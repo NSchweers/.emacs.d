@@ -1,0 +1,9 @@
+11/11/2013 ATM Klausur rücktritts-datum (spätestens).  
+%%(diary-anniversary 5 1 1959) Giselas %d. Geburtstag.  
+%%(diary-anniversary 7 2 1987) Mein %d. Geburtstag.  
+%%(diary-anniversary 9 2 1989) Rebekkas %d. Geburtstag.  
+%%(diary-anniversary 28 2 1953) Wilhelms %d. Geburtstag.  
+%%(diary-anniversary 29 4 1989) Melanies %d. Geburtstag.  
+%%(diary-anniversary 30 10 1991) Esthers %d. Geburtstag.  
+%%(diary-anniversary 24 12 1985) Björn Dietrichs %d. Geburtstag.  
+%%(diary-float t 4 2) PUG Stammtisch treffen.  
