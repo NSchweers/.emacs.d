@@ -11,3 +11,6 @@ authinfo.gpg
 .emacs.desktop
 .emacs.desktop.lock
 
+# Other emacs bookkeeping
+.places
+
