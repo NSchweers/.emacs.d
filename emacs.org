@@ -1,8 +1,0 @@
-things to look at: 
-- is there ido for info?
-- visual regexp
-- multiple cursors?
-- expand-region?
-
-
-- fill-column-indicator
