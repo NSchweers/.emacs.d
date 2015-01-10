@@ -65,6 +65,7 @@
 (require 'setup-auctex)
 (with-demoted-errors (load (expand-file-name "gnus.el" user-emacs-directory)))
 (with-demoted-errors (require 'setup-multiple-cursors))
+(with-demoted-errors (require 'setup-erc))
 
 (require 'server)
 (unless (server-running-p)
