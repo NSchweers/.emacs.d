@@ -10,10 +10,13 @@
 ;; Add our dir for code to the load-path, so code from there can be required.  
 (add-to-list 'load-path (expand-file-name "code" user-emacs-directory))
 (add-to-list 'load-path (expand-file-name "site-lisp" user-emacs-directory))
-(add-to-list 'load-path (expand-file-name "site-lisp/mc16basm"
-                                          user-emacs-directory))
-(add-to-list 'load-path (expand-file-name "site-lisp/mc16bemu"
-                                          user-emacs-directory))
+(dolist (d '("site-lisp/mc16basm" "site-lisp/mc16bemu"))
+  (add-to-list 'load-path (expand-file-name d user-emacs-directory)))
+
+;; (add-to-list 'load-path (expand-file-name "site-lisp/mc16basm"
+;;                                           user-emacs-directory))
+;; (add-to-list 'load-path (expand-file-name "site-lisp/mc16bemu"
+;;                                           user-emacs-directory))
 
 (setq custom-file (expand-file-name "custom.el" user-emacs-directory))
 (load custom-file)
@@ -60,7 +63,7 @@
 (with-demoted-errors (require 'setup-elpy))
 (with-demoted-errors (require 'setup-mc16basm))
 (with-demoted-errors (require 'setup-ace-window))
-(require 'setup-org)
+(with-demoted-errors (require 'setup-org))
 (require 'setup-ispell)
 (require 'setup-auctex)
 (with-demoted-errors (load (expand-file-name "gnus.el" user-emacs-directory)))

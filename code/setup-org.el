@@ -17,19 +17,20 @@
 ;; org-export-latex-classes
 ;; org-latex-classes
 
-(require 'ox-latex)
+(with-demoted-errors
+  (require 'ox-latex)
 
-(add-hook 'org-mode-hook
-          (lambda ()
-            (add-to-list 'org-latex-classes
-                         '("IEEEtran"
-                           "\\documentclass[conference]{IEEEtran}"
-                           ("\\section{%s}" . "\\section*{%s}")
-                           ("\\subsection{%s}" . "\\subsection*{%s}")
-                           ("\\subsubsection{%s}" . "\\subsubsection*{%s}")
-                           ("\\paragraph{%s}" . "\\paragraph*{%s}")
-                           ("\\subparagraph{%s}" . "\\subparagraph*{%s}")))
-            (flyspell-mode 1)))
+  (add-hook 'org-mode-hook
+            (lambda ()
+              (add-to-list 'org-latex-classes
+                           '("IEEEtran"
+                             "\\documentclass[conference]{IEEEtran}"
+                             ("\\section{%s}" . "\\section*{%s}")
+                             ("\\subsection{%s}" . "\\subsection*{%s}")
+                             ("\\subsubsection{%s}" . "\\subsubsection*{%s}")
+                             ("\\paragraph{%s}" . "\\paragraph*{%s}")
+                             ("\\subparagraph{%s}" . "\\subparagraph*{%s}")))
+              (flyspell-mode 1))))
 
 ;; (defvar org-custom/org-environment )
 
