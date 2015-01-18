@@ -11,6 +11,5 @@ authinfo.gpg
 .emacs.desktop
 .emacs.desktop.lock
 
-# Other emacs bookkeeping
+# Places (each machine has different files)
 .places
-
