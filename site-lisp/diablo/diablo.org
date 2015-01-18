@@ -67,10 +67,22 @@
           (org-mode))
         (switch-to-buffer b)))
   #+END_SRC
+
 ** Emerald
-   | Level             | Count |
-   |-------------------+-------|
-   | koeniglich        |     1 |
-   | imperial-marquise |     5 |
-   | marquise          |    59 |
-   |                   |       |
+   | Level      | Count |
+   |------------+-------|
+   | koeniglich |     1 |
+   | imperial   |     5 |
+   | marquise   |    59 |
+   |            |       |
+** Diamond
+   | Level    | Count |
+   |----------+-------|
+   | imperial | 1     |
+   | marquise | 100   |
+
+** Amethyst
+   | Level    | Count |
+   |----------+-------|
+   | imperial | 1     |
+   | marquise | 101   |
