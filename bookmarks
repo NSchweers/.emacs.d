@@ -4,7 +4,7 @@
 ;;; -*- End Of Bookmark File Format Version Stamp -*-
 (("org-capture-last-stored"
  (filename . "~/.emacs.d/notes.org")
- (front-context-string . "** TODO Look at ")
- (rear-context-string . "2015-01-10 Sat]\n")
- (position . 125))
+ (front-context-string . "** TODO ts passw")
+ (rear-context-string . "lor sit amet.]]\n")
+ (position . 1825))
 )

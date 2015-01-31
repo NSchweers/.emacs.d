@@ -1,4 +1,5 @@
 * Regular Gems
+** Code
   #+BEGIN_SRC elisp
     ;; -*- lexical-binding: t -*-
     (require 'cl)
@@ -76,13 +77,28 @@
    | marquise   |    59 |
    |            |       |
 ** Diamond
-   | Level    | Count |
-   |----------+-------|
-   | imperial | 1     |
-   | marquise | 100   |
+   | Level      | Count |
+   |------------+-------|
+   | koeniglich |     0 |
+   | imperial   |     0 |
+   | marquise   |   151 |
 
 ** Amethyst
    | Level    | Count |
    |----------+-------|
-   | imperial | 1     |
-   | marquise | 101   |
+   | imperial |     1 |
+   | marquise |   101 |
+** Ruby
+   | Level    | Count |
+   |----------+-------|
+   | imperial | 22    |
+   | marquise | 274   |
+** Topaz
+   | Level    | Count |
+   |----------+-------|
+   | imperial | 14    |
+   | marquise | 230   |
+* Merkzettel
+  - 2 Juwelenhorter brachten: 15 imperiale und 117 marquise edelsteine.
+  - 2 Juwelenhorter brachten: 14 imperiale und 86 marquise edelsteine.
+  - Mit dem Barbaren Belial getötet während ich selbst tot war!
