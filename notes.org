@@ -13,3 +13,19 @@
    zwei4und2vierzig
    [2015-01-22 Do]
    [[file:~/.emacs.d/site-lisp/diablo/diablo.org::*Merkzettel][Merkzettel]]
+** TODO projectile
+
+   Look into Projectile
+   [2015-01-31 Sa]
+** TODO ibuffer
+
+   Look into ibuffer. 
+   [2015-01-31 Sa]
+** TODO flycheck
+
+   Look into flycheck. 
+   [2015-01-31 Sa]
+** TODO Mail
+
+   Finally get some sort of mail setup running, with IMAP please.  
+   [2015-01-31 Sa]

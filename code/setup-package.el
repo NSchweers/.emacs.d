@@ -62,7 +62,8 @@ re-downloaded in order to locate PACKAGE."
      shell-command
      smex
      undo-tree
-     w3m)))
+     w3m
+     wanderlust)))
 
 (condition-case nil
     (init--install-packages)

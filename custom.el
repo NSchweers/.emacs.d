@@ -7,53 +7,24 @@
  '(auth-source-save-behavior nil)
  '(auth-sources (quote ("~/.emacs.d/authinfo.gpg")))
  '(calendar-week-start-day 1)
+ '(elmo-imap4-default-authenticate-type (quote clear))
  '(erc-autojoin-channels-alist (quote (("freenode.net"))))
  '(erc-nick "schweers")
  '(erc-prompt-for-channel-key t)
  '(gnus-home-directory "~/.emacs.d/")
  '(haskell-mode-hook (quote (turn-on-haskell-indentation)))
- '(jabber-account-list
-   (quote
-    (("schweers@3suns.de/emacs"
-      (:connection-type . starttls))
-     ("brainfuck@gabbler.de"))))
+ '(jabber-account-list (quote (("schweers@3suns.de/emacs" (:connection-type . starttls)) ("brainfuck@gabbler.de"))))
  '(jabber-roster-show-bindings nil)
  '(jabber-show-resources (quote always))
  '(jabber-vcard-avatars-retrieve nil)
- '(mail-sources
-   (quote
-    ((imap :server "mail.fh-frankfurt.de" :user "nathanaelschweers" :stream starttls :authenticator login :mailbox "INBOX" :dontexpunge t))))
+ '(mail-sources (quote ((imap :server "mail.fh-frankfurt.de" :user "nathanaelschweers" :stream starttls :authenticator login :mailbox "INBOX" :dontexpunge t))))
  '(mew-rc-file "~/.emacs.d/mew")
  '(openwith-associations nil)
- '(org-latex-default-packages-alist
-   (quote
-    (("AUTO" "inputenc" t)
-     ("T1" "fontenc" t)
-     ("" "fixltx2e" nil)
-     ("" "graphicx" t)
-     ("" "longtable" nil)
-     ("" "float" nil)
-     ("" "wrapfig" nil)
-     ("" "rotating" nil)
-     ("normalem" "ulem" t)
-     ("" "amsmath" t)
-     ("" "textcomp" t)
-     ("" "marvosym" t)
-     ("" "wasysym" t)
-     ("" "amssymb" t)
-     ("hidelinks" "hyperref" nil)
-     "\\tolerance=1000")))
+ '(org-latex-default-packages-alist (quote (("AUTO" "inputenc" t) ("T1" "fontenc" t) ("" "fixltx2e" nil) ("" "graphicx" t) ("" "longtable" nil) ("" "float" nil) ("" "wrapfig" nil) ("" "rotating" nil) ("normalem" "ulem" t) ("" "amsmath" t) ("" "textcomp" t) ("" "marvosym" t) ("" "wasysym" t) ("" "amssymb" t) ("hidelinks" "hyperref" nil) "\\tolerance=1000")))
  '(rcirc-default-nick "schweers")
  '(rcirc-default-user-name "schweers")
  '(rcirc-fill-column (quote frame-width))
- '(rcirc-server-alist
-   (quote
-    (("3suns.de" :port 6666 :channels
-      ("&bitlbee")
-      nil nil)
-     ("irc.freenode.net" :channels
-      ("#neo" "#informatik-ag")
-      nil nil))))
+ '(rcirc-server-alist (quote (("3suns.de" :port 6666 :channels ("&bitlbee") nil nil) ("irc.freenode.net" :channels ("#neo" "#informatik-ag") nil nil))))
  '(send-mail-function (quote smtpmail-send-it))
  '(smtpmail-smtp-server "smtp.1und1.de" t)
  '(smtpmail-smtp-service 25 t))
