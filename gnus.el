@@ -40,6 +40,8 @@
          "\\(?:^To:.*emacs-devel@gnu.org\\)\\|\\(?:^Cc:.*emacs-devel@gnu.org\\)")
         ("INBOX/FRITZ!Box"
          "\\(?:^From:.*\"FRITZ!Box\" <wgschweers@online.de>\\)")
+        ("INBOX/Geocaching"
+         "\\(?:From:.*@geocaching.com\\)")
         ("INBOX" "")))
 
 ;; (setq gnus-select-method '(nmimap "1&1"
