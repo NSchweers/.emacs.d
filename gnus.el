@@ -31,13 +31,15 @@
         ("INBOX/NEO" 
          ,(concat "\\(?:^Subject:.*\\[Neo\\]\\)\\|\\(?:^To:.*diskussion@neo-layout.org\\)\\|"
                  "\\(?:Reply-To:.*diskussion@neo-layout.org\\)"))
-        ("INBOX/FH" "\\(?:^From:.*@fra-uas.de\\)\\|\\(?:^Reply-To:.*@fra-uas.de\\)")
+        ("INBOX/FH" "\\(?:^From:.*@.*fra-uas.de\\)\\|\\(?:^Reply-To:.*@.*fra-uas.de\\)")
         ("INBOX/klingemann"
          "^To:.*klingemann-geschaedigte-ev@lists.informatiktreffpunkt.de")
         ("INBOX/emacs-help"
          "\\(?:^To:.*help-gnu-emacs@gnu.org\\)\\|\\(?:^Cc:.*help-gnu-emacs@gnu.org\\)")
         ("INBOX/emacs-devel"
          "\\(?:^To:.*emacs-devel@gnu.org\\)\\|\\(?:^Cc:.*emacs-devel@gnu.org\\)")
+        ("INBOX/FRITZ!Box"
+         "\\(?:^From:.*\"FRITZ!Box\" <wgschweers@online.de>\\)")
         ("INBOX" "")))
 
 ;; (setq gnus-select-method '(nmimap "1&1"
