@@ -45,13 +45,20 @@
 
 (global-set-key (kbd "C-S-s") 'misc/switch-to-scratch)
 
-(defun misc/switch-to-neo-chat ()
-  (interactive)
-  (cond ((bufferp (get-buffer "#neo"))
-         (switch-to-buffer "#neo"))
-        (t (message "No such buffer."))))
+(defmacro misc/switch-to-chat (chan key)
+  `(progn
+     (defun misc/switch-to-neo-chat ()
+       (interactive)
+       (cond ((bufferp (get-buffer ,chan))
+              (switch-to-buffer ,chan))
+             (t (message "No such buffer."))))
+     (global-set-key (kbd (s-concat "C-S-" key)) 'misc/)))
 
 (global-set-key (kbd "C-S-n") 'misc/switch-to-neo-chat)
+
+(defun misc/switch-to-emacs-chat ()
+  )
+
 
 ;; (defun misc/next-word-at-point ()
 ;;   "Go to the next occurence of the word at point.  "

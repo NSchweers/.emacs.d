@@ -7,6 +7,7 @@
  '(auth-source-save-behavior nil)
  '(auth-sources (quote ("~/.emacs.d/authinfo.gpg")))
  '(calendar-week-start-day 1)
+ '(elmo-imap4-default-authenticate-type (quote clear))
  '(erc-autojoin-channels-alist (quote (("freenode.net"))))
  '(erc-nick "schweers")
  '(erc-prompt-for-channel-key t)

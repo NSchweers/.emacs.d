@@ -66,6 +66,7 @@
 (with-demoted-errors (load (expand-file-name "gnus.el" user-emacs-directory)))
 (with-demoted-errors (require 'setup-multiple-cursors))
 (with-demoted-errors (require 'setup-erc))
+;(with-demoted-errors (require 'setup-wanderlust))
 
 (require 'server)
 (unless (server-running-p)
