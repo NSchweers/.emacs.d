@@ -76,3 +76,33 @@
    It may seem weird and clunky in the beginning, but it should be worth some
    effort.  
    [2015-01-08 Thu]
+** TODO Take a look at this video (it’s on lisp)
+
+   http://www.youtube.com/watch?v=2Op3QLzMgSY
+   [2015-01-10 Sat]
+** TODO Look at this article on finite state machines for parsing protocols
+
+   http://www.cs.dartmouth.edu/~pete/pubs/LangSec-2014-fsm-parsers.pdf
+   [2015-01-10 Sat]
+   [[file:~/code/NetworkSecurityMeasuresAndMetrics/doc/report_template.tex::Lorem%20ipsum%20dolor%20sit%20amet,%20consetetur%20sadipscing%20elitr,%20sed%20diam%20nonumy%20eirmod%20tempor%20invidunt%20ut%20labore%20et%20dolore%20magna%20aliquyam%20erat,%20sed%20diam%20voluptua.%20At%20vero%20eos%20et%20accusam%20et%20justo%20duo%20dolores%20et%20ea%20rebum.%20Stet%20clita%20kasd%20gubergren,%20no%20sea%20takimata%20sanctus%20est%20Lorem%20ipsum%20dolor%20sit%20amet.%20Lorem%20ipsum%20dolor%20sit%20amet,%20consetetur%20sadipscing%20elitr,%20sed%20diam%20nonumy%20eirmod%20tempor%20invidunt%20ut%20labore%20et%20dolore%20magna%20aliquyam%20erat,%20sed%20diam%20voluptua.%20At%20vero%20eos%20et%20accusam%20et%20justo%20duo%20dolores%20et%20ea%20rebum.%20Stet%20clita%20kasd%20gubergren,%20no%20sea%20takimata%20sanctus%20est%20Lorem%20ipsum%20dolor%20sit%20amet.][file:~/code/NetworkSecurityMeasuresAndMetrics/doc/report_template.tex::Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet.]]
+** TODO ts passwd
+
+   zwei4und2vierzig
+   [2015-01-22 Do]
+   [[file:~/.emacs.d/site-lisp/diablo/diablo.org::*Merkzettel][Merkzettel]]
+** TODO projectile
+
+   Look into Projectile
+   [2015-01-31 Sa]
+** TODO ibuffer
+
+   Look into ibuffer. 
+   [2015-01-31 Sa]
+** TODO flycheck
+
+   Look into flycheck. 
+   [2015-01-31 Sa]
+** TODO Mail
+
+   Finally get some sort of mail setup running, with IMAP please.  
+   [2015-01-31 Sa]

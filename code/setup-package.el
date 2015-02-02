@@ -36,6 +36,7 @@ re-downloaded in order to locate PACKAGE."
 (defun init--install-packages ()
   (packages-install
    '(ac-geiser
+     ace-link
      ace-window
      auctex
      auto-complete
