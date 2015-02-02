@@ -1,6 +1,8 @@
 (setq user-mail-address "NSchweers@online.de")
 (setq user-full-name "Nathanael Schweers")
 
+;(setq nntp-send-authinfo (expand-file-name ".authfile.gpg" (getenv "HOME")))
+
 (setq gnus-select-method 
       '(nnimap "1&1"
                (nnimap-address "imap.1und1.de")
@@ -9,8 +11,12 @@
                (nnimap-stream ssl)))
 
 ;; (nnimap-authinfo-file
+<<<<<<< HEAD
 ;;  (expand-file-name ".authfile.gpg" (getenv "HOME")))
                
+=======
+;;  (expand-file-name ".authinfo" (getenv "HOME")))
+>>>>>>> 0b30c2395f297da7d0c868bfbc36043715c5253a
 
 (setq message-send-mail-function 'smtpmail-send-it
       smtpmail-starttls-credentials '(("smtp.1und1.de" 587 nil nil))
@@ -22,6 +28,10 @@
       ;gnus-ignored-newsgroups "^to\\.\\|^[0-9. ]+\\( \\|$\\)\\|^[\"]\"[#'()]"
       )
 
+<<<<<<< HEAD
+=======
+(setq nnimap-inbox "INBOX")
+>>>>>>> 0b30c2395f297da7d0c868bfbc36043715c5253a
 (setq nnimap-split-methods
       `(("INBOX/PUG" 
          "\\(?:^Subject:.*\\[PUG\\]\\)\\|\\(?:^To:.*talk@pug.org\\)\\|\\(?:Reply-To:.*talk@pug.org\\)")
@@ -29,9 +39,17 @@
         ("INBOX/NEO" 
          ,(concat "\\(?:^Subject:.*\\[Neo\\]\\)\\|\\(?:^To:.*diskussion@neo-layout.org\\)\\|"
                  "\\(?:Reply-To:.*diskussion@neo-layout.org\\)"))
-        ("INBOX/FH" "\\(?:^From:.*@fh-frankfurt.de\\)\\|\\(?:^Reply-To:.*@fh-frankfurt.de\\)")
+        ("INBOX/FH" "\\(?:^From:.*@.*fra-uas.de\\)\\|\\(?:^Reply-To:.*@.*fra-uas.de\\)")
         ("INBOX/klingemann"
          "^To:.*klingemann-geschaedigte-ev@lists.informatiktreffpunkt.de")
+        ("INBOX/emacs-help"
+         "\\(?:^To:.*help-gnu-emacs@gnu.org\\)\\|\\(?:^Cc:.*help-gnu-emacs@gnu.org\\)")
+        ("INBOX/emacs-devel"
+         "\\(?:^To:.*emacs-devel@gnu.org\\)\\|\\(?:^Cc:.*emacs-devel@gnu.org\\)")
+        ("INBOX/FRITZ!Box"
+         "\\(?:^From:.*\"FRITZ!Box\" <wgschweers@online.de>\\)")
+        ("INBOX/Geocaching"
+         "\\(?:From:.*@geocaching.com\\)")
         ("INBOX" "")))
 
 ;; (setq gnus-select-method '(nmimap "1&1"

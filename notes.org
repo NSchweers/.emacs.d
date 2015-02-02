@@ -1,4 +1,81 @@
 * Tasks
+** TODO Learn to use Conqueror (browser)
+   [2014-07-07 Mon]
+** TODO Take a closer look at mark commands and modes.  
+
+   Items of note include
+   - Visible Mark
+   - AutoMark
+   - MarkCommands
+   [2014-07-07 Mon]
+** TODO Look into smart scan, or write an alternative
+
+   I started an alternative, but can't properly concentrate right now.  It can
+   be found at misc.el (misc/next-word-at-point), but is commented out.  
+   [2014-07-07 Mon]
+   [[file:~/.emacs.d/code/misc.el]]
+** TODO Look at emacs repeat command.
+
+   See here: 
+   http://www.masteringemacs.org/articles/2011/07/15/repeating-commands-emacs/
+   [2014-07-07 Mon]
+   [[file:~/.emacs.d/code/misc.el]]
+** TODO Emacs recent files
+
+   Look at modes to open recently opened files.  
+   [2014-07-07 Mon]
+   [[file:~/.emacs.d/code/misc.el]]
+** TODO Look at ibuffer
+   [2014-07-07 Mon]
+   [[info:calc#Embedded%20Mode%20Overview][info:calc#Embedded Mode Overview]]
+** TODO Look at eshell
+
+   http://www.masteringemacs.org/articles/2010/12/13/complete-guide-mastering-eshell/
+   [2014-07-07 Mon]
+   [[info:calc#Embedded%20Mode%20Overview][info:calc#Embedded Mode Overview]]
+** TODO Write an assembler and disassembler for the mb16b CPU.
+
+   This shall be done in pure elisp. 
+   [2014-07-13 Sun]
+   [[file:~/.emacs.d/notes.org::*Tasks][Tasks]]
+** TODO Finish dvd-rip
+   [2014-07-13 Sun]
+** TODO Find out how to blog with Org Mode
+   [2014-07-13 Sun]
+** TODO Look at project-archetypes
+
+   This may teach me some stuff about how to properly do emacs packages, and
+   how to test them (integration testing). 
+   [2014-07-13 Sun]
+   [[file:~/tmp/test.el::(message%20(read-string%20"")))][file:~/tmp/test.el::(message (read-string "")))]]
+** TODO Look at eldoc
+   [2014-07-13 Sun]
+   [[file:~/.emacs.d/notes.org::*Tasks][Tasks]]
+** TODO Take a closer look at elnode.
+
+   Possibly after a node.js crashcourse.  
+   [2014-07-13 Sun]
+   [[file:~/.emacs.d/notes.org::*Tasks][Tasks]]
+** DONE Look at Yasnippet
+
+   I believe it is already installed, yet it is unused.  Which is a shame, as
+   it seems to be /really/ awesome.  
+   [2014-07-15 Tue]
+** TODO Read up on the π-calculus. 
+   [2014-11-23 Sun]
+   [[file:~/code/his-project/model.py]]
+** TODO Sophia MC server
+
+   url: http://hill_of_tara.aternos.me
+   username: Hill_of_Tara
+   pw: Hi13J25Ra02
+   [2014-12-14 Sun]
+   [[file:~/code/src/guile/module/system/base/compile.scm]]
+** TODO Take a look at browse-kill-ring.  
+
+   It may seem weird and clunky in the beginning, but it should be worth some
+   effort.  
+   [2015-01-08 Thu]
 ** TODO Take a look at this video (it’s on lisp)
 
    http://www.youtube.com/watch?v=2Op3QLzMgSY

@@ -44,6 +44,9 @@ relevant window."
                        ws))
                     va))))
 
+(setq aw-scope 'frame)
+(setq aw-keys '(?s ?n ?r ?t ?d ?o ?e ?a ?i ?u))
+
 (global-set-key (kbd "C-x o") 'ace-window)
 
 (provide 'setup-ace-window)
