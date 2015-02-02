@@ -53,6 +53,22 @@
 
 (global-set-key (kbd "C-S-n") 'misc/switch-to-neo-chat)
 
+(defmacro misc/switch-to-buffer (buffer &optional k)
+  "Generate a function and keybinding.  
+
+If K is given, bind to (kbd k).  Otherwise bind to C-S-(buffer-substring 1 1
+name).  "
+  (let ((name (make-symbol "name")))
+    (list 'let (list (list name buffer))
+          (list 'defun (intern (s-concat "misc/switch-to-" name))
+                (list 'interactive)
+                (list 'switch-to-buffer name))
+    ;; `(let ((,name ,buffer))
+    ;;    (defun ,(intern (s-concat "misc/switch-to-" buffer)) ()
+    ;;      (interactive)
+    ;;      (switch-to-buffer ,name)))
+    )))
+
 ;; (defun misc/next-word-at-point ()
 ;;   "Go to the next occurence of the word at point.  "
 ;;   (interactive)
