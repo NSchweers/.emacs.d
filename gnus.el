@@ -6,11 +6,11 @@
                (nnimap-address "imap.1und1.de")
                (nnimap-authenticator login)
                (nnimap-server-port 993)
-               (nnimap-stream ssl)
-               (nnimap-authinfo-file
-                (expand-file-name ".authfile.gpg" (getenv "HOME")))
-                                        ;(remove-prefix "INBOX.")
-               ))
+               (nnimap-stream ssl)))
+
+;; (nnimap-authinfo-file
+;;  (expand-file-name ".authfile.gpg" (getenv "HOME")))
+               
 
 (setq message-send-mail-function 'smtpmail-send-it
       smtpmail-starttls-credentials '(("smtp.1und1.de" 587 nil nil))
@@ -22,7 +22,7 @@
       ;gnus-ignored-newsgroups "^to\\.\\|^[0-9. ]+\\( \\|$\\)\\|^[\"]\"[#'()]"
       )
 
-(setq nnmail-split-methods
+(setq nnimap-split-methods
       `(("INBOX/PUG" 
          "\\(?:^Subject:.*\\[PUG\\]\\)\\|\\(?:^To:.*talk@pug.org\\)\\|\\(?:Reply-To:.*talk@pug.org\\)")
         ("INBOX/Geocaching" "^From:.*@geocaching.com")

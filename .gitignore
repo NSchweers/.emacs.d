@@ -4,9 +4,6 @@
 # Packaging
 .cask
 
-# Authentication
-authinfo.gpg
-
 # Desktop files
 .emacs.desktop
 .emacs.desktop.lock
