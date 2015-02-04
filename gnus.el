@@ -42,6 +42,8 @@
          "\\(?:^From:.*\"FRITZ!Box\" <wgschweers@online.de>\\)")
         ("INBOX/Geocaching"
          "\\(?:From:.*@geocaching.com\\)")
+        ("INBOX/Amazon"
+         "\\(?:From:.*@amazon.de\\)")
         ("INBOX" "")))
 
 ;; (setq gnus-select-method '(nmimap "1&1"

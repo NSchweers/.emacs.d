@@ -7,22 +7,22 @@
   (byte-compile-file (expand-file-name "init.el" user-emacs-directory)))
 
 (defun file-in-emacs-d? (filename)
-  (s-starts-with? (expand-file-name user-emacs-directory) 
+  (s-starts-with? (expand-file-name user-emacs-directory)
                   (expand-file-name filename)))
 
 (defun recompile-if-emacs-d ()
   (let ((filename (buffer-file-name (current-buffer))
-         )) 
+         ))
     (if (and (file-in-emacs-d? filename) (s-ends-with? ".el" filename))
         (condition-case nil
             (byte-compile-file filename)
-          (error 
+          (error
            (ignore-errors (delete-file (byte-compile-dest-file filename))))))))
 
-;; Autocompile any elisp files in our emacs directory.  
+;; Autocompile any elisp files in our emacs directory.
 (add-hook 'after-save-hook 'recompile-if-emacs-d)
 
-;; Open the init file on startup.  
+;; Open the init file on startup.
 (find-file (expand-file-name "init.el" user-emacs-directory))
 
 ;;we want to have the compilation window scroll automatically
@@ -61,7 +61,7 @@
   )
 
 (defmacro misc/switch-to-buffer (buffer &optional k)
-  "Generate a function and keybinding.  
+  "Generate a function and keybinding.
 
 If K is given, bind to (kbd k).  Otherwise bind to C-S-(buffer-substring 1 1
 name).  "
@@ -107,5 +107,36 @@ name).  "
         (forward-line -2)
         (indent-for-tab-command)
         (save-buffer)))))
+
+(defun misc/hurra ()
+  "Calls xdg-open (i.e. a browser) for a youtube search link for the song
+„hurra“.
+
+This song describes very nicely how it felt before and after knowing Emacs ;)"
+  (interactive)
+  (let* ((p (start-process
+             "hurra" "hurra-out" "xdg-open"
+             (s-concat "https://www.youtube.com/"
+                       "results?search_query=die+%C3%A4rzte+hurra")))
+         (pb (process-buffer p)))
+    (set-process-sentinel
+     p
+     (lambda (_proc e)
+       (cond ((string-match "finished" e)
+              (kill-buffer pb)))))))
+
+(defun misc/transpose-windows (arg)
+  "Transpose the buffers shown in two windows.
+
+Stolen from http://www.emacswiki.org/emacs/TransposeWindows"
+  (interactive "p")
+  (let ((selector (if (>= arg 0) 'next-window 'previous-window)))
+    (while (/= arg 0)
+      (let ((this-win (window-buffer))
+            (next-win (window-buffer (funcall selector))))
+        (set-window-buffer (selected-window) next-win)
+        (set-window-buffer (funcall selector) this-win)
+        (select-window (funcall selector)))
+      (setq arg (if (plusp arg) (1- arg) (1+ arg))))))
 
 (provide 'misc)
