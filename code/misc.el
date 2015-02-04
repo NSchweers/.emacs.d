@@ -1,3 +1,4 @@
+;; -*- lexical-binding: t -*-
 (require 's)
 
 (defun recompile-emacs-d ()
@@ -86,5 +87,25 @@ name).  "
 (add-hook 'erc-mode-hook (-partial 'auto-fill-mode 0))
 
 (setq save-interprogram-paste-before-kill t)
+
+(defun misc/new-setup (name)
+  (interactive "MWhich package do you want to set up? \n")
+  (let ((proper-name (s-concat "setup-" name ".el")))
+    (save-excursion
+      (find-file
+       (expand-file-name
+        proper-name
+        (expand-file-name "code" user-emacs-directory)))
+      (goto-char (point-min))
+      (if (not (string= (buffer-string) ""))
+          (progn
+            (forward-line 2)
+            (indent-for-tab-command))
+        (insert ";; -*- lexical-binding: t -*-\n\n\n(provide '")
+        (insert proper-name)
+        (insert ")\n")
+        (forward-line -2)
+        (indent-for-tab-command)
+        (save-buffer)))))
 
 (provide 'misc)

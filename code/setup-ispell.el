@@ -1,3 +1,5 @@
+;; -*- lexical-binding: t -*-
+
 (require 'ispell)
 
 (add-to-list 'ispell-local-dictionary-alist '("deutsch-hunspell"

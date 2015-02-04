@@ -1,3 +1,4 @@
+;; -*- lexical-binding: t -*-
 ;; Note that flyspell is enabled for each mode separately in the setup file for
 ;; the appropriate mode.  See for instance setup-org.el
 

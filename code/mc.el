@@ -1,3 +1,4 @@
+;; -*- lexical-binding: t -*-
 (require 'minecraft-report)
 
 (defun mc-regen-file (file)

@@ -1,3 +1,4 @@
+;; -*- lexical-binding: t -*-
 (require 'ace-window)
 
 ;; BEWARE: this function must have once been part of ace-jump-mode.  I pulled

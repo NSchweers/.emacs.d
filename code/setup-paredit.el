@@ -1,3 +1,4 @@
+;; -*- lexical-binding: t -*-
 ;; My keybindings for paredit
 
 (require 'paredit)

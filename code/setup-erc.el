@@ -1,3 +1,4 @@
+;; -*- lexical-binding: t -*-
 (add-hook 'erc-mode-hook (lambda ()
                            (auto-fill-mode nil)
                            (show-paren-mode nil)))

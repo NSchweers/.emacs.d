@@ -1,3 +1,4 @@
+;; -*- lexical-binding: t -*-
 (autoload 'mew "mew" nil t)
 (autoload 'mew-send "mew" nil t)
 (if (boundp 'read-mail-command)

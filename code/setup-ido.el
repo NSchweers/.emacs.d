@@ -1,3 +1,4 @@
+;; -*- lexical-binding: t -*-
 ;; Interactively Do Things
 
 (require 'ido)

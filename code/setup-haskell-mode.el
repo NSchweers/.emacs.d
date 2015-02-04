@@ -1,3 +1,4 @@
+;; -*- lexical-binding: t -*-
 (eval-after-load "haskell-mode"
   '(define-key haskell-mode-map (kbd "C-c C-c") 'haskell-compile))
 

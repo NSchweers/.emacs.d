@@ -1,3 +1,4 @@
+;; -*- lexical-binding: t -*-
 (require 'mc16basm)
 
 (add-hook 'mc16basm-mode-hook

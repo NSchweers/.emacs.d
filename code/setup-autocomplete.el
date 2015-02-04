@@ -1,3 +1,4 @@
+;; -*- lexical-binding: t -*-
 (require 'auto-complete)
 
 (dolist (m (list 'clojure-mode-hook 'cider-repl-mode-hook 'emacs-lisp-mode-hook))

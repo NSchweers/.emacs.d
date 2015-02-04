@@ -1,3 +1,4 @@
+;; -*- lexical-binding: t -*-
 ;; Kill a word with C-w (as in shell and vim-insert-mode).  
 (global-set-key (kbd "C-w") 'backward-kill-word)
 (global-set-key (kbd "C-c C-w") 'kill-region)
