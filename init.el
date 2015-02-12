@@ -70,6 +70,7 @@
 (with-demoted-errors (require 'setup-multiple-cursors))
 (with-demoted-errors (require 'setup-erc))
 (with-demoted-errors (require 'setup-ace-link))
+(with-demoted-errors (require 'setup-browse-kill-ring))
 
 (require 'server)
 (unless (server-running-p)

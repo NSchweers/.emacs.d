@@ -102,7 +102,7 @@ name).  "
             (forward-line 2)
             (indent-for-tab-command))
         (insert ";; -*- lexical-binding: t -*-\n\n\n(provide '")
-        (insert proper-name)
+        (insert (substring proper-name 0 (- (length proper-name) 3)))
         (insert ")\n")
         (forward-line -2)
         (indent-for-tab-command)

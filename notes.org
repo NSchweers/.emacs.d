@@ -106,3 +106,8 @@
 
    Finally get some sort of mail setup running, with IMAP please.  
    [2015-01-31 Sa]
+** TODO Take a look at speed-of-thought-lisp
+
+   http://endlessparentheses.com/new-on-elpa-speed-of-thought-lisp.html?source=rss
+   [2015-02-10 Tue]
+   [[file:/mnt/data/video/serien/spartacus/vengance/Spartacus.S02E03.720p.HDTV.x264-IMMERSE.mkv]]

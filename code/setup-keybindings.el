@@ -33,9 +33,6 @@
 ;; Have completion on C-TAB, as ESC TAB is lame.
 (global-set-key (kbd "<C-tab>") 'completion-at-point)
 
-;; Transpose the buffers of two windows.
-(define-key ctl-x-4-map (kbd "t") 'misc/transpose-windows)
-
 (define-prefix-command 'endless/toggle-map)
 ;; The manual recommends C-c for user keys, but C-x t is
 ;; always free, whereas C-c t is used by some modes.
