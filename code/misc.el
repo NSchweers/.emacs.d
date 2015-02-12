@@ -89,6 +89,9 @@ name).  "
 (setq save-interprogram-paste-before-kill t)
 
 (defun misc/new-setup (name)
+  "Create a new setup file, called setup-NAME.el in
+~/.emacs.d/code/ which enables lexical scoping, contains the
+appropriate provide and places point at the right position."
   (interactive "MWhich package do you want to set up? \n")
   (let ((proper-name (s-concat "setup-" name ".el")))
     (save-excursion

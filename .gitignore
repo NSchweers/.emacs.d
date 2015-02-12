@@ -10,3 +10,17 @@
 
 # Places (each machine has different files)
 .places
+
+# installed packages
+elpa
+
+# session files
+session.*
+
+# multiple cursors file
+.mc-lists.el
+
+.newsrc*
+
+# auto-complete file
+ac-comphist.dat

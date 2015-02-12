@@ -111,3 +111,21 @@
    http://endlessparentheses.com/new-on-elpa-speed-of-thought-lisp.html?source=rss
    [2015-02-10 Tue]
    [[file:/mnt/data/video/serien/spartacus/vengance/Spartacus.S02E03.720p.HDTV.x264-IMMERSE.mkv]]
+** TODO Look at LaTeX paper helpers
+   
+   - writing smell detector
+   - chrisper
+   - academic-writing-check
+
+   
+   [2015-02-06 Fri]
+** TODO Add a hook to `TeX-LaTeX-sentinel'.
+
+   Maybe one can add advice first to `TeX-LaTeX-sentinel', which adds advice to
+   `message', in order to check for success.  If the compilation was successful,
+   we should run a hook.
+
+   A function can be put into a hook which reloads the corresponding (maybe even
+   all?) docview-mode buffers. 
+   [2015-02-06 Fri]
+   [[file:~/code/emacs.d/elpa/auctex-11.88.2/tex-buf.el::(message%20"%25s"%20(concat%20name%20":%20successfully%20formatted%20"][file:~/code/emacs.d/elpa/auctex-11.88.2/tex-buf.el::(message "%s" (concat name ": successfully formatted "]]

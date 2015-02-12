@@ -56,16 +56,13 @@ re-downloaded in order to locate PACKAGE."
      ido-vertical-mode
      lua-mode
      magit
-     mew
      multiple-cursors
      org
      paredit
      s
      shell-command
      smex
-     undo-tree
-     w3m
-     wanderlust)))
+     undo-tree)))
 
 (condition-case nil
     (init--install-packages)
