@@ -72,10 +72,9 @@
 ** Emerald
    | Level      | Count |
    |------------+-------|
-   | koeniglich |     1 |
-   | imperial   |     5 |
-   | marquise   |    59 |
-   |            |       |
+   | koeniglich |     0 |
+   | imperial   |     0 |
+   | marquise   |    79 |
 ** Diamond
    | Level      | Count |
    |------------+-------|
