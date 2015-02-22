@@ -71,6 +71,7 @@
 (with-demoted-errors (require 'setup-erc))
 (with-demoted-errors (require 'setup-ace-link))
 (with-demoted-errors (require 'setup-browse-kill-ring))
+(with-demoted-errors (require 'setup-slime))
 
 (require 'server)
 (unless (server-running-p)

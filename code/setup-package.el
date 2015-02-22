@@ -61,6 +61,7 @@ re-downloaded in order to locate PACKAGE."
      paredit
      s
      shell-command
+     slime
      smex
      undo-tree)))
 
