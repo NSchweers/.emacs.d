@@ -128,6 +128,24 @@ This song describes very nicely how it felt before and after knowing Emacs ;)"
        (cond ((string-match "finished" e)
               (kill-buffer pb)))))))
 
+(defun misc/olbia (arg)
+  "Downloads the menu of the Pizzeria Olbia in Frankfurt/Main.
+
+Switches to the apropriate buffer if it already exists."
+  (interactive "P")
+  (let ((b (get-buffer "*Olbia*")))
+    (cond (b (cond ((null arg) (switch-to-buffer b))
+                      (t (switch-to-buffer-other-window b))))
+          (t (url-retrieve
+              "http://pizzeriaolbia.de/index_htm_files/Speisekarte%20Juni2014.pdf"
+              (lambda (status)
+                (rename-buffer "*Olbia*")
+                (search-forward-regexp "%PDF")
+                (beginning-of-line)
+                (delete-region (point-min) (point))
+                (doc-view-mode)
+                (misc/olbia arg)))))))
+
 (defun misc/transpose-windows (arg)
   "Transpose the buffers shown in two windows.
 
