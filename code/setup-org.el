@@ -36,6 +36,10 @@
                              ("\\subparagraph{%s}" . "\\subparagraph*{%s}")))
               (flyspell-mode 1))))
 
+(setq org-latex-listings t)
+(add-to-list 'org-latex-packages-alist '("" "listings"))
+(add-to-list 'org-latex-packages-alist '("" "color"))
+
 (provide 'setup-org)
 
 ;; (defun my-org/fund-to-org (f &rest args)

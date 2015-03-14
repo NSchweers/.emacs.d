@@ -47,10 +47,12 @@ re-downloaded in order to locate PACKAGE."
      clojure-mode
      dash-functional
      elpy
+     expand-region
      flx-ido
      geiser
      guide-key
      haskell-mode
+     htmlize
      ido-at-point
      ido-ubiquitous
      ido-vertical-mode

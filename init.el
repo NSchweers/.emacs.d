@@ -1,3 +1,5 @@
+;; -*- lexical-binding: t -*-
+
 (setq inhibit-startup-message t)
 
 ;; For Emacs 24.4 to prevent loading outdated compiled files
@@ -72,6 +74,8 @@
 (with-demoted-errors (require 'setup-ace-link))
 (with-demoted-errors (require 'setup-browse-kill-ring))
 (with-demoted-errors (require 'setup-slime))
+(with-demoted-errors (require 'setup-wanderlust))
+(with-demoted-errors (require 'setup-expand-region))
 
 (require 'server)
 (unless (server-running-p)
