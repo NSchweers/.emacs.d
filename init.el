@@ -56,7 +56,6 @@
 (with-demoted-errors (require 'setup-autocomplete))
 (with-demoted-errors (require 'setup-magit))
 (eval-after-load "dash" '(dash-enable-font-lock))
-(with-demoted-errors (require 'browse-kill-ring))
 (with-demoted-errors (require 'smex)
                      (smex-initialize))
 (require 'setup-keybindings)
