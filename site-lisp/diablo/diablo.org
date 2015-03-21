@@ -1,74 +1,77 @@
-* Regular Gems
-** Code
-  #+BEGIN_SRC elisp
-    ;; -*- lexical-binding: t -*-
-    (require 'cl)
-    
-    (defvar d3/gem-names
-      (let ((names
-             (list :laediert :fehlerhaft :normal :makellos :perfekt :glaenzend
-                   :quadratisch :makellos-quadratisch :perfekt-quadratisch
-                   :glaenzend-quadratisch :sternfoermig :makellos-sternfoermig
-                   :perfekt-sternförmig :glaenzend-sternfoermig :marquise
-                   :imperial :makellos-imperial :koeniglich :makellos-koeniglich)))
-        (reverse (-zip names (number-sequence 0 (length names))))))
-    
-    (defun d3/gem-name-to-num (name)
-      (cond ((stringp name)
-             (cdr (assoc (intern (s-concat ":" name)) d3/gem-names)))
-            ((symbolp name) (let* ((n (symbol-name name))
-                                   (v (if (keywordp name) (substring n 1) n)))
-                              (d3/gem-name-to-num v)))))
-    
-    (defun d3/gem-num-to-name (num)
-      (substring (symbol-name (car (rassoc num d3/gem-names))) 1))
-    
-    (defun* d3/get-deps (lvl count inv)
-      (cl-labels
-          ((f (acc lvl)
-              (cond ((stringp lvl) (f acc (d3/gem-name-to-num lvl)))
-                    ((zerop lvl) acc)
-                    (t (let ((c (- (* 3 (cdar acc))
-                                   (or (cdr (assoc (1- lvl) inv))
-                                       0))))
-                         (if (<= c 0) acc
-                           (f (cons `(,(1- lvl) . ,c) acc) (1- lvl))))))))
-        (f `((,(d3/gem-name-to-num lvl) . ,count)) (d3/gem-name-to-num lvl))))
-    
-    (defun craft-gems (lvl/name count)
-      (interactive "MName or number of gem level you’d like to craft: 
-    nHow many Gems do you wish to craft? ")
-      (if (not (org-at-table-p))
-          (error "You must be within an org-mode table to issue this command"))
-      (let ((c (or count 1)))
-        (d3/pretty-print
-         (d3/get-deps lvl/name c (-map
+* Code
+ #+BEGIN_SRC elisp
+   ;; -*- lexical-binding: t -*-
+   (require 'cl)
+   
+   (defvar d3/gem-names
+     (let ((names
+            (list :laediert :fehlerhaft :normal :makellos :perfekt :glaenzend
+                  :quadratisch :makellos-quadratisch :perfekt-quadratisch
+                  :glaenzend-quadratisch :sternfoermig :makellos-sternfoermig
+                  :perfekt-sternförmig :glaenzend-sternfoermig :marquise
+                  :imperial :makellos-imperial :koeniglich :makellos-koeniglich)))
+       (reverse (-zip names (number-sequence 0 (length names))))))
+   
+   (defun d3/gem-name-to-num (name)
+     (cond ((stringp name)
+            (cdr (assoc (intern (s-concat ":" name)) d3/gem-names)))
+           ((symbolp name) (let* ((n (symbol-name name))
+                                  (v (if (keywordp name) (substring n 1) n)))
+                             (d3/gem-name-to-num v)))))
+   
+   (defun d3/gem-num-to-name (num)
+     (substring (symbol-name (car (rassoc num d3/gem-names))) 1))
+   
+   (defun* d3/get-deps (lvl count inv)
+     (cl-labels
+         ((f (acc lvl)
+             (cond ((stringp lvl) (f acc (d3/gem-name-to-num lvl)))
+                   ((zerop lvl) acc)
+                   (t (let ((c (- (* 3 (cdar acc))
+                                  (or (cdr (assoc (1- lvl) inv))
+                                      0))))
+                        (if (<= c 0) acc
+                          (f (cons `(,(1- lvl) . ,c) acc) (1- lvl))))))))
+       (f `((,(d3/gem-name-to-num lvl) . ,count)) (d3/gem-name-to-num lvl))))
+   
+   (defun craft-gems (lvl/name count)
+     (interactive "MName or number of gem level you’d like to craft: 
+   nHow many Gems do you wish to craft? ")
+     (if (not (org-at-table-p))
+         (error "You must be within an org-mode table to issue this command"))
+     (let ((c (or count 1)))
+       (d3/pretty-print
+        (d3/get-deps lvl/name c (-map
+                                 (lambda (e)
+                                   `(,(d3/gem-name-to-num (car e)) .
+                                     ,(string-to-int(cadr e))))
+                                 (-filter
                                   (lambda (e)
-                                    `(,(d3/gem-name-to-num (car e)) .
-                                      ,(string-to-int(cadr e))))
-                                  (-filter
-                                   (lambda (e)
-                                     (not (or (eq e 'hline)
-                                              (-any? (-partial 'string-equal "") e)
-                                              (string-equal (car e) "Level"))))
-                                   (org-table-to-lisp)))))))
-    
-    (defun d3/pretty-print (lst)
-      (let ((b (generate-new-buffer "gems")))
-        (with-current-buffer b
-          (insert "These are the gems you need to craft, in that order: \n")
-          (org-table-create (format "2x%s" (1+ (length lst))))
-          (org-table-put 1 1 "Grade")
-          (org-table-put 1 2 "Amount")
-          (-each (-zip (number-sequence 1 (length lst)) lst)
-            (-lambda ((i lvl . count))
-              (org-table-put (1+ i) 1 (format "%s" (d3/gem-num-to-name lvl)))
-              (org-table-put (1+ i) 2 (format "%s" count))))
-          (org-table-align)
-          (org-mode))
-        (switch-to-buffer b)))
-  #+END_SRC
+                                    (not (or (eq e 'hline)
+                                             (-any? (-partial 'string-equal "") e)
+                                             (string-equal (car e) "Level"))))
+                                  (org-table-to-lisp)))))))
+   
+   (defun d3/pretty-print (lst)
+     (let ((b (generate-new-buffer "gems")))
+       (with-current-buffer b
+         (insert "These are the gems you need to craft, in that order: \n")
+         (org-table-create (format "2x%s" (1+ (length lst))))
+         (org-table-put 1 1 "Grade")
+         (org-table-put 1 2 "Amount")
+         (-each (-zip (number-sequence 1 (length lst)) lst)
+           (-lambda ((i lvl . count))
+             (org-table-put (1+ i) 1 (format "%s" (d3/gem-num-to-name lvl)))
+             (org-table-put (1+ i) 2 (format "%s" count))))
+         (org-table-align)
+         (org-mode))
+       (switch-to-buffer b)))
+ #+END_SRC
 
+ #+RESULTS:
+ : d3/pretty-print
+
+* Regular Gems
 ** Emerald
    | Level      | Count |
    |------------+-------|
@@ -83,10 +86,11 @@
    | marquise   |   151 |
 
 ** Amethyst
-   | Level    | Count |
-   |----------+-------|
-   | imperial |     1 |
-   | marquise |   101 |
+   | Level      | Count |
+   |------------+-------|
+   | koeniglich |     2 |
+   | imperial   |    28 |
+   | marquise   |   387 |
 ** Ruby
    | Level    | Count |
    |----------+-------|
@@ -95,9 +99,19 @@
 ** Topaz
    | Level    | Count |
    |----------+-------|
-   | imperial | 14    |
-   | marquise | 230   |
+   | imperial |    14 |
+   | marquise |   230 |
+   |          |       |
 * Merkzettel
   - 2 Juwelenhorter brachten: 15 imperiale und 117 marquise edelsteine.
   - 2 Juwelenhorter brachten: 14 imperiale und 86 marquise edelsteine.
   - Mit dem Barbaren Belial getötet während ich selbst tot war!
+
+  - quiver, kopf, stiefel: splitterpfeil
+  - schultern + brust: sentry
+
+  |   vorher | tätigkeit       |  nachher |  Gewinn |
+  |----------+-----------------+----------+---------|
+  | 44243209 | Akt I ohne Gabe | 46611549 | 2368340 |
+  | 46555867 | Akt I mit Gabe  | 56363290 | 9807423 |
+  #+TBLFM: $4=$3 - $1

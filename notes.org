@@ -129,3 +129,6 @@
    all?) docview-mode buffers. 
    [2015-02-06 Fri]
    [[file:~/code/emacs.d/elpa/auctex-11.88.2/tex-buf.el::(message%20"%25s"%20(concat%20name%20":%20successfully%20formatted%20"][file:~/code/emacs.d/elpa/auctex-11.88.2/tex-buf.el::(message "%s" (concat name ": successfully formatted "]]
+** DONE Mail link to Truly ergonomic to Vanessa
+   [2015-02-24 Di]
+   [[file:~/.emacs.d/code/setup-slime.el::(require%20'ac-slime)][file:~/.emacs.d/code/setup-slime.el::(require 'ac-slime)]]
