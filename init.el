@@ -1,3 +1,5 @@
+;; -*- lexical-binding: t -*-
+
 (setq inhibit-startup-message t)
 
 ;; For Emacs 24.4 to prevent loading outdated compiled files
@@ -56,7 +58,6 @@
 (with-demoted-errors (require 'setup-autocomplete))
 (with-demoted-errors (require 'setup-magit))
 (eval-after-load "dash" '(dash-enable-font-lock))
-(with-demoted-errors (require 'browse-kill-ring))
 (with-demoted-errors (require 'smex)
                      (smex-initialize))
 (require 'setup-keybindings)
@@ -72,6 +73,8 @@
 (with-demoted-errors (require 'setup-ace-link))
 (with-demoted-errors (require 'setup-browse-kill-ring))
 (with-demoted-errors (require 'setup-slime))
+(with-demoted-errors (require 'setup-wanderlust))
+(with-demoted-errors (require 'setup-expand-region))
 
 (require 'server)
 (unless (server-running-p)

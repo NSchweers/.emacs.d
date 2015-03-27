@@ -1,6 +1,7 @@
-(if (eq system-type 'windows-nt)
-    (setq inferior-lisp-program
-          "sbcl"))
+(cond ((eq system-type 'windows-nt)
+       (setq inferior-lisp-program "sbcl"))
+      ((eq system-type 'gnu/linux)
+       (setq inferior-lisp-program "sbcl")))
 
 (require 'ac-slime)
 (add-hook 'slime-mode-hook 'set-up-slime-ac)
