@@ -139,3 +139,12 @@
    [2015-04-15 Wed]
 ** TODO Look at helm!!!
    [2015-04-15 Wed]
+** DONE Mail link to Truly ergonomic to Vanessa
+   [2015-02-24 Di]
+   [[file:~/.emacs.d/code/setup-slime.el::(require%20'ac-slime)][file:~/.emacs.d/code/setup-slime.el::(require 'ac-slime)]]
+** TODO Threema backup
+
+   Y5NN-OY7Y-AB5Q-F4PH-57IQ-6SRW-UARN-ZD7Y-J62G-2NI7-6HUU-CFV2-RE3M-SCRC-
+   YDWI-V2SO-VBKL-EEXM-FRNG-JTZH
+   [2015-03-27 Fr]
+   [[file:~/.emacs.d/code/setup-slime.el::(cond%20((eq%20system-type%20'windows-nt)][file:~/.emacs.d/code/setup-slime.el::(cond ((eq system-type 'windows-nt)]]
