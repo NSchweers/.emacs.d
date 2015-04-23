@@ -75,6 +75,8 @@
 (with-demoted-errors (require 'setup-slime))
 (with-demoted-errors (require 'setup-wanderlust))
 (with-demoted-errors (require 'setup-expand-region))
+(with-demoted-errors (require 'setup-names))
+(with-demoted-errors (require 'setup-eldoc))
 
 (require 'server)
 (unless (server-running-p)

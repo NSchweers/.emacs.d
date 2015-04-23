@@ -59,6 +59,7 @@ re-downloaded in order to locate PACKAGE."
      lua-mode
      magit
      multiple-cursors
+     names
      org
      paredit
      s
