@@ -43,6 +43,7 @@
 (define-key paredit-mode-map (kbd "M-]") 'paredit-wrap-square-from-behind)
 (define-key paredit-mode-map (kbd "M-{") 'paredit-wrap-curly)
 (define-key paredit-mode-map (kbd "M-}") 'paredit-wrap-curly-from-behind)
+(define-key paredit-mode-map (kbd "C-w") 'paredit-backward-kill-word)
 
 ;; Take care of C-h
 (define-key paredit-mode-map (kbd "C-h") 'paredit-backward-delete)

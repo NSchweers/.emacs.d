@@ -8,7 +8,13 @@
                (nnimap-address "imap.1und1.de")
                (nnimap-authenticator login)
                (nnimap-server-port 993)
-               (nnimap-stream ssl)))
+               (nnimap-stream ssl))
+      gnus-secondary-select-methods
+      '((nnimap "mailbox.org"
+                (nnimap-address "imap.mailbox.org")
+                (nnimap-authenticator login)
+                (nnimap-server-port 143)
+                (nnimap-stream starttls))))
 
 ;; (nnimap-authinfo-file
 ;;  (expand-file-name ".authinfo" (getenv "HOME")))
@@ -38,7 +44,7 @@
          "\\(?:^To:.*help-gnu-emacs@gnu.org\\)\\|\\(?:^Cc:.*help-gnu-emacs@gnu.org\\)")
         ("INBOX/emacs-devel"
          "\\(?:^To:.*emacs-devel@gnu.org\\)\\|\\(?:^Cc:.*emacs-devel@gnu.org\\)")
-        ("INBOX/FRITZ!Box"
+        ("INBOX/FRITZBox"
          "\\(?:^From:.*\"FRITZ!Box\" <wgschweers@online.de>\\)")
         ("INBOX/Geocaching"
          "\\(?:From:.*@geocaching.com\\)")

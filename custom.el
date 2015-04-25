@@ -13,7 +13,7 @@
  '(erc-prompt-for-channel-key t)
  '(gnus-home-directory "~/.emacs.d/")
  '(haskell-mode-hook (quote (turn-on-haskell-indentation)))
- '(jabber-account-list (quote (("schweers@3suns.de/emacs" (:connection-type . starttls)) ("brainfuck@gabbler.de"))))
+ '(jabber-account-list (quote (("schweers@3suns.de/emacs") ("brainfuck@gabbler.de"))))
  '(jabber-roster-show-bindings nil)
  '(jabber-show-resources (quote always))
  '(jabber-vcard-avatars-retrieve nil)

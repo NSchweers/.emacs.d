@@ -36,8 +36,7 @@ re-downloaded in order to locate PACKAGE."
 
 (defun init--install-packages ()
   (packages-install
-   '(ac-geiser
-     ace-link
+   '(ace-link
      ace-window
      auctex
      auto-complete
@@ -56,6 +55,7 @@ re-downloaded in order to locate PACKAGE."
      ido-at-point
      ido-ubiquitous
      ido-vertical-mode
+     jabber
      lua-mode
      magit
      multiple-cursors
@@ -66,7 +66,8 @@ re-downloaded in order to locate PACKAGE."
      shell-command
      slime
      smex
-     undo-tree)))
+     undo-tree
+     ac-geiser)))
 
 (condition-case nil
     (init--install-packages)
