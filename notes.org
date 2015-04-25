@@ -129,6 +129,10 @@
    all?) docview-mode buffers. 
    [2015-02-06 Fri]
    [[file:~/code/emacs.d/elpa/auctex-11.88.2/tex-buf.el::(message%20"%25s"%20(concat%20name%20":%20successfully%20formatted%20"][file:~/code/emacs.d/elpa/auctex-11.88.2/tex-buf.el::(message "%s" (concat name ": successfully formatted "]]
+** TODO Krankenhaus Höchst Anrufen, für Termin
+
+   069 3106 2002  09:00 - 16:00
+   [2015-04-02 Thu]
 ** TODO Look at redshank
 
    Seems to be even cooler than paredit (runs in parallel, not a replacement)
