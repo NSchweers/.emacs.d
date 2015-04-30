@@ -48,7 +48,7 @@
         ("INBOX/emacs-devel"
          "\\(?:^To:.*emacs-devel@gnu.org\\)\\|\\(?:^Cc:.*emacs-devel@gnu.org\\)")
         ("INBOX/FRITZBox"
-         "\\(?:^From:.*\"FRITZ!Box\" <wgschweers@online.de>\\)")
+         "\\(?:^From:.*\\\"FRITZ!Box\\\" <wgschweers@online.de>\\)")
         ("INBOX/Geocaching"
          "\\(?:From:.*@geocaching.com\\)")
         ("INBOX/Amazon"
@@ -85,5 +85,9 @@
                                (turn-on-orgtbl)
                                (define-key message-mode-map (kbd "C-c C-w")
                                  'kill-region)))
+(bbdb-initialize)
+
+(add-hook 'gnus-startup-hook 'bbdb-insinuate-gnus)
+(add-hook 'gnus-startup-hook 'bbdb-insinuate-message)
 
 (provide 'setup-gnus)

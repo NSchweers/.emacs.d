@@ -141,4 +141,15 @@
 (put 'upcase-region 'disabled nil)
 (put 'narrow-to-region 'disabled nil)
 
+;; We want the minibuffer to shrink again
+(setq resize-mini-windows t)
+
+;; (-each (list minibuffer-local-map
+;;              minibuffer-local-ns-map
+;;              minibuffer-local-completion-map
+;;              minibuffer-local-must-match-map
+;;              minibuffer-local-filename-completion-map
+;;              minibuffer-local-filename-must-match-map)
+;;   (lambda (m) (define-key m (kbd "C-h") 'delete-backward-char)))
+
 (provide 'sane-defaults)
