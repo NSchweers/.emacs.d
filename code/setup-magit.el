@@ -9,6 +9,10 @@
                             user-emacs-directory))
 (setq magit-repo-dirs (list (getenv "HOME")))
 ;; 3 seems to be the default. 
-;(setq magit-repo-dirs-depth 3)
+                                        ;(setq magit-repo-dirs-depth 3)
+
+
+                                        ;(setq magit-auto-revert-mode nil)
+(setq magit-last-seen-setup-instructions "1.4.0")
 
 (provide 'setup-magit)
