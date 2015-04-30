@@ -9,7 +9,7 @@
 
 ;;; This line is a fallback for mode selection, so org-mode is the new default,
 ;;; instead of fundamental-mode (which sucks).  
-(add-to-list 'magic-fallback-mode-alist '((lambda () t) . org-mode))
+;(add-to-list 'magic-fallback-mode-alist '((lambda () t) . org-mode))
 
 
 

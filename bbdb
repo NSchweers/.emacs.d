@@ -1,0 +1,12 @@
+;; -*- mode: Emacs-Lisp; coding: utf-8; -*-
+;;; file-format: 7
+["Sabrina" "Bajorat" nil nil nil nil nil ("sabrina.bajorat@gmail.com") ((creation-date . "2015-04-28 12:38:12 +0000") (timestamp . "2015-04-28 12:38:12 +0000")) nil]
+["Hendrike" "Bode" nil nil nil (["home" 491 627 6564 61]) nil ("Hendrike.Bode@gmx.de") ((creation-date . "2015-04-30 08:41:25 +0000") (timestamp . "2015-04-30 08:42:51 +0000")) nil]
+["Manuel" "Grob" nil nil nil nil nil ("manuel@grobwiefein.de") ((creation-date . "2015-04-28 12:36:21 +0000") (timestamp . "2015-04-28 12:36:21 +0000")) nil]
+["David" "Klein" nil nil nil nil nil ("dklein@vistec.net") ((creation-date . "2015-04-28 12:38:18 +0000") (timestamp . "2015-04-28 12:38:18 +0000")) nil]
+["Franziska" "Mäder" nil nil nil nil nil ("fra.maeder@googlemail.com") ((creation-date . "2015-04-28 12:38:22 +0000") (timestamp . "2015-04-28 12:39:11 +0000")) nil]
+["Robin" "Müller-Bady" nil nil nil nil nil ("mueller-bady@fb2.fra-uas.de") ((creation-date . "2015-04-28 12:37:48 +0000") (timestamp . "2015-04-28 12:37:48 +0000")) nil]
+["Heiko" "Niebuhr" nil nil nil nil nil ("post@hniebuhr.de") ((creation-date . "2015-04-28 12:34:50 +0000") (timestamp . "2015-04-28 12:34:50 +0000")) nil]
+["Esther" "Schweers" nil nil nil nil nil ("elschweers@googlemail.com") ((creation-date . "2015-04-28 12:36:35 +0000") (timestamp . "2015-04-28 12:36:54 +0000")) nil]
+["Gisela" "Schweers" nil nil nil nil nil ("gschweers@gmx.de") ((creation-date . "2015-04-28 12:38:28 +0000") (timestamp . "2015-04-28 12:38:38 +0000")) nil]
+["Prof. Dr. Jörg" "Schäfer" nil nil nil nil nil ("jschaefer@fb2.fra-uas.de") ((creation-date . "2015-04-28 12:37:19 +0000") (timestamp . "2015-04-28 12:37:19 +0000")) nil]
