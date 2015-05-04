@@ -8,10 +8,10 @@
  '(auth-sources (quote ("~/.emacs.d/authinfo.gpg")))
  '(calendar-week-start-day 1)
  '(elmo-imap4-default-authenticate-type (quote clear))
- '(erc-autojoin-channels-alist (quote (("freenode.net" "#emacs" "#neo" "#gnus"))))
+ '(erc-autojoin-channels-alist (quote (("freenode.net" "#emacs" "#neo"))))
  '(erc-nick "schweers")
  '(erc-prompt-for-channel-key t)
- '(gnus-home-directory "~/.emacs.d/")
+ '(gnus-home-directory "~/.emacs.d/" t)
  '(haskell-mode-hook (quote (turn-on-haskell-indentation)))
  '(jabber-account-list
    (quote
@@ -56,8 +56,8 @@
       ("#neo" "#informatik-ag")
       nil nil))))
  '(send-mail-function (quote smtpmail-send-it))
- '(smtpmail-smtp-server "smtp.1und1.de")
- '(smtpmail-smtp-service 25))
+ '(smtpmail-smtp-server "smtp.1und1.de" t)
+ '(smtpmail-smtp-service 25 t))
 
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
