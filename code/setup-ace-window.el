@@ -46,7 +46,7 @@ relevant window."
                     va))))
 
 (setq aw-scope 'frame)
-(setq aw-keys '(?s ?n ?r ?t ?d ?o ?e ?a ?i ?u))
+(setq aw-keys '(?b ?n ?r ?s ?g ?o ?e ?i ?t ?c))
 
 (global-set-key (kbd "C-x o") 'ace-window)
 
