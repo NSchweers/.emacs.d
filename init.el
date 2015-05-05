@@ -52,7 +52,7 @@
   (setq guide-key/idle-delay 0.1))
 
 ;; Setup extensions
-(with-demoted-errors (eval-after-load 'ido '(require 'setup-ido)))
+;(with-demoted-errors (eval-after-load 'ido '(require 'setup-ido)))
 (with-demoted-errors (eval-after-load 'shell '(require 'setup-shell)))
 (with-demoted-errors (require 'setup-paredit))
 (with-demoted-errors (require 'setup-autocomplete))
@@ -80,6 +80,7 @@
 (with-demoted-errors (require 'setup-names))
 (with-demoted-errors (require 'setup-eldoc))
 (with-demoted-errors (require 'setup-jabber-otr))
+(with-demoted-errors (require 'setup-helm))
 
 (require 'server)
 (unless (server-running-p)

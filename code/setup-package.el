@@ -51,10 +51,11 @@ re-downloaded in order to locate PACKAGE."
      geiser
      guide-key
      haskell-mode
+     helm-mode
      htmlize
-     ido-at-point
-     ido-ubiquitous
-     ido-vertical-mode
+     ido-at-point ; May have become obsolete, due to helm.
+     ido-ubiquitous ; May have become obsolete, due to helm.
+     ido-vertical-mode ; May have become obsolete, due to helm.
      jabber
      lua-mode
      magit
