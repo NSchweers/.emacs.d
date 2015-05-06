@@ -51,7 +51,7 @@ re-downloaded in order to locate PACKAGE."
      geiser
      guide-key
      haskell-mode
-     helm-mode
+     helm
      htmlize
      ido-at-point ; May have become obsolete, due to helm.
      ido-ubiquitous ; May have become obsolete, due to helm.
