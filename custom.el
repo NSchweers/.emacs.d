@@ -11,7 +11,8 @@
  '(erc-autojoin-channels-alist (quote (("freenode.net" "#emacs" "#neo"))))
  '(erc-nick "schweers")
  '(erc-prompt-for-channel-key t)
- '(gnus-home-directory "~/.emacs.d/" t)
+ '(erc-timestamp-format-right " [%H:%M:%S]")
+ '(gnus-home-directory "~/.emacs.d/")
  '(haskell-mode-hook (quote (turn-on-haskell-indentation)))
  '(jabber-account-list
    (quote
