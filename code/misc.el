@@ -46,35 +46,22 @@
 
 (global-set-key (kbd "C-S-s") 'misc/switch-to-scratch)
 
-(defmacro misc/switch-to-chat (chan key)
-  `(progn
-     (defun misc/switch-to-neo-chat ()
-       (interactive)
-       (cond ((bufferp (get-buffer ,chan))
-              (switch-to-buffer ,chan))
-             (t (message "No such buffer."))))
-     (global-set-key (kbd (s-concat "C-S-" key)) 'misc/)))
+(defmacro misc/make-buffer-switch (buffer cname)
+  `(defun ,(intern (s-concat "misc/switch-to-" cname)) ()
+     (interactive)
+     (switch-to-buffer ,buffer)))
 
-(global-set-key (kbd "C-S-n") 'misc/switch-to-neo-chat)
+(defmacro misc/make-irc-hydra ()
+  `(global-set-key
+    (kbd "C-c i")
+    (defhydra hydra-switch-irc (:color blue)
+      "switch to"
+      ("n" ,(misc/make-buffer-switch "#neo" "neo") "neo")
+      ("e" ,(misc/make-buffer-switch "#emacs" "emacs"))
+      ("f" ,(misc/make-buffer-switch "irc.freenode.net:6667" "freenode")
+       "freenode"))))
 
-(defun misc/switch-to-emacs-chat ()
-  )
-
-(defmacro misc/switch-to-buffer (buffer &optional k)
-  "Generate a function and keybinding.
-
-If K is given, bind to (kbd k).  Otherwise bind to C-S-(buffer-substring 1 1
-name).  "
-  (let ((name (make-symbol "name")))
-    (list 'let (list (list name buffer))
-          (list 'defun (intern (s-concat "misc/switch-to-" name))
-                (list 'interactive)
-                (list 'switch-to-buffer name))
-    ;; `(let ((,name ,buffer))
-    ;;    (defun ,(intern (s-concat "misc/switch-to-" buffer)) ()
-    ;;      (interactive)
-    ;;      (switch-to-buffer ,name)))
-    )))
+(misc/make-irc-hydra)
 
 ;; (defun misc/next-word-at-point ()
 ;;   "Go to the next occurence of the word at point.  "
@@ -139,7 +126,7 @@ Switches to the apropriate buffer if it already exists."
           (t
            (url-retrieve
             "http://pizzeriaolbia.de/index_htm_files/Speisekarte%20032015.pdf"
-            (lambda (status)
+            (lambda (_status)
               (rename-buffer "*Olbia*")
               (search-forward-regexp "%PDF")
               (beginning-of-line)
