@@ -38,7 +38,7 @@
    This shall be done in pure elisp. 
    [2014-07-13 Sun]
    [[file:~/.emacs.d/notes.org::*Tasks][Tasks]]
-** TODO Finish dvd-rip
+** DONE Finish dvd-rip
    [2014-07-13 Sun]
 ** TODO Find out how to blog with Org Mode
    [2014-07-13 Sun]
@@ -48,7 +48,7 @@
    how to test them (integration testing). 
    [2014-07-13 Sun]
    [[file:~/tmp/test.el::(message%20(read-string%20"")))][file:~/tmp/test.el::(message (read-string "")))]]
-** TODO Look at eldoc
+** DONE Look at eldoc
    [2014-07-13 Sun]
    [[file:~/.emacs.d/notes.org::*Tasks][Tasks]]
 ** TODO Take a closer look at elnode.
@@ -64,7 +64,7 @@
 ** TODO Read up on the π-calculus. 
    [2014-11-23 Sun]
    [[file:~/code/his-project/model.py]]
-** TODO Sophia MC server
+** Sophia MC server
 
    url: http://hill_of_tara.aternos.me
    username: Hill_of_Tara
@@ -85,7 +85,7 @@
    http://www.cs.dartmouth.edu/~pete/pubs/LangSec-2014-fsm-parsers.pdf
    [2015-01-10 Sat]
    [[file:~/code/NetworkSecurityMeasuresAndMetrics/doc/report_template.tex::Lorem%20ipsum%20dolor%20sit%20amet,%20consetetur%20sadipscing%20elitr,%20sed%20diam%20nonumy%20eirmod%20tempor%20invidunt%20ut%20labore%20et%20dolore%20magna%20aliquyam%20erat,%20sed%20diam%20voluptua.%20At%20vero%20eos%20et%20accusam%20et%20justo%20duo%20dolores%20et%20ea%20rebum.%20Stet%20clita%20kasd%20gubergren,%20no%20sea%20takimata%20sanctus%20est%20Lorem%20ipsum%20dolor%20sit%20amet.%20Lorem%20ipsum%20dolor%20sit%20amet,%20consetetur%20sadipscing%20elitr,%20sed%20diam%20nonumy%20eirmod%20tempor%20invidunt%20ut%20labore%20et%20dolore%20magna%20aliquyam%20erat,%20sed%20diam%20voluptua.%20At%20vero%20eos%20et%20accusam%20et%20justo%20duo%20dolores%20et%20ea%20rebum.%20Stet%20clita%20kasd%20gubergren,%20no%20sea%20takimata%20sanctus%20est%20Lorem%20ipsum%20dolor%20sit%20amet.][file:~/code/NetworkSecurityMeasuresAndMetrics/doc/report_template.tex::Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet.]]
-** TODO ts passwd
+** ts passwd
 
    zwei4und2vierzig
    [2015-01-22 Do]
@@ -102,7 +102,7 @@
 
    Look into flycheck. 
    [2015-01-31 Sa]
-** TODO Mail
+** DONE Mail
 
    Finally get some sort of mail setup running, with IMAP please.  
    [2015-01-31 Sa]
@@ -129,7 +129,7 @@
    all?) docview-mode buffers. 
    [2015-02-06 Fri]
    [[file:~/code/emacs.d/elpa/auctex-11.88.2/tex-buf.el::(message%20"%25s"%20(concat%20name%20":%20successfully%20formatted%20"][file:~/code/emacs.d/elpa/auctex-11.88.2/tex-buf.el::(message "%s" (concat name ": successfully formatted "]]
-** TODO Krankenhaus Höchst Anrufen, für Termin
+** DONE Krankenhaus Höchst Anrufen, für Termin
 
    069 3106 2002  09:00 - 16:00
    [2015-04-02 Thu]
@@ -141,7 +141,7 @@
 
    `elint-current-buffer'
    [2015-04-15 Wed]
-** TODO Look at helm!!!
+** DONE Look at helm!!!
    [2015-04-15 Wed]
 ** DONE Mail link to Truly ergonomic to Vanessa
    [2015-02-24 Di]
