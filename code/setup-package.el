@@ -36,7 +36,8 @@ re-downloaded in order to locate PACKAGE."
 
 (defun init--install-packages ()
   (packages-install
-   '(ace-jump-mode
+   '(ac-geiser
+     ace-jump-mode
      ace-link
      ace-window
      auctex
@@ -48,7 +49,7 @@ re-downloaded in order to locate PACKAGE."
      dash-functional
      elpy
      expand-region
-     flx-ido
+     flx-ido ; May have become obsolete, due to helm.
      geiser
      guide-key
      haskell-mode
@@ -69,8 +70,7 @@ re-downloaded in order to locate PACKAGE."
      shell-command
      slime
      smex
-     undo-tree
-     ac-geiser)))
+     undo-tree)))
 
 (condition-case nil
     (init--install-packages)
