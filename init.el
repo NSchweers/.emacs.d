@@ -81,6 +81,7 @@
 (with-demoted-errors (require 'setup-eldoc))
 (with-demoted-errors (require 'setup-jabber-otr))
 (with-demoted-errors (require 'setup-helm))
+(with-demoted-errors (require 'setup-ace-jump-mode))
 
 (require 'server)
 (unless (server-running-p)

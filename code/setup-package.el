@@ -36,7 +36,8 @@ re-downloaded in order to locate PACKAGE."
 
 (defun init--install-packages ()
   (packages-install
-   '(ace-link
+   '(ace-jump-mode
+     ace-link
      ace-window
      auctex
      auto-complete
