@@ -54,12 +54,13 @@
 (defmacro misc/make-irc-hydra ()
   `(global-set-key
     (kbd "C-c i")
-    (defhydra hydra-switch-irc (:color blue)
+    (defhydra hydra-switch-irc (:color amaranth)
       "switch to"
       ("n" ,(misc/make-buffer-switch "#neo" "neo") "neo")
       ("e" ,(misc/make-buffer-switch "#emacs" "emacs"))
       ("f" ,(misc/make-buffer-switch "irc.freenode.net:6667" "freenode")
-       "freenode"))))
+       "freenode")
+      ("q" nil "quit" :color blue))))
 
 (misc/make-irc-hydra)
 
@@ -91,10 +92,10 @@ appropriate provide and places point at the right position."
           (progn
             (forward-line 2)
             (indent-for-tab-command))
-        (insert ";; -*- lexical-binding: t -*-\n\n\n(provide '")
+        (insert ";; -*- lexical-binding: t -*-\n\n\n\n(provide '")
         (insert (substring proper-name 0 (- (length proper-name) 3)))
         (insert ")\n")
-        (forward-line -2)
+        (forward-line -3)
         (indent-for-tab-command)
         (save-buffer)))))
 
