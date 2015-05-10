@@ -11,8 +11,6 @@
 ;;; instead of fundamental-mode (which sucks).  
 ;(add-to-list 'magic-fallback-mode-alist '((lambda () t) . org-mode))
 
-
-
 (setq org-default-notes-file
       (expand-file-name "notes.org" user-emacs-directory))
 
@@ -25,16 +23,16 @@
   (require 'ox-latex)
 
   (add-hook 'org-mode-hook
-            (lambda ()
-              (add-to-list 'org-latex-classes
-                           '("IEEEtran"
-                             "\\documentclass[conference]{IEEEtran}"
-                             ("\\section{%s}" . "\\section*{%s}")
-                             ("\\subsection{%s}" . "\\subsection*{%s}")
-                             ("\\subsubsection{%s}" . "\\subsubsection*{%s}")
-                             ("\\paragraph{%s}" . "\\paragraph*{%s}")
-                             ("\\subparagraph{%s}" . "\\subparagraph*{%s}")))
-              (flyspell-mode 1))))
+            #'(lambda ()
+                (add-to-list 'org-latex-classes
+                             '("IEEEtran"
+                               "\\documentclass[conference]{IEEEtran}"
+                               ("\\section{%s}" . "\\section*{%s}")
+                               ("\\subsection{%s}" . "\\subsection*{%s}")
+                               ("\\subsubsection{%s}" . "\\subsubsection*{%s}")
+                               ("\\paragraph{%s}" . "\\paragraph*{%s}")
+                               ("\\subparagraph{%s}" . "\\subparagraph*{%s}")))
+                (flyspell-mode 1))))
 
 (setq org-latex-listings t)
 (add-to-list 'org-latex-packages-alist '("" "listings"))

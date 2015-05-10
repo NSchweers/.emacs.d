@@ -87,7 +87,7 @@
 ;; Represent undo-history as an actual tree (visualize with C-x u)
 (with-demoted-errors (setq undo-tree-mode-lighter "")
                      (require 'undo-tree)
-                     (global-undo-tree-mode))
+                     (global-undo-tree-mode 1))
 
 ;; Sentences do not need double spaces to end. Period.
 ; (set-default 'sentence-end-double-space nil)

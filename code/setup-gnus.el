@@ -48,7 +48,7 @@
         ("INBOX/emacs-devel"
          "\\(?:^To:.*emacs-devel@gnu.org\\)\\|\\(?:^Cc:.*emacs-devel@gnu.org\\)")
         ("INBOX/FRITZBox"
-         "\\(?:^From:.*\\\"FRITZ!Box\\\" <wgschweers@online.de>\\)")
+         "\\(?:^From:.*\\\"FRITZ\\!Box\\\" <wgschweers@online.de>\\)")
         ("INBOX/Geocaching"
          "\\(?:From:.*@geocaching.com\\)")
         ("INBOX/Amazon"

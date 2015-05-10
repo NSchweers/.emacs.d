@@ -2,7 +2,9 @@
 (require 'package)
 
 ;; Add melpa to package repos
-(add-to-list 'package-archives '("melpa" . "http://melpa.org/packages/") t)
+(let ((m '("melpa" . "http://melpa.org/packages/")))
+  (when (member m package-archives)
+    (add-to-list 'package-archives m t)))
 
 (package-initialize)
 

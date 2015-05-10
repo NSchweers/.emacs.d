@@ -43,7 +43,9 @@ relevant window."
                       (set-window-start
                        (aj-visual-area-window va)
                        ws))
-                    va))))
+                    va)))
+  (message
+   "WARNING: using old definition of `ace-jump-mode-make-indirect-buffer'!"))
 
 (setq aw-scope 'frame)
 (setq aw-keys '(?b ?n ?r ?s ?g ?o ?e ?i ?t ?c))
