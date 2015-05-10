@@ -174,7 +174,6 @@
    ("+" balance-windows "balance")
    ("q" nil "quit")))
 
-
 (defhydra hydra-page (ctl-x-map "" :pre (widen))
   "page"
   ("]" forward-page "next")
@@ -202,5 +201,7 @@
 (define-key endless/toggle-map "r" #'dired-toggle-read-only)
 (autoload 'dired-toggle-read-only "dired" nil t)
 (define-key endless/toggle-map "w" #'whitespace-mode)
+
+(global-set-key (kbd "M-o") 'occur)
 
 (provide 'setup-keybindings)

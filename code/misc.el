@@ -4,7 +4,7 @@
 (defun recompile-emacs-d ()
   (interactive)
   (byte-recompile-directory (expand-file-name "code" user-emacs-directory) 0 t)
-  (byte-compile-file (expand-file-name "init.el" user-emacs-directory)))
+  (byte-compile-file user-init-file))
 
 (defun file-in-emacs-d? (filename)
   (s-starts-with? (expand-file-name user-emacs-directory)
@@ -19,11 +19,15 @@
           (error
            (ignore-errors (delete-file (byte-compile-dest-file filename))))))))
 
+(defun reload-emacs-conf ()
+  (interactive)
+  (load user-init-file))
+
 ;; Autocompile any elisp files in our emacs directory.
 (add-hook 'after-save-hook 'recompile-if-emacs-d)
 
 ;; Open the init file on startup.
-(find-file (expand-file-name "init.el" user-emacs-directory))
+(find-file-noselect (expand-file-name "init.el" user-emacs-directory))
 
 ;;we want to have the compilation window scroll automatically
 (setq compilation-scroll-output 'first-error)
@@ -46,31 +50,26 @@
 
 (global-set-key (kbd "C-S-s") 'misc/switch-to-scratch)
 
-(defmacro misc/make-buffer-switch (buffer cname)
-  `(defun ,(intern (s-concat "misc/switch-to-" cname)) ()
-     (interactive)
-     (switch-to-buffer ,buffer)))
-
-(defmacro misc/make-irc-hydra ()
+(defmacro misc/buffer-switch-hydra (hydra-name short-name key-prefix
+                                               &rest heads)
+  (declare (indent 3))
   `(global-set-key
-    (kbd "C-c i")
-    (defhydra hydra-switch-irc (:color amaranth)
-      "switch to"
-      ("n" ,(misc/make-buffer-switch "#neo" "neo") "neo")
-      ("e" ,(misc/make-buffer-switch "#emacs" "emacs"))
-      ("f" ,(misc/make-buffer-switch "irc.freenode.net:6667" "freenode")
-       "freenode")
-      ("q" nil "quit" :color blue))))
+    (kbd ,key-prefix)
+    ,(append
+      `(defhydra ,hydra-name (:color amaranth) ,short-name)
+      (append
+       (-map
+        (-lambda ((key b-or-n hint))
+          `(,key (lambda ()
+                   (interactive)
+                   (switch-to-buffer ,b-or-n)) ,hint))
+        heads)
+       '(("q" nil "quit" :color blue))))))
 
-(misc/make-irc-hydra)
-
-;; (defun misc/next-word-at-point ()
-;;   "Go to the next occurence of the word at point.  "
-;;   (interactive)
-;;   (if (not (looking-at "\\b"))
-;;       (progn (backward-word)
-;;              (misc/next-word-at-point))
-;;     (let ((word ())))))
+(misc/buffer-switch-hydra hydra-irc "channel" "C-c i"
+  ("n" "#neo" "neo")
+  ("e" "#emacs" "emacs")
+  ("f" "irc.freenode.net:6667" "freenode"))
 
 (add-hook 'erc-mode-hook (-partial 'auto-fill-mode 0))
 
@@ -134,19 +133,5 @@ Switches to the apropriate buffer if it already exists."
               (delete-region (point-min) (point))
               (doc-view-mode)
               (call-interactively #'misc/olbia)))))))
-
-;; (defun misc/transpose-windows (arg)
-;;   "Transpose the buffers shown in two windows.
-
-;; Stolen from http://www.emacswiki.org/emacs/TransposeWindows"
-;;   (interactive "p")
-;;   (let ((selector (if (>= arg 0) 'next-window 'previous-window)))
-;;     (while (/= arg 0)
-;;       (let ((this-win (window-buffer))
-;;             (next-win (window-buffer (funcall selector))))
-;;         (set-window-buffer (selected-window) next-win)
-;;         (set-window-buffer (funcall selector) this-win)
-;;         (select-window (funcall selector)))
-;;       (setq arg (if (plusp arg) (1- arg) (1+ arg))))))
 
 (provide 'misc)

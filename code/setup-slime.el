@@ -1,3 +1,4 @@
+;; -*- lexical-binding: t -*-
 (cond ((eq system-type 'windows-nt)
        (setq inferior-lisp-program "sbcl"))
       ((eq system-type 'gnu/linux)

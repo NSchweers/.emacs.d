@@ -32,10 +32,10 @@
   (paredit-mode 1)
   (misc/set-kill-and-delete-keys))
 
-(add-hook 'clojure-mode-hook (lambda () (setup-paredit/init)))
-(add-hook 'cider-repl-mode-hook (lambda () (setup-paredit/init)))
-(add-hook 'emacs-lisp-mode-hook (lambda () (setup-paredit/init)))
-(add-hook 'lisp-mode-hook (lambda () (setup-paredit/init)))
+(add-hook 'clojure-mode-hook #'(lambda () (setup-paredit/init)))
+(add-hook 'cider-repl-mode-hook #'(lambda () (setup-paredit/init)))
+(add-hook 'emacs-lisp-mode-hook #'(lambda () (setup-paredit/init)))
+(add-hook 'lisp-mode-hook #'(lambda () (setup-paredit/init)))
 
 (define-key paredit-mode-map (kbd "M-(") 'paredit-wrap-round)
 (define-key paredit-mode-map (kbd "M-)") 'paredit-wrap-round-from-behind)
