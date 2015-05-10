@@ -42,9 +42,9 @@
   (declare (indent 0))
   (let ((code '(progn)))
     (dolist (f files (reverse code))
-      (cond ((symbolp f) (push `(load ,(symbol-name f)) code))
-            ((stringp f) (push `(load ,f) code))
-            ((consp f) (push f code))
+      (cond ((symbolp f) (push `(with-demoted-errors (load ,(symbol-name f))) code))
+            ((stringp f) (push `(with-demoted-errors (load ,f)) code))
+            ((consp f) (push `(with-demoted-errors ,f) code))
             (t
              (error
               "%s is neither a literal string, literal symbol, nor a list."
@@ -53,7 +53,7 @@
 (load-lisp-from-path
   appearance
   setup-package
-  (with-demoted-errors (require 'hydra))
+  (require 'hydra)
   misc
   saveplace
   sane-defaults
@@ -68,8 +68,8 @@
   setup-org
   setup-ispell
   setup-auctex
-  setup-gnus
   setup-bbdb
+  setup-gnus
   setup-multiple-cursors
   setup-erc
   setup-ace-link
@@ -142,9 +142,6 @@
 ;; (with-demoted-errors (require 'setup-eldoc))
 ;; (with-demoted-errors (require 'setup-jabber-otr))
 ;; (with-demoted-errors (require 'setup-helm))
-(with-demoted-errors (require 'setup-ace-jump-mode))
-
-
 
 (require 'server)
 (unless (server-running-p)
