@@ -3,7 +3,7 @@
 
 ;; Add melpa to package repos
 (let ((m '("melpa" . "http://melpa.org/packages/")))
-  (when (member m package-archives)
+  (unless (member m package-archives)
     (add-to-list 'package-archives m t)))
 
 (package-initialize)
@@ -39,12 +39,14 @@ re-downloaded in order to locate PACKAGE."
 (defun init--install-packages ()
   (packages-install
    '(ac-geiser
+     ac-slime
      ace-jump-mode
      ace-link
      ace-window
      auctex
      auto-complete
      bash-completion
+     bbdb
      browse-kill-ring
      cider
      clojure-mode
