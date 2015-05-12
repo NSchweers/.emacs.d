@@ -152,4 +152,8 @@
 ;;              minibuffer-local-filename-must-match-map)
 ;;   (lambda (m) (define-key m (kbd "C-h") 'delete-backward-char)))
 
+;; Set lexical-binding in the *scratch* buffer to t
+(with-current-buffer (get-buffer "*scratch*")
+  (setq lexical-binding t))
+
 (provide 'sane-defaults)

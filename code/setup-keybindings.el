@@ -204,4 +204,6 @@
 
 (global-set-key (kbd "M-o") 'occur)
 
+(global-set-key (kbd "C-x C-b") 'ibuffer-other-window)
+
 (provide 'setup-keybindings)

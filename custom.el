@@ -22,9 +22,6 @@
  '(jabber-roster-show-bindings nil)
  '(jabber-show-resources (quote always))
  '(jabber-vcard-avatars-retrieve nil)
- '(mail-sources
-   (quote
-    ((imap :server "mail.fh-frankfurt.de" :user "nathanaelschweers" :stream starttls :authenticator login :mailbox "INBOX" :dontexpunge t))))
  '(mew-rc-file "~/.emacs.d/mew")
  '(openwith-associations nil)
  '(org-latex-default-packages-alist
