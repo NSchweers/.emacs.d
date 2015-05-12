@@ -8,7 +8,9 @@
 
 (package-initialize)
 
-(unless (file-exists-p "~/.emacs.d/elpa/archives/melpa")
+(unless (file-exists-p (expand-file-name
+                        "elpa/archives/melpa"
+                        user-emacs-directory))
   (package-refresh-contents))
 
 ;; first install dash if it isn't yet. 
