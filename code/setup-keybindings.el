@@ -186,24 +186,47 @@
 ;; Have completion on C-TAB, as ESC TAB is lame.
 (global-set-key (kbd "<C-tab>") 'completion-at-point)
 
-(define-prefix-command 'endless/toggle-map)
-;; The manual recommends C-c for user keys, but C-x t is
-;; always free, whereas C-c t is used by some modes.
-(define-key ctl-x-map "t" 'endless/toggle-map)
-(define-key endless/toggle-map "c" #'column-number-mode)
-(define-key endless/toggle-map "d" #'toggle-debug-on-error)
-(define-key endless/toggle-map "e" #'toggle-debug-on-error)
-(define-key endless/toggle-map "f" #'auto-fill-mode)
-(define-key endless/toggle-map "l" #'toggle-truncate-lines)
-(define-key endless/toggle-map "q" #'toggle-debug-on-quit)
-;(define-key endless/toggle-map "t" #'endless/toggle-theme)
-;;; Generalized version of `read-only-mode'.
-(define-key endless/toggle-map "r" #'dired-toggle-read-only)
+;; (define-prefix-command 'endless/toggle-map)
+;; ;; The manual recommends C-c for user keys, but C-x t is
+;; ;; always free, whereas C-c t is used by some modes.
+;; (define-key ctl-x-map "t" 'endless/toggle-map)
+;; (define-key endless/toggle-map "c" #'column-number-mode)
+;; (define-key endless/toggle-map "d" #'toggle-debug-on-error)
+;; (define-key endless/toggle-map "e" #'toggle-debug-on-error)
+;; (define-key endless/toggle-map "f" #'auto-fill-mode)
+;; (define-key endless/toggle-map "l" #'toggle-truncate-lines)
+;; (define-key endless/toggle-map "q" #'toggle-debug-on-quit)
+;; ;(define-key endless/toggle-map "t" #'endless/toggle-theme)
+;; ;;; Generalized version of `read-only-mode'.
+;; (define-key endless/toggle-map "r" #'dired-toggle-read-only)
+;; (autoload 'dired-toggle-read-only "dired" nil t)
+;; (define-key endless/toggle-map "w" #'whitespace-mode)
+
 (autoload 'dired-toggle-read-only "dired" nil t)
-(define-key endless/toggle-map "w" #'whitespace-mode)
+
+(global-set-key
+ (kbd "C-x t")
+ (defhydra hydra-toggle (:color teal)
+   "toggle"
+   ("c" column-number-mode "column number mode")
+   ("d" toggle-debug-on-error "debug on error")
+   ("e" toggle-debug-on-error "debug on error")
+   ("f" auto-fill-mode "auto-fill mode")
+   ("t" toggle-truncate-lines "truncate lines")
+   ("Q" toggle-debug-on-quit "debug on quit")
+   ("r" dired-toggle-read-only "dired: read-only")
+   ("w" whitespace-mode "whitespace mode")
+   ("q" nil "quit")))
 
 (global-set-key (kbd "M-o") 'occur)
 
 (global-set-key (kbd "C-x C-b") 'ibuffer-other-window)
+
+(global-set-key (kbd "M-j") 'eval-print-last-sexp)
+
+(misc/buffer-switch-hydra hydra-irc "channel" "C-c i"
+  ("n" "#neo" "neo")
+  ("e" "#emacs" "emacs")
+  ("f" "irc.freenode.net:6667" "freenode"))
 
 (provide 'setup-keybindings)

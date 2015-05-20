@@ -35,20 +35,26 @@
 (setq nnimap-inbox "INBOX")
 (setq nnimap-split-methods
       `(("INBOX/PUG"
-         "\\(?:^Subject:.*\\[PUG\\]\\)\\|\\(?:^To:.*talk@pug.org\\)\\|\\(?:Reply-To:.*talk@pug.org\\)")
+         ,(concat "\\(?:^Subject:.*\\[PUG\\]\\)\\|\\(?:^To:.*talk@pug.org\\)"
+                  "\\|\\(?:Reply-To:.*talk@pug.org\\)"))
         ("INBOX/Geocaching" "^From:.*@geocaching.com")
         ("INBOX/NEO"
-         ,(concat "\\(?:^Subject:.*\\[Neo\\]\\)\\|\\(?:^To:.*diskussion@neo-layout.org\\)\\|"
-                 "\\(?:Reply-To:.*diskussion@neo-layout.org\\)"))
-        ("INBOX/FH" "\\(?:^From:.*@.*fra-uas.de\\)\\|\\(?:^Reply-To:.*@.*fra-uas.de\\)")
+         ,(concat "\\(?:^Subject:.*\\[Neo\\]\\)\\|"
+                  "\\(?:^To:.*diskussion@neo-layout.org\\)\\|"
+                  "\\(?:Reply-To:.*diskussion@neo-layout.org\\)"))
+        ("INBOX/FH"
+         ,(concat "\\(?:^From:.*@.*fra-uas.de\\)\\|"
+                  "\\(?:^Reply-To:.*@.*fra-uas.de\\)"))
         ("INBOX/klingemann"
          "^To:.*klingemann-geschaedigte-ev@lists.informatiktreffpunkt.de")
         ("INBOX/emacs-help"
-         "\\(?:^To:.*help-gnu-emacs@gnu.org\\)\\|\\(?:^Cc:.*help-gnu-emacs@gnu.org\\)")
+         ,(concat "\\(?:^To:.*help-gnu-emacs@gnu.org\\)\\|"
+                  "\\(?:^Cc:.*help-gnu-emacs@gnu.org\\)"))
         ("INBOX/emacs-devel"
-         "\\(?:^To:.*emacs-devel@gnu.org\\)\\|\\(?:^Cc:.*emacs-devel@gnu.org\\)")
+         ,(concat "\\(?:^To:.*emacs-devel@gnu.org\\)\\|"
+                  "\\(?:^Cc:.*emacs-devel@gnu.org\\)"))
         ("INBOX/FRITZBox"
-         "\\(?:^From:.*\\\"FRITZ\\!Box\\\" <wgschweers@online.de>\\)")
+         "\\(?:^From:.*\"FRITZ!Box\" \<wgschweers@online.de\>\\)")
         ("INBOX/Geocaching"
          "\\(?:From:.*@geocaching.com\\)")
         ("INBOX/Amazon"
