@@ -35,7 +35,7 @@
 
 (desktop-save-mode 1)
 ;;with this we try to save the desktop file when the emacs server is killed.
-(add-hook 'kill-emacs-hook (lambda () (desktop-save "~/.emacs.d/")))
+(add-hook 'kill-emacs-hook (lambda () (desktop-save user-emacs-directory)))
 
 (defun misc/set-kill-and-delete-keys ()
   (local-set-key (kbd "C-w") 'backward-kill-word)
@@ -56,7 +56,7 @@
   `(global-set-key
     (kbd ,key-prefix)
     ,(append
-      `(defhydra ,hydra-name (:color amaranth) ,short-name)
+      `(defhydra ,hydra-name (:color pink) ,short-name)
       (append
        (-map
         (-lambda ((key b-or-n hint))
@@ -65,11 +65,6 @@
                    (switch-to-buffer ,b-or-n)) ,hint))
         heads)
        '(("q" nil "quit" :color blue))))))
-
-(misc/buffer-switch-hydra hydra-irc "channel" "C-c i"
-  ("n" "#neo" "neo")
-  ("e" "#emacs" "emacs")
-  ("f" "irc.freenode.net:6667" "freenode"))
 
 (add-hook 'erc-mode-hook (-partial 'auto-fill-mode 0))
 
@@ -149,6 +144,9 @@ rest of the paragraph.  This is useful in message-mode."
     (when in-line
       (save-excursion
         (forward-line 2)
-        (fill-paragraph)))))
+;;; This binding is needed, so fill-paragraph won’t create an extra
+;;; undo-boundary, which is normally done because of message-mode.
+        (let ((fill-paragraph-function (lambda (&rest _) nil)))
+          (fill-paragraph))))))
 
 (provide 'misc)
