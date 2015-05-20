@@ -134,4 +134,21 @@ Switches to the apropriate buffer if it already exists."
               (doc-view-mode)
               (call-interactively #'misc/olbia)))))))
 
+(defun schweers/split-quoted-paragraph ()
+  "Split the quoted paragraph at point, making space for a reply, and fill the
+rest of the paragraph.  This is useful in message-mode."
+  (interactive)
+  (let ((in-line (not (looking-at "[[:space:]]*$"))))
+    (insert "\n")
+    (delete-horizontal-space)
+    (when in-line
+      (insert "> "))
+    (beginning-of-line)
+    (open-line (if in-line 3 2))
+    (forward-line 1)
+    (when in-line
+      (save-excursion
+        (forward-line 2)
+        (fill-paragraph)))))
+
 (provide 'misc)
