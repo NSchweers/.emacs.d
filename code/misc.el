@@ -133,11 +133,17 @@ Switches to the apropriate buffer if it already exists."
   "Split the quoted paragraph at point, making space for a reply, and fill the
 rest of the paragraph.  This is useful in message-mode."
   (interactive)
-  (let ((in-line (not (looking-at "[[:space:]]*$"))))
+  (let ((in-line (not (looking-at "[[:space:]]*$")))
+        (level (save-excursion
+                 (beginning-of-line)
+                 (save-match-data
+                   (if (looking-at ">*")
+                       (- (match-end 0) (match-beginning 0))
+                     0)))))
     (insert "\n")
     (delete-horizontal-space)
-    (when in-line
-      (insert "> "))
+    (when (and in-line (> level 0))
+      (insert (s-concat (s-repeat level ">") " ")))
     (beginning-of-line)
     (open-line (if in-line 3 2))
     (forward-line 1)
