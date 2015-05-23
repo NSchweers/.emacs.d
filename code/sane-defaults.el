@@ -144,6 +144,9 @@
 ;; We want the minibuffer to shrink again
 (setq resize-mini-windows t)
 
+;; I don’t want to type out yes RET all the time
+(fset 'yes-or-no-p 'y-or-n-p)
+
 ;; (-each (list minibuffer-local-map
 ;;              minibuffer-local-ns-map
 ;;              minibuffer-local-completion-map
