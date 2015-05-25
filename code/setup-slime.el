@@ -4,6 +4,10 @@
       ((eq system-type 'gnu/linux)
        (setq inferior-lisp-program "sbcl")))
 
+(require 'slime-autoloads)
+
+(add-to-list 'slime-contribs 'slime-fancy)
+
 (require 'ac-slime)
 (add-hook 'slime-mode-hook 'set-up-slime-ac)
 (add-hook 'slime-repl-mode-hook 'set-up-slime-ac)
