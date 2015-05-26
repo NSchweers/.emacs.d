@@ -80,7 +80,8 @@
   setup-eldoc
   setup-jabber-otr
   setup-helm
-  setup-ace-jump-mode)
+  setup-ace-jump-mode
+  setup-clhs)
 
 ;; ;; Set up appearance early.  
 ;; (require 'appearance)
