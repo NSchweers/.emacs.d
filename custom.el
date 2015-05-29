@@ -42,7 +42,6 @@
      ("" "amssymb" t)
      ("hidelinks" "hyperref" nil)
      "\\tolerance=1000")))
- '(paradox-github-token t)
  '(rcirc-default-nick "schweers")
  '(rcirc-default-user-name "schweers")
  '(rcirc-fill-column (quote frame-width))
