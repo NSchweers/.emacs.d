@@ -13,7 +13,7 @@
  '(erc-prompt-for-channel-key t)
  '(erc-timestamp-format-right " [%H:%M:%S]")
  '(gnus-home-directory "~/.emacs.d/")
- '(haskell-mode-hook (quote (turn-on-haskell-indentation)))
+ '(haskell-mode-hook (quote (turn-on-haskell-indentation)) t)
  '(jabber-account-list
    (quote
     (("schweers@3suns.de/emacs"
@@ -42,6 +42,7 @@
      ("" "amssymb" t)
      ("hidelinks" "hyperref" nil)
      "\\tolerance=1000")))
+ '(paradox-github-token t)
  '(rcirc-default-nick "schweers")
  '(rcirc-default-user-name "schweers")
  '(rcirc-fill-column (quote frame-width))
@@ -54,8 +55,8 @@
       ("#neo" "#informatik-ag")
       nil nil))))
  '(send-mail-function (quote smtpmail-send-it))
- '(smtpmail-smtp-server "smtp.1und1.de" t)
- '(smtpmail-smtp-service 25 t))
+ '(smtpmail-smtp-server "smtp.1und1.de")
+ '(smtpmail-smtp-service 25))
 
 (custom-set-faces
  ;; custom-set-faces was added by Custom.

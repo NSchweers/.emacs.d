@@ -150,5 +150,15 @@
 
    Y5NN-OY7Y-AB5Q-F4PH-57IQ-6SRW-UARN-ZD7Y-J62G-2NI7-6HUU-CFV2-RE3M-SCRC-
    YDWI-V2SO-VBKL-EEXM-FRNG-JTZH
+   [[file:~/.emacs.d/notes.org::*Threema%20backup][Threema backup]]
+
    [2015-03-27 Fr]
-   [[file:~/.emacs.d/code/setup-slime.el::(cond%20((eq%20system-type%20'windows-nt)][file:~/.emacs.d/code/setup-slime.el::(cond ((eq system-type 'windows-nt)]]
+** TODO Vice City hidden packages
+   Collected 100 - 81 (incl.) from
+   http://www.gtaplanet.de/gtavc/100_paeckchen.html?cat=5 
+   [2015-05-27 Wed]
+** TODO cl-filter git
+
+   http://alternativlos.cdn.as250.net/alternativlos-27.opus
+   [2015-05-27 Wed]
+   [[file:~/.emacs.d/init.el]]
