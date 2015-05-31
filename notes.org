@@ -25,7 +25,7 @@
    Look at modes to open recently opened files.  
    [2014-07-07 Mon]
    [[file:~/.emacs.d/code/misc.el]]
-** TODO Look at ibuffer
+** DONE Look at ibuffer
    [2014-07-07 Mon]
    [[info:calc#Embedded%20Mode%20Overview][info:calc#Embedded Mode Overview]]
 ** TODO Look at eshell
@@ -71,7 +71,7 @@
    pw: Hi13J25Ra02
    [2014-12-14 Sun]
    [[file:~/code/src/guile/module/system/base/compile.scm]]
-** TODO Take a look at browse-kill-ring.  
+** DONE Take a look at browse-kill-ring.  
 
    It may seem weird and clunky in the beginning, but it should be worth some
    effort.  
@@ -94,7 +94,7 @@
 
    Look into Projectile
    [2015-01-31 Sa]
-** TODO ibuffer
+** DONE ibuffer
 
    Look into ibuffer. 
    [2015-01-31 Sa]
@@ -152,3 +152,21 @@
    YDWI-V2SO-VBKL-EEXM-FRNG-JTZH
    [2015-03-27 Fr]
    [[file:~/.emacs.d/code/setup-slime.el::(cond%20((eq%20system-type%20'windows-nt)][file:~/.emacs.d/code/setup-slime.el::(cond ((eq system-type 'windows-nt)]]
+** TODO Bind custom keys in a minor mode?
+
+   Seen this in a comment on http://masteringemacs.org:
+
+   A great trick I recently learned (maybe from this blog; if so, sorry for the
+   repetition!) is to define your custom bindings in your own minor mode, so
+   that way you dont have to play whackamole with other modes that want the same
+   binding.
+   [2015-05-30 Sat]
+** TODO Henny Antworten
+   [2015-05-30 Sat]
+   [[gnus:INBOX#55691EBF.1030005@gmx.de][Email from Hendrike Bode: Re: Hallo aus Hamburg]]
+** TODO Complete the function `schweers/ask-to-commit-on-exit
+   
+   <2015-05-31 Sun>
+   [[file:~/.emacs.d/code/misc.el::%3B%3B%3B%20Don%E2%80%99t%20use%20this%20yet,%20it%E2%80%99s%20not%20working%20yet!][file:~/.emacs.d/code/misc.el::;;; Don’t use this yet, it’s not working yet!]]
+* Notes
+

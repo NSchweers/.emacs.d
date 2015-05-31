@@ -19,6 +19,45 @@
           (error
            (ignore-errors (delete-file (byte-compile-dest-file filename))))))))
 
+;; (defun schweers/ask-to-commit ()
+;;   "If the file saved is in our emacs.d directory, check for unstaged data.
+
+;; If unstaged files exist, ask the user whether they shall be autocommitted."
+;;   (if (and
+;;        (magit-anything-modified-p)
+;;        (y-or-n-p-with-timeout
+;;         (format "Uncommitted changes in repo %s.  %s"
+;;                 (magit-get-top-dir
+;;                  (file-name-directory (buffer-file-name)))
+;;                 "Stage all and commit?  You have 5s to say yes.")
+;;         5 nil))))
+
+
+;;; Don’t use this yet, it’s not working yet!
+
+(defun schweers/ask-to-commit-on-exit ()
+  (let ((repos (make-hash-table)))
+    (-each (buffer-list)
+      (lambda (b)
+        (-when-let (fname
+                    (car (-filter
+                          (-compose 'not 'null)
+                          (-map
+                           (-compose 'magit-get-top-dir 'file-name-directory)
+                           (-filter (-compose 'not 'null)
+                                    (-map 'buffer-file-name (list b)))))))
+          (with-current-buffer b
+            (when (and (magit-anything-modified-p)
+                       (y-or-n-p
+                        (format "Uncommitted changes in repo %s.  %s"
+                                (magit-get-top-dir
+                                 (file-name-directory (buffer-file-name)))
+                                "Stage all and commit?")))
+              (magit-stage-all)
+              (magit-commit))))))))
+
+;; (add-hook 'kill-emacs-query-functions 'schweers/ask-to-commit)
+
 (defun reload-emacs-conf ()
   (interactive)
   (load user-init-file))

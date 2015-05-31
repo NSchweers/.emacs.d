@@ -1,6 +1,7 @@
 ;; -*- lexical-binding: t -*-
 
 (setq inhibit-startup-message t)
+(setq user-init-file (buffer-file-name))
 
 ;; For Emacs 24.4 to prevent loading outdated compiled files
 (setq load-prefer-newer t)
@@ -81,7 +82,8 @@
   setup-jabber-otr
   setup-helm
   setup-ace-jump-mode
-  setup-clhs)
+  setup-clhs
+  setup-gud)
 
 ;; ;; Set up appearance early.  
 ;; (require 'appearance)
