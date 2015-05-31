@@ -38,6 +38,18 @@
 (add-to-list 'org-latex-packages-alist '("" "listings"))
 (add-to-list 'org-latex-packages-alist '("" "color"))
 
+(setq org-capture-templates
+      `(("t" "Task" entry
+         (file+headline ,org-default-notes-file
+                        "Tasks")
+         "* TODO %?\n  %i\n  %t\n  %a")
+        ("n" "Notes" entry
+         (file+headline ,org-default-notes-file
+                        "Notes")
+         "* %?\n  %i\n  %t\n  %a")))
+
+(global-set-key (kbd "C-c c") 'org-capture)
+
 (provide 'setup-org)
 
 ;; (defun my-org/fund-to-org (f &rest args)
