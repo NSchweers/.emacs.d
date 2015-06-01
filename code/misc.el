@@ -1,10 +1,13 @@
 ;; -*- lexical-binding: t -*-
 (require 's)
+(require 'dash)
+(require 'dash-functional)
 
 (defun recompile-emacs-d ()
   (interactive)
   (byte-recompile-directory (expand-file-name "code" user-emacs-directory) 0 t)
-  (byte-compile-file user-init-file))
+  (byte-compile-file (or user-init-file
+                         (expand-file-name "init.el" user-emacs-directory))))
 
 (defun file-in-emacs-d? (filename)
   (s-starts-with? (expand-file-name user-emacs-directory)
@@ -33,30 +36,57 @@
 ;;         5 nil))))
 
 
-;;; Don’t use this yet, it’s not working yet!
-
-(defun schweers/ask-to-commit-on-exit ()
-  (let ((repos (make-hash-table)))
+(defun schweers/ask-to-commit-and-push ()
+  (interactive)
+  "For each open repository which has uncommitted changes or unpushed commits,
+to commit and/or push them."
+  (let ((repos (make-hash-table :test 'equal)))
     (-each (buffer-list)
       (lambda (b)
-        (-when-let (fname
-                    (car (-filter
-                          (-compose 'not 'null)
-                          (-map
-                           (-compose 'magit-get-top-dir 'file-name-directory)
-                           (-filter (-compose 'not 'null)
-                                    (-map 'buffer-file-name (list b)))))))
-          (with-current-buffer b
-            (when (and (magit-anything-modified-p)
-                       (y-or-n-p
-                        (format "Uncommitted changes in repo %s.  %s"
-                                (magit-get-top-dir
-                                 (file-name-directory (buffer-file-name)))
-                                "Stage all and commit?")))
-              (magit-stage-all)
-              (magit-commit))))))))
+        ;; Use a singleton list with sequencing functions as a poor mans Maybe
+        ;; monad.
+        (-when-let
+            (repo-buf-name
+             (car
+              (-filter
+               (-compose 'not 'null)
+               (-map
+                (-compose 'magit-get-top-dir 'file-name-directory)
+                (-filter
+                 'file-exists-p
+                 (-filter
+                  (-compose 'not 'null)
+                  (-map 'buffer-file-name (list b))))))))
+          (puthash repo-buf-name b repos))))
+    (when (hash-table-count repos)
+      (save-some-buffers))
+    (maphash
+     (lambda (r b)
+       (with-current-buffer b
+         (when (and (magit-anything-modified-p)
+                    (y-or-n-p
+                     (format "Uncommitted changes in repo %s.  %s"
+                             r "Stage all and commit?")))
+           (magit-stage-all)
+           (magit-commit))))
+     repos)
+    (maphash
+     (lambda (r b)
+       (with-current-buffer b
+         (save-window-excursion
+           (call-interactively 'magit-status)
+           (when (> (length (-filter
+                             (lambda (c)
+                               (eq (magit-section-type c) 'unpushed))
+                             (magit-section-children magit-root-section)))
+                    0)
+             (when (y-or-n-p (format "Unpushed changes in repo %s.  Push now?"
+                                     r))
+               (magit-push))))))
+     repos)
+    t))
 
-;; (add-hook 'kill-emacs-query-functions 'schweers/ask-to-commit)
+;; (add-hook 'kill-emacs-query-functions 'schweers/ask-to-commit-and-push)
 
 (defun reload-emacs-conf ()
   (interactive)

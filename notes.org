@@ -150,6 +150,8 @@
 
    Y5NN-OY7Y-AB5Q-F4PH-57IQ-6SRW-UARN-ZD7Y-J62G-2NI7-6HUU-CFV2-RE3M-SCRC-
    YDWI-V2SO-VBKL-EEXM-FRNG-JTZH
+   [[file:~/.emacs.d/notes.org::*Threema%20backup][Threema backup]]
+
    [2015-03-27 Fr]
    [[file:~/.emacs.d/code/setup-slime.el::(cond%20((eq%20system-type%20'windows-nt)][file:~/.emacs.d/code/setup-slime.el::(cond ((eq system-type 'windows-nt)]]
 ** TODO Bind custom keys in a minor mode?
@@ -169,4 +171,11 @@
    <2015-05-31 Sun>
    [[file:~/.emacs.d/code/misc.el::%3B%3B%3B%20Don%E2%80%99t%20use%20this%20yet,%20it%E2%80%99s%20not%20working%20yet!][file:~/.emacs.d/code/misc.el::;;; Don’t use this yet, it’s not working yet!]]
 * Notes
+** Vice City hidden packages
+   Collected 100 - 81 (incl.) from
+   http://www.gtaplanet.de/gtavc/100_paeckchen.html?cat=5 
+   [2015-05-27 Wed]
+** cl-filter git
 
+   [2015-05-27 Wed]
+   [[file:~/.emacs.d/init.el]]
