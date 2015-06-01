@@ -2,6 +2,9 @@
 ;; Allow pasting selection outside of Emacs
 (setq x-select-enable-clipboard t)
 
+;; Fundamental Mode has to go in favor of Org Mode!
+(set-default 'major-mode 'org-mode)
+
 ;; Auto refresh buffers
 ; (global-auto-revert-mode 1)
 

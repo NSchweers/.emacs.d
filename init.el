@@ -84,7 +84,9 @@
   setup-ace-jump-mode
   setup-clhs
   setup-gud
-  setup-emms)
+  setup-emms
+  setup-dired
+  setup-binding-mode)
 
 ;; ;; Set up appearance early.  
 ;; (require 'appearance)

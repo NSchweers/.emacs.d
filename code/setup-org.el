@@ -4,7 +4,7 @@
   (define-key org-mode-map (kbd "RET") 'org-return-indent)
   (define-key org-mode-map (kbd "C-j") 'org-return))
 
-(add-hook 'org-mode-hook 'misc/set-kill-and-delete-keys)
+;(add-hook 'org-mode-hook 'misc/set-kill-and-delete-keys)
 ;(add-hook 'org-mode-hook 'setup-org/define-newline-keys)
 
 ;;; This line is a fallback for mode selection, so org-mode is the new default,

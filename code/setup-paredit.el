@@ -28,18 +28,20 @@
 ;;       (kill-region (region-beginning) (region-end))
 ;;     (paredit-backward-kill-word)))
 
-(defun setup-paredit/init ()
-  (paredit-mode 1)
-  (misc/set-kill-and-delete-keys))
+;; (defun setup-paredit/init ()
+;;   (paredit-mode 1)
+;;   (misc/set-kill-and-delete-keys))
 
 ;; (add-hook 'clojure-mode-hook #'(lambda () (setup-paredit/init)))
 ;; (add-hook 'cider-repl-mode-hook #'(lambda () (setup-paredit/init)))
 ;; (add-hook 'emacs-lisp-mode-hook #'(lambda () (setup-paredit/init)))
 ;; (add-hook 'lisp-mode-hook #'(lambda () (setup-paredit/init)))
 
-(dolist (m '(clojure-mode-hook cider-repl-mode-hook emacs-lisp-mode-hook
-                               lisp-mode-hook slime-repl-mode-hook))
-  (add-hook m #'(lambda () (setup-paredit/init))))
+;; (dolist (m '(clojure-mode-hook cider-repl-mode-hook emacs-lisp-mode-hook
+;;                                lisp-mode-hook slime-repl-mode-hook))
+;;   (add-hook m #'(lambda () (setup-paredit/init))))
+
+(add-hook 'lisp-mode (-compose 'paredit-mode (-partial 'subword-mode -1)))
 
 (define-key paredit-mode-map (kbd "M-(") 'paredit-wrap-round)
 (define-key paredit-mode-map (kbd "M-)") 'paredit-wrap-round-from-behind)
@@ -48,6 +50,8 @@
 (define-key paredit-mode-map (kbd "M-{") 'paredit-wrap-curly)
 (define-key paredit-mode-map (kbd "M-}") 'paredit-wrap-curly-from-behind)
 (define-key paredit-mode-map (kbd "C-w") 'paredit-backward-kill-word)
+(define-key paredit-mode-map [remap backward-kill-word]
+  'paredit-backward-kill-word)
 
 ;; Take care of C-h
 (define-key paredit-mode-map (kbd "C-h") 'paredit-backward-delete)
@@ -81,7 +85,7 @@
   (if (eq this-command 'eval-expression)
       (paredit-mode 1)))
 
-;; (add-hook 'minibuffer-setup-hook 'conditionally-enable-paredit-mode)
+(add-hook 'minibuffer-setup-hook 'conditionally-enable-paredit-mode)
 
 ;; making paredit work with delete-selection-mode
 (put 'paredit-forward-delete 'delete-selection 'supersede)
