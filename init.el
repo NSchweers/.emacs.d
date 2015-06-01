@@ -83,7 +83,8 @@
   setup-helm
   setup-ace-jump-mode
   setup-clhs
-  setup-gud)
+  setup-gud
+  setup-emms)
 
 ;; ;; Set up appearance early.  
 ;; (require 'appearance)
