@@ -106,12 +106,12 @@ to commit and/or push them."
 ;;with this we try to save the desktop file when the emacs server is killed.
 (add-hook 'kill-emacs-hook (lambda () (desktop-save user-emacs-directory)))
 
-(defun misc/set-kill-and-delete-keys ()
-  (local-set-key (kbd "C-w") 'backward-kill-word)
-  (local-set-key (kbd "C-c C-w") 'kill-region)
-  ;; Note on rebinding C-h: One merely needs to press any "help" key (e.g. F1).
-  (local-set-key (kbd "C-h") 'delete-backward-char)
-  (local-set-key (kbd "<f1>") 'help-command))
+;; (defun misc/set-kill-and-delete-keys ()
+;;   (local-set-key (kbd "C-w") 'backward-kill-word)
+;;   (local-set-key (kbd "C-c C-w") 'kill-region)
+;;   ;; Note on rebinding C-h: One merely needs to press any "help" key (e.g. F1).
+;;   (local-set-key (kbd "C-h") 'delete-backward-char)
+;;   (local-set-key (kbd "<f1>") 'help-command))
 
 (defun misc/switch-to-scratch ()
   (interactive)
