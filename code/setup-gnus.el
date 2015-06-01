@@ -93,6 +93,11 @@
                                  'kill-region)
                                (define-key message-mode-map (kbd "C-M-o")
                                  'schweers/split-quoted-paragraph)))
+
+(add-hook 'message-mode-hook (lambda ()
+                               (turn-on-orgtbl)
+                               (define-key message-mode-map (kbd "C-M-o")
+                                 'schweers/split-quoted-paragraph)))
 (bbdb-initialize)
 
 (add-hook 'gnus-startup-hook 'bbdb-insinuate-gnus)
