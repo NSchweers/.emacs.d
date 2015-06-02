@@ -41,11 +41,11 @@
 ;;                                lisp-mode-hook slime-repl-mode-hook))
 ;;   (add-hook m #'(lambda () (setup-paredit/init))))
 
-;; (dolist (m '(clojure-mode-hook cider-repl-mode-hook emacs-lisp-mode-hook
-;;                                lisp-mode-hook slime-repl-mode-hook))
-;;   (add-hook m (-compose 'paredit-mode (-partial 'subword-mode -1))))
+(dolist (m '(clojure-mode-hook cider-repl-mode-hook emacs-lisp-mode-hook
+                               lisp-mode-hook slime-repl-mode-hook))
+  (add-hook m (-compose 'paredit-mode (-partial 'subword-mode -1))))
 
-(add-hook 'lisp-mode (-compose 'paredit-mode (-partial 'subword-mode -1)))
+;; (add-hook 'lisp-mode-hook (-compose 'paredit-mode (-partial 'subword-mode -1)))
 
 (define-key paredit-mode-map (kbd "M-(") 'paredit-wrap-round)
 (define-key paredit-mode-map (kbd "M-)") 'paredit-wrap-round-from-behind)

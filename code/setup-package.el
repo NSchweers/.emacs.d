@@ -55,16 +55,16 @@ re-downloaded in order to locate PACKAGE."
      dash-functional
      elpy
      expand-region
-     flx-ido ; May have become obsolete, due to helm.
+;;;     flx-ido ; May have become obsolete, due to helm.
      geiser
      guide-key
      haskell-mode
      helm
      htmlize
      hydra
-     ido-at-point ; May have become obsolete, due to helm.
-     ido-ubiquitous ; May have become obsolete, due to helm.
-     ido-vertical-mode ; May have become obsolete, due to helm.
+;;;     ido-at-point ; May have become obsolete, due to helm.
+;;;     ido-ubiquitous ; May have become obsolete, due to helm.
+;;;     ido-vertical-mode ; May have become obsolete, due to helm.
      jabber
      lua-mode
      magit

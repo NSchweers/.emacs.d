@@ -50,6 +50,26 @@
 
 (global-set-key (kbd "C-c c") 'org-capture)
 
+(defun schweers/find-file-org-advice (&rest args)
+  "If the file we just opened is in fundamental-mode, switch to org-mode."
+  (if (eq major-mode 'fundamental-mode)
+      (org-mode)))
+
+(defun schweers/switch-to-buffer-org-advice (real-fun &rest args)
+  "Make org-mode the new default mode."
+  (if (or (not (called-interactively-p)) (not (default-boundp 'major-mode)))
+      (apply 'funcall real-fun args)
+    (let ((backup (default-value 'major-mode)))
+      (unwind-protect
+          (progn
+            (setq-default major-mode 'org-mode)
+            (apply 'funcall real-fun args))
+        (setq-default major-mode backup)))))
+
+(advice-add 'find-file :after #'schweers/find-file-org-advice)
+
+(advice-add 'switch-to-buffer :around #'schweers/switch-to-buffer-org-advice)
+
 (provide 'setup-org)
 
 ;; (defun my-org/fund-to-org (f &rest args)

@@ -3,7 +3,7 @@
 (setq x-select-enable-clipboard t)
 
 ;; Fundamental Mode has to go in favor of Org Mode!
-(set-default 'major-mode 'org-mode)
+;(set-default 'major-mode 'org-mode)
 
 ;; Auto refresh buffers
 ; (global-auto-revert-mode 1)
@@ -143,6 +143,7 @@
 (put 'downcase-region 'disabled nil)
 (put 'upcase-region 'disabled nil)
 (put 'narrow-to-region 'disabled nil)
+(put 'narrow-to-page 'disabled nil)
 
 ;; We want the minibuffer to shrink again
 (setq resize-mini-windows t)

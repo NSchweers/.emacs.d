@@ -180,6 +180,4 @@
 ;;; Turn it on, already
 (schweers-global-bindings-mode)
 
-
-
 (provide 'setup-binding-mode)

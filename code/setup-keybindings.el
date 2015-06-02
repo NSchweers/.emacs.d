@@ -178,7 +178,8 @@
   "page"
   ("]" forward-page "next")
   ("[" backward-page "prev")
-  ("n" narrow-to-page "narrow" :bind nil :exit t))
+  ("n" narrow-to-page "narrow" :bind nil :exit t)
+  ("q" nil "quit"))
 
 ;; Switch windows with shift-cursors.
 (windmove-default-keybindings)
