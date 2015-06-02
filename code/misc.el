@@ -36,6 +36,7 @@
 ;;         5 nil))))
 
 
+;;; Don’t use this, it is broken!
 (defun schweers/ask-to-commit-and-push ()
   (interactive)
   "For each open repository which has uncommitted changes or unpushed commits,
@@ -86,7 +87,48 @@ to commit and/or push them."
      repos)
     t))
 
-;; (add-hook 'kill-emacs-query-functions 'schweers/ask-to-commit-and-push)
+(defun schweers/remind-of-unstaged-or-unpushed ()
+  (interactive)
+  (let ((repos (make-hash-table :test 'equal)))
+    (-each (buffer-list)
+      (lambda (b)
+        ;; Use a singleton list with sequencing functions as a poor mans Maybe
+        ;; monad.
+        (-when-let
+            (repo-buf-name
+             (car
+              (-filter
+               (-compose 'not 'null)
+               (-map
+                (-compose 'magit-get-top-dir 'file-name-directory)
+                (-filter
+                 'file-exists-p
+                 (-filter
+                  (-compose 'not 'null)
+                  (-map 'buffer-file-name (list b))))))))
+          (puthash repo-buf-name b repos))))
+    (when (< 0 (hash-table-count repos))
+      (save-some-buffers))
+    (let ((res))
+      (maphash
+       (lambda (r b)
+         (with-current-buffer b
+           (when (or (magit-anything-modified-p)
+                     (save-window-excursion
+                       (call-interactively 'magit-status)
+                       (if (< 0 (length (-filter
+                                         (lambda (c)
+                                           (eq (magit-section-type c) 'unpushed))
+                                         (magit-section-children magit-root-section))))
+                           t
+                         nil)))
+             (push (y-or-n-p (format "Unstaged or unpushed changes in repo %s.  %s"
+                                     r "Are you sure you want to quit?"))
+                   res))))
+       repos)
+      (-all? (-compose 'not 'null) res))))
+
+(add-hook 'kill-emacs-query-functions 'schweers/remind-of-unstaged-or-unpushed)
 
 (defun reload-emacs-conf ()
   (interactive)
@@ -139,17 +181,30 @@ to commit and/or push them."
 
 (setq save-interprogram-paste-before-kill t)
 
-(defun misc/new-setup (name)
+(defun misc/new-setup (name &optional stage)
   "Create a new setup file, called setup-NAME.el in
 ~/.emacs.d/code/ which enables lexical scoping, contains the
-appropriate provide and places point at the right position."
-  (interactive "MWhich package do you want to set up? \n")
+appropriate provide and places point at the right position. 
+
+If STAGE is non-nil, also stage the file with magit."
+  ;; (interactive "MWhich package do you want to set up? \n")
+  (interactive (list (read-string "Which package do you want to set up? ")
+                     (if current-prefix-arg
+                         (let ((p (if (consp current-prefix-arg)
+                                      (car current-prefix-arg)
+                                    current-prefix-arg)))
+                           (if (or (null p) (eq p '-) (< p 0))
+                               nil
+                             t))
+                       (y-or-n-p "Do you want to stage the file with magit? "))))
   (let ((proper-name (s-concat "setup-" name ".el")))
     (save-excursion
       (find-file
        (expand-file-name
         proper-name
         (expand-file-name "code" user-emacs-directory)))
+      (when (or (buffer-narrowed-p) (/= (point-min) (point-max)))
+        (error "File is not empty and/or the corresponding buffer is narrowed"))
       (goto-char (point-min))
       (if (not (string= (buffer-string) ""))
           (progn
@@ -160,6 +215,8 @@ appropriate provide and places point at the right position."
         (insert ")\n")
         (forward-line -3)
         (indent-for-tab-command)
+        (when stage
+          (magit-stage-item (buffer-file-name)))
         (save-buffer)))))
 
 (defun misc/hurra ()
