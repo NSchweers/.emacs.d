@@ -4,7 +4,6 @@
 
 (define-key *schweers-bindings* (kbd "C-w") 'backward-kill-word)
 (define-key *schweers-bindings* (kbd "C-c C-w") 'kill-region)
-(define-key *schweers-bindings* (kbd "C-c C-a") 'kill-region)
 (define-key *schweers-bindings* (kbd "C-h") 'delete-backward-char)
 (define-key *schweers-bindings* (kbd "<f1>") 'help-command)
 (define-key *schweers-bindings*
@@ -179,5 +178,25 @@
 
 ;;; Turn it on, already
 (schweers-global-bindings-mode)
+
+;;; As some modes—I’m looking at you, wl-draft-mode—think it’s totally OK to
+;;; rebind my keys, I’ll put them into the overriding keymap instead.
+
+;; (defun schweers/set-bindings-in-broken-modes ()
+;;   (cl-flet
+;;       ((find-my-bindings
+;;         (e)
+;;         (eq (car e) 'schweers-bindings-mode)))
+;;     (setq
+;;      minor-mode-overriding-map-alist
+;;      (-filter #'find-my-bindings minor-mode-map-alist))))
+
+;; minor-mode-overriding-map-alist
+;; minor-mode-map-alist
+;; (add-to-list 'minor-mode-map-alist (car minor-mode-overriding-map-alist))
+
+;; (add-hook 'wl-draft-mode-hook #'schweers/set-bindings-in-broken-modes)
+
+;; (setq  wl-draft-mode-hook nil)
 
 (provide 'setup-binding-mode)

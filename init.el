@@ -71,6 +71,7 @@
   setup-auctex
   setup-bbdb
   setup-gnus
+  setup-wanderlust
   setup-multiple-cursors
   setup-erc
   setup-ace-link
