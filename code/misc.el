@@ -281,4 +281,37 @@ rest of the paragraph.  This is useful in message-mode."
         (let ((fill-paragraph-function (lambda (&rest _) nil)))
           (fill-paragraph))))))
 
+(defun remake-local-etags ()
+  (interactive)
+  (if (not (zerop
+            (call-process "/bin/sh" nil nil nil
+                          "-c" (format "cd %s; etags `find ./ -iname \\*.el`"
+                                       user-emacs-directory))))
+      (warn "etags failed.")))
+
+(defmacro +let (&rest args)
+  "Allows scheme like recursion.  
+
+A symbol may be given as an additional first argument, the rest is like `let'.
+If this extra argument is given, it is the name of a local function, which is
+created by this macro.  The bindings given in the second argument give the names
+of the arguments, and the values, with which the function is initially called."
+  (let ((name (car args)))
+    (if (symbolp name)
+        (if (eq name nil)
+            `(let ,@(cdr args))
+          (let ((argnames (-map (lambda (binding)
+                                  (if (consp binding)
+                                      (car binding)
+                                    binding))
+                                (second args)))
+                (init-args (-map (lambda (binding)
+                                   (if (consp binding)
+                                       (cadr binding)
+                                     nil))
+                                 (second args))))
+            `(cl-labels ((,name ,argnames ,@(cddr args)))
+               (,name ,@init-args))))
+      `(let ,@args))))
+
 (provide 'misc)

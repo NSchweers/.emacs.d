@@ -151,6 +151,8 @@
 ;; I don’t want to type out yes RET all the time
 (fset 'yes-or-no-p 'y-or-n-p)
 
+(add-to-list 'tags-table-list (expand-file-name "TAGS" user-emacs-directory))
+
 ;; (-each (list minibuffer-local-map
 ;;              minibuffer-local-ns-map
 ;;              minibuffer-local-completion-map

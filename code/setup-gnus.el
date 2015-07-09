@@ -33,33 +33,33 @@
       )
 
 (setq nnimap-inbox "INBOX")
-(setq nnimap-split-methods
-      `(("INBOX/PUG"
-         ,(concat "\\(?:^Subject:.*\\[PUG\\]\\)\\|\\(?:^To:.*talk@pug.org\\)"
-                  "\\|\\(?:Reply-To:.*talk@pug.org\\)"))
-        ("INBOX/Geocaching" "^From:.*@geocaching.com")
-        ("INBOX/NEO"
-         ,(concat "\\(?:^Subject:.*\\[Neo\\]\\)\\|"
-                  "\\(?:^To:.*diskussion@neo-layout.org\\)\\|"
-                  "\\(?:Reply-To:.*diskussion@neo-layout.org\\)"))
-        ("INBOX/FH"
-         ,(concat "\\(?:^From:.*@.*fra-uas.de\\)\\|"
-                  "\\(?:^Reply-To:.*@.*fra-uas.de\\)"))
-        ("INBOX/klingemann"
-         "^To:.*klingemann-geschaedigte-ev@lists.informatiktreffpunkt.de")
-        ("INBOX/emacs-help"
-         ,(concat "\\(?:^To:.*help-gnu-emacs@gnu.org\\)\\|"
-                  "\\(?:^Cc:.*help-gnu-emacs@gnu.org\\)"))
-        ("INBOX/emacs-devel"
-         ,(concat "\\(?:^To:.*emacs-devel@gnu.org\\)\\|"
-                  "\\(?:^Cc:.*emacs-devel@gnu.org\\)"))
-        ("INBOX/FRITZBox"
-         "\\(?:^From:.*\"FRITZ!Box\" \<wgschweers@online.de\>\\)")
-        ("INBOX/Geocaching"
-         "\\(?:From:.*@geocaching.com\\)")
-        ("INBOX/Amazon"
-         "\\(?:From:.*@amazon.de\\)")
-        ("INBOX" "")))
+;; (setq nnimap-split-methods
+;;       `(("INBOX/PUG"
+;;          ,(concat "\\(?:^Subject:.*\\[PUG\\]\\)\\|\\(?:^To:.*talk@pug.org\\)"
+;;                   "\\|\\(?:Reply-To:.*talk@pug.org\\)"))
+;;         ("INBOX/Geocaching" "^From:.*@geocaching.com")
+;;         ("INBOX/NEO"
+;;          ,(concat "\\(?:^Subject:.*\\[Neo\\]\\)\\|"
+;;                   "\\(?:^To:.*diskussion@neo-layout.org\\)\\|"
+;;                   "\\(?:Reply-To:.*diskussion@neo-layout.org\\)"))
+;;         ("INBOX/FH"
+;;          ,(concat "\\(?:^From:.*@.*fra-uas.de\\)\\|"
+;;                   "\\(?:^Reply-To:.*@.*fra-uas.de\\)"))
+;;         ("INBOX/klingemann"
+;;          "^To:.*klingemann-geschaedigte-ev@lists.informatiktreffpunkt.de")
+;;         ("INBOX/emacs-help"
+;;          ,(concat "\\(?:^To:.*help-gnu-emacs@gnu.org\\)\\|"
+;;                   "\\(?:^Cc:.*help-gnu-emacs@gnu.org\\)"))
+;;         ("INBOX/emacs-devel"
+;;          ,(concat "\\(?:^To:.*emacs-devel@gnu.org\\)\\|"
+;;                   "\\(?:^Cc:.*emacs-devel@gnu.org\\)"))
+;;         ("INBOX/FRITZBox"
+;;          "\\(?:^From:.*\"FRITZ!Box\" \<wgschweers@online.de\>\\)")
+;;         ("INBOX/Geocaching"
+;;          "\\(?:From:.*@geocaching.com\\)")
+;;         ("INBOX/Amazon"
+;;          "\\(?:From:.*@amazon.de\\)")
+;;         ("INBOX" "")))
 
 ;; (setq gnus-select-method '(nmimap "1&1"
 ;;                                   (nmimap-address "imap.1und1.de")
