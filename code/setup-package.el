@@ -71,7 +71,7 @@ re-downloaded in order to locate PACKAGE."
      multiple-cursors
      names
      org
-     paradox
+;;;     paradox
      paredit
      s
      shell-command
