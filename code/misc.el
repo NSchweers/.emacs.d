@@ -128,7 +128,7 @@ to commit and/or push them."
        repos)
       (-all? (-compose 'not 'null) res))))
 
-(add-hook 'kill-emacs-query-functions 'schweers/remind-of-unstaged-or-unpushed)
+;; (add-hook 'kill-emacs-query-functions 'schweers/remind-of-unstaged-or-unpushed)
 
 (defun reload-emacs-conf ()
   (interactive)
@@ -313,5 +313,20 @@ of the arguments, and the values, with which the function is initially called."
             `(cl-labels ((,name ,argnames ,@(cddr args)))
                (,name ,@init-args))))
       `(let ,@args))))
+
+(defun foo ()
+  (message "I AM IN FOO!!!"))
+
+(defun schweers/critical-mass-friday (date)
+  (let ((friday?
+         (+ 5 (do ((sunday? 1 (1+ sunday?)))
+                  ((zerop (calendar-day-of-week
+                           (list (first date) sunday? (third date))))
+                   sunday?)))))
+    (if (calendar-date-is-valid-p (list (first date) friday? (third date)))
+        (if (calendar-date-equal (list (first date) friday? (third date)) date)
+            "Critical Mass Frankfurt (19:00)"
+          nil)
+      (error "Bug in critical mass ffm friday"))))
 
 (provide 'misc)

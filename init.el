@@ -1,5 +1,7 @@
 ;; -*- lexical-binding: t -*-
 
+(require 'cl)
+
 (setq inhibit-startup-message t)
 (setq user-init-file (buffer-file-name))
 
