@@ -1,4 +1,11 @@
 ;; -*- lexical-binding: t -*-
+
+(use-package bbdb
+  :config
+;  (require 'bbdb-autoloads)
+  (require 'bbdb)
+  :demand)
+
 (use-package gnus
   :commands (gnus)
   :config
