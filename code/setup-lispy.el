@@ -12,6 +12,7 @@
     (interactive)
     (let ((current-prefix-arg '(2)))
       (call-interactively 'lispy-parens)))
-  (define-key lispy-mode-map (kbd "M-(") 'schweers/lispy-M-paren))
+  (define-key lispy-mode-map (kbd "M-(") 'schweers/lispy-M-paren)
+  :demand)
 
 (provide 'setup-lispy)

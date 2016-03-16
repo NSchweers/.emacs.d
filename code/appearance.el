@@ -27,7 +27,7 @@
 (xterm-mouse-mode 1)
 
 ;; Don't defar screen updates when performing operations.  
-(setq redisplay-dont-pause t)
+;; (setq redisplay-dont-pause t)
 
 ;; If on a graphical display, maximize the current frame.  
 (when window-system

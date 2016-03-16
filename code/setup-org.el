@@ -14,6 +14,9 @@
 (setq org-default-notes-file
       (expand-file-name "notes.org" user-emacs-directory))
 
+;; Fontify org-mode code blocks
+(setq org-src-fontify-natively t)
+
 ;; (require 'org-latex)
 
 ;; org-export-latex-classes

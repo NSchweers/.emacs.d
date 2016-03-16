@@ -19,6 +19,8 @@
   (package-install 'dash))
 (require 'dash)
 
+(setf use-package-always-ensure t)
+
 (defun packages-install (packages)
   (--each packages
     (when (not (package-installed-p it))
@@ -39,49 +41,55 @@ re-downloaded in order to locate PACKAGE."
         (package-refresh-contents)
         (require-package package min-version t)))))
 
+;; (defun init--install-packages ()
+;;   (packages-install
+;;    '(ac-geiser
+;;      ac-slime
+;;      ace-jump-mode
+;;      ace-link
+;;      ace-window
+;;      auctex
+;;      auto-complete
+;;      bash-completion
+;;      bbdb
+;;      browse-kill-ring
+;;      cider
+;;      clojure-mode
+;;      dash-functional
+;;      dired+
+;;      elpy
+;;      expand-region
+;; ;;;     flx-ido ; May have become obsolete, due to helm.
+;;      geiser
+;;      guide-key
+;;      haskell-mode
+;;      helm
+;;      htmlize
+;;      hydra
+;; ;;;     ido-at-point ; May have become obsolete, due to helm.
+;; ;;;     ido-ubiquitous ; May have become obsolete, due to helm.
+;; ;;;     ido-vertical-mode ; May have become obsolete, due to helm.
+;;      jabber
+;;      lispy
+;;      lua-mode
+;;      magit
+;;      ;; monky
+;;      multiple-cursors
+;;      names
+;;      org
+;; ;;;     paradox
+;;      paredit
+;;      s
+;;      shell-command
+;;      slime
+;;      smex
+;;      undo-tree
+;;      use-package)))
+
 (defun init--install-packages ()
   (packages-install
-   '(ac-geiser
-     ac-slime
-     ace-jump-mode
-     ace-link
-     ace-window
-     auctex
-     auto-complete
-     bash-completion
-     bbdb
-     browse-kill-ring
-     cider
-     clojure-mode
-     dash-functional
-     dired+
-     elpy
-     expand-region
-;;;     flx-ido ; May have become obsolete, due to helm.
-     geiser
-     guide-key
-     haskell-mode
-     helm
-     htmlize
-     hydra
-;;;     ido-at-point ; May have become obsolete, due to helm.
-;;;     ido-ubiquitous ; May have become obsolete, due to helm.
-;;;     ido-vertical-mode ; May have become obsolete, due to helm.
-     jabber
-     lispy
-     lua-mode
-     magit
-     ;; monky
-     multiple-cursors
-     names
-     org
-;;;     paradox
-     paredit
+   '(dash-functional
      s
-     shell-command
-     slime
-     smex
-     undo-tree
      use-package)))
 
 (defun install-my-packages ()
