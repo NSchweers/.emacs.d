@@ -37,96 +37,96 @@
 
 
 ;;; Don’t use this, it is broken!
-(defun schweers/ask-to-commit-and-push ()
-  (interactive)
-  "For each open repository which has uncommitted changes or unpushed commits,
-to commit and/or push them."
-  (let ((repos (make-hash-table :test 'equal)))
-    (-each (buffer-list)
-      (lambda (b)
-        ;; Use a singleton list with sequencing functions as a poor mans Maybe
-        ;; monad.
-        (-when-let
-            (repo-buf-name
-             (car
-              (-filter
-               (-compose 'not 'null)
-               (-map
-                (-compose 'magit-get-top-dir 'file-name-directory)
-                (-filter
-                 'file-exists-p
-                 (-filter
-                  (-compose 'not 'null)
-                  (-map 'buffer-file-name (list b))))))))
-          (puthash repo-buf-name b repos))))
-    (when (hash-table-count repos)
-      (save-some-buffers))
-    (maphash
-     (lambda (r b)
-       (with-current-buffer b
-         (when (and (magit-anything-modified-p)
-                    (y-or-n-p
-                     (format "Uncommitted changes in repo %s.  %s"
-                             r "Stage all and commit?")))
-           (magit-stage-all)
-           (magit-commit))))
-     repos)
-    (maphash
-     (lambda (r b)
-       (with-current-buffer b
-         (save-window-excursion
-           (call-interactively 'magit-status)
-           (when (> (length (-filter
-                             (lambda (c)
-                               (eq (magit-section-type c) 'unpushed))
-                             (magit-section-children magit-root-section)))
-                    0)
-             (when (y-or-n-p (format "Unpushed changes in repo %s.  Push now?"
-                                     r))
-               (magit-push))))))
-     repos)
-    t))
+;; (defun schweers/ask-to-commit-and-push ()
+;;   (interactive)
+;;   "For each open repository which has uncommitted changes or unpushed commits,
+;; to commit and/or push them."
+;;   (let ((repos (make-hash-table :test 'equal)))
+;;     (-each (buffer-list)
+;;       (lambda (b)
+;;         ;; Use a singleton list with sequencing functions as a poor mans Maybe
+;;         ;; monad.
+;;         (-when-let
+;;             (repo-buf-name
+;;              (car
+;;               (-filter
+;;                (-compose 'not 'null)
+;;                (-map
+;;                 (-compose 'magit-get-top-dir 'file-name-directory)
+;;                 (-filter
+;;                  'file-exists-p
+;;                  (-filter
+;;                   (-compose 'not 'null)
+;;                   (-map 'buffer-file-name (list b))))))))
+;;           (puthash repo-buf-name b repos))))
+;;     (when (hash-table-count repos)
+;;       (save-some-buffers))
+;;     (maphash
+;;      (lambda (r b)
+;;        (with-current-buffer b
+;;          (when (and (magit-anything-modified-p)
+;;                     (y-or-n-p
+;;                      (format "Uncommitted changes in repo %s.  %s"
+;;                              r "Stage all and commit?")))
+;;            (magit-stage-all)
+;;            (magit-commit))))
+;;      repos)
+;;     (maphash
+;;      (lambda (r b)
+;;        (with-current-buffer b
+;;          (save-window-excursion
+;;            (call-interactively 'magit-status)
+;;            (when (> (length (-filter
+;;                              (lambda (c)
+;;                                (eq (magit-section-type c) 'unpushed))
+;;                              (magit-section-children magit-root-section)))
+;;                     0)
+;;              (when (y-or-n-p (format "Unpushed changes in repo %s.  Push now?"
+;;                                      r))
+;;                (magit-push))))))
+;;      repos)
+;;     t))
 
-(defun schweers/remind-of-unstaged-or-unpushed ()
-  (interactive)
-  (let ((repos (make-hash-table :test 'equal)))
-    (-each (buffer-list)
-      (lambda (b)
-        ;; Use a singleton list with sequencing functions as a poor mans Maybe
-        ;; monad.
-        (-when-let
-            (repo-buf-name
-             (car
-              (-filter
-               (-compose 'not 'null)
-               (-map
-                (-compose 'magit-get-top-dir 'file-name-directory)
-                (-filter
-                 'file-exists-p
-                 (-filter
-                  (-compose 'not 'null)
-                  (-map 'buffer-file-name (list b))))))))
-          (puthash repo-buf-name b repos))))
-    (when (< 0 (hash-table-count repos))
-      (save-some-buffers))
-    (let ((res))
-      (maphash
-       (lambda (r b)
-         (with-current-buffer b
-           (when (or (magit-anything-modified-p)
-                     (save-window-excursion
-                       (call-interactively 'magit-status)
-                       (if (< 0 (length (-filter
-                                         (lambda (c)
-                                           (eq (magit-section-type c) 'unpushed))
-                                         (magit-section-children magit-root-section))))
-                           t
-                         nil)))
-             (push (y-or-n-p (format "Unstaged or unpushed changes in repo %s.  %s"
-                                     r "Are you sure you want to quit?"))
-                   res))))
-       repos)
-      (-all? (-compose 'not 'null) res))))
+;; (defun schweers/remind-of-unstaged-or-unpushed ()
+;;   (interactive)
+;;   (let ((repos (make-hash-table :test 'equal)))
+;;     (-each (buffer-list)
+;;       (lambda (b)
+;;         ;; Use a singleton list with sequencing functions as a poor mans Maybe
+;;         ;; monad.
+;;         (-when-let
+;;             (repo-buf-name
+;;              (car
+;;               (-filter
+;;                (-compose 'not 'null)
+;;                (-map
+;;                 (-compose 'magit-get-top-dir 'file-name-directory)
+;;                 (-filter
+;;                  'file-exists-p
+;;                  (-filter
+;;                   (-compose 'not 'null)
+;;                   (-map 'buffer-file-name (list b))))))))
+;;           (puthash repo-buf-name b repos))))
+;;     (when (< 0 (hash-table-count repos))
+;;       (save-some-buffers))
+;;     (let ((res))
+;;       (maphash
+;;        (lambda (r b)
+;;          (with-current-buffer b
+;;            (when (or (magit-anything-modified-p)
+;;                      (save-window-excursion
+;;                        (call-interactively 'magit-status)
+;;                        (if (< 0 (length (-filter
+;;                                          (lambda (c)
+;;                                            (eq (magit-section-type c) 'unpushed))
+;;                                          (magit-section-children magit-root-section))))
+;;                            t
+;;                          nil)))
+;;              (push (y-or-n-p (format "Unstaged or unpushed changes in repo %s.  %s"
+;;                                      r "Are you sure you want to quit?"))
+;;                    res))))
+;;        repos)
+;;       (-all? (-compose 'not 'null) res))))
 
 ;; (add-hook 'kill-emacs-query-functions 'schweers/remind-of-unstaged-or-unpushed)
 
@@ -216,7 +216,8 @@ If STAGE is non-nil, also stage the file with magit."
         (forward-line -3)
         (indent-for-tab-command)
         (when stage
-          (magit-stage-item (buffer-file-name)))
+          (magit-stage-file (buffer-file-name))
+          (warn "Check whether staging occurred or not, it seems to be buggy!"))
         (save-buffer)))))
 
 (defun misc/hurra ()
@@ -314,8 +315,8 @@ of the arguments, and the values, with which the function is initially called."
                (,name ,@init-args))))
       `(let ,@args))))
 
-(defun foo ()
-  (message "I AM IN FOO!!!"))
+;; (defun foo (&rest args)
+;;   (message "I AM IN FOO!!!"))
 
 (defun schweers/critical-mass-friday (date)
   (let ((friday?
@@ -328,5 +329,73 @@ of the arguments, and the values, with which the function is initially called."
             "Critical Mass Frankfurt (19:00)"
           nil)
       (error "Bug in critical mass ffm friday"))))
+
+(defun misc/list-C-funs ()
+  (interactive)
+  (cl-labels
+      ;; I copied and bastardized this from `describe-function-1'
+      ((from-C-source-p
+        (function)
+        (let* ((advised (and (symbolp function)
+                             (featurep 'nadvice)
+                             (advice--p (advice--symbol-function function))))
+               ;; If the function is advised, use the symbol that has the
+               ;; real definition, if that symbol is already set up.
+               (real-function
+                (or (and advised
+                         (advice--cd*r (advice--symbol-function function)))
+                    function))
+               ;; Get the real definition.
+               (def (if (symbolp real-function)
+                        (or (symbol-function real-function)
+                            (signal 'void-function (list real-function)))
+                      real-function))
+               (file-name (find-lisp-object-file-name function def)))
+          (eq file-name 'C-source))))
+    (with-current-buffer (generate-new-buffer "C functions")
+      (insert "The following functions are implemented in C:\n\n")
+      (mapatoms
+       (lambda (x)
+         (if (and (fboundp x) (from-C-source-p x))
+             (insert (symbol-name x) "\n"))))
+      (switch-to-buffer-other-window (current-buffer)))))
+
+(defun toggle-frame-split ()
+  "If the frame is split vertically, split it horizontally or vice versa.
+Assumes that the frame is only split into two.
+
+Got this from here: http://www.emacswiki.org/emacs/ToggleWindowSplit"
+  (interactive)
+  (unless (= (length (window-list)) 2) (error "Can only toggle a frame split in two"))
+  (let ((split-vertically-p (window-combined-p)))
+    (delete-window) ; closes current window
+    (if split-vertically-p
+        (split-window-horizontally)
+      (split-window-vertically)) ; gives us a split with the other window twice
+    (switch-to-buffer nil))) ; restore the original window in this part of the
+                                        ; frame
+
+(defun tea-timer (duration &optional description)
+  (interactive "sDuration: \nsEnter a description: ")
+  (run-at-time duration nil
+               (lambda ()
+                 (start-process
+                  "teetimer-sound-aplay"
+                  " teetimer-sound-aplay"
+                  "aplay"
+                  "/home/schweers/downloads/alarm-clock.wav")
+                 (message "%s" description))))
+
+;; (defcustom )
+
+;; (defun tee (name)
+;;   (interactive ))
+
+;; (completing-read "Which tee? " '(("Pfefferminz" 3) ("Kamille" 2)
+;;                                 ("Earl Gray" 1))
+;;                  nil t)
+
+;; (start-process "teetimer-sound-aplay" " teetimer-sound-aplay"
+;;                "aplay" "/home/schweers/downloads/alarm-clock.wav")
 
 (provide 'misc)
