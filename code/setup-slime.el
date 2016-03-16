@@ -1,6 +1,7 @@
 ;; -*- lexical-binding: t -*-
 
 (use-package slime
+  :ensure ac-slime
   :init
   (cond ((eq system-type 'windows-nt)
          (setq inferior-lisp-program "sbcl"))

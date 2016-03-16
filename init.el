@@ -51,11 +51,9 @@
   saveplace
   ;; setup-evil
   setup-guide-keys
-  ;; setup-paredit
   setup-lispy
   setup-autocomplete
   setup-magit
-  ;; setup-monky
   setup-keybindings
   setup-elpy
   setup-ace-window
@@ -64,14 +62,12 @@
   setup-auctex
   setup-bbdb
   setup-gnus
-  ;;  setup-wanderlust
   setup-multiple-cursors
   setup-erc
   setup-ace-link
   setup-browse-kill-ring
   setup-slime
   setup-expand-region
-  ;;  setup-names
   setup-eldoc
   setup-jabber-otr
   setup-helm
