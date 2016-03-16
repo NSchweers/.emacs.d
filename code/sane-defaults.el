@@ -152,6 +152,7 @@
 (fset 'yes-or-no-p 'y-or-n-p)
 
 (add-to-list 'tags-table-list (expand-file-name "TAGS" user-emacs-directory))
+(add-to-list 'tags-table-list (expand-file-name "code/src/emacs/src/TAGS" (getenv "HOME")))
 
 ;; (-each (list minibuffer-local-map
 ;;              minibuffer-local-ns-map

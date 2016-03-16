@@ -163,13 +163,21 @@
    that way you dont have to play whackamole with other modes that want the same
    binding.
    [2015-05-30 Sat]
-** TODO Henny Antworten
-   [2015-05-30 Sat]
-   [[gnus:INBOX#55691EBF.1030005@gmx.de][Email from Hendrike Bode: Re: Hallo aus Hamburg]]
 ** TODO Complete the function `schweers/ask-to-commit-on-exit
    
    <2015-05-31 Sun>
    [[file:~/.emacs.d/code/misc.el::%3B%3B%3B%20Don%E2%80%99t%20use%20this%20yet,%20it%E2%80%99s%20not%20working%20yet!][file:~/.emacs.d/code/misc.el::;;; Don’t use this yet, it’s not working yet!]]
+** TODO Monitor SMART logs.
+
+   Do this by using existing software, or by writing a program to monitor
+   systemd (journalctl) logs.  These can be exported via json.  See also
+   cl-json. 
+   
+   <2015-10-06 Tue>
+** TODO Create a nice UI including customizable variables for a tea timer.
+   
+   <2015-10-27 Tue>
+   [[file:~/.emacs.d/code/misc.el::(defcustom%20)][file:~/.emacs.d/code/misc.el::(defcustom )]]
 * Notes
 ** Vice City hidden packages
    Collected 100 - 81 (incl.) from
@@ -179,3 +187,18 @@
 
    [2015-05-27 Wed]
    [[file:~/.emacs.d/init.el]]
+** Forth resources
+   - http://www.forth.org/tutorials.html
+   - http://www.softsynth.com/pforth/pf_tut.php
+   - [[file:~/Documents/eBooks/SP_ProgrammingForth.pdf][Programming Forth]]
+   - [[file:~/Documents/eBooks/Forth - CM_ProgrammingAProblemOrientedLanguages.pdf][ProgrammingAProblemOrientedLanguages]]
+
+   <2015-09-23 Wed>
+** Bone Rekord
+   | WPM           |     94 |
+   | Keystrokes    |    468 |
+   | Correct Words |     86 |
+   | Wrong Words   |      0 |
+   | Better than   | 93.21% |
+** Simply Password
+   o1FaTwJXgr

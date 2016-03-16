@@ -38,4 +38,13 @@
 ;; Get rid of the fucking annoying BEEPING.
 (setq visible-bell t)
 
+;; As the default colors are barely readable on my second screen, and customize
+;; thinks emacs was started with -q, even though it wasn’t, set the region color
+;; here.
+
+(face-spec-set 'region
+               '((t (:distant-foreground "royal blue"
+                                         :background "cornflower blue"))))
+
+(setq split-height-threshold 180)
 (provide 'appearance)

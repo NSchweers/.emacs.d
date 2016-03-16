@@ -34,9 +34,18 @@
                                ("\\subparagraph{%s}" . "\\subparagraph*{%s}")))
                 (flyspell-mode 1))))
 
-(setq org-latex-listings t)
-(add-to-list 'org-latex-packages-alist '("" "listings"))
-(add-to-list 'org-latex-packages-alist '("" "color"))
+(setq org-latex-listings 'minted)
+;; (add-to-list 'org-latex-packages-alist '("" "listings"))
+;; (add-to-list 'org-latex-packages-alist '("" "color"))
+(add-to-list 'org-latex-packages-alist '("" "minted"))
+
+(setf
+ org-latex-pdf-process
+ '("pdflatex -shell-escape -interaction nonstopmode -output-directory %o %f"
+   "pdflatex -shell-escape -interaction nonstopmode -output-directory %o %f"
+   "pdflatex -shell-escape -interaction nonstopmode -output-directory %o %f"))
+
+(add-to-list 'org-structure-template-alist '("C" "#+BEGIN_COMMENT\n?\n#+END_COMMENT"))
 
 (setq org-capture-templates
       `(("t" "Task" entry
@@ -50,14 +59,15 @@
 
 (global-set-key (kbd "C-c c") 'org-capture)
 
-(defun schweers/find-file-org-advice (&rest args)
+(defun schweers/find-file-org-advice (&rest _args)
   "If the file we just opened is in fundamental-mode, switch to org-mode."
   (if (eq major-mode 'fundamental-mode)
       (org-mode)))
 
 (defun schweers/switch-to-buffer-org-advice (real-fun &rest args)
   "Make org-mode the new default mode."
-  (if (or (not (called-interactively-p)) (not (default-boundp 'major-mode)))
+  (if (or (not (called-interactively-p 'interactive))
+          (not (default-boundp 'major-mode)))
       (apply 'funcall real-fun args)
     (let ((backup (default-value 'major-mode)))
       (unwind-protect
@@ -66,9 +76,49 @@
             (apply 'funcall real-fun args))
         (setq-default major-mode backup)))))
 
-(advice-add 'find-file :after #'schweers/find-file-org-advice)
+;; (advice-add 'find-file :after #'schweers/find-file-org-advice)
 
-(advice-add 'switch-to-buffer :around #'schweers/switch-to-buffer-org-advice)
+;; (advice-add 'switch-to-buffer :around #'schweers/switch-to-buffer-org-advice)
+
+(define-key org-mode-map (kbd "C-c <")
+  (defhydra hydra-org-blocks (:color blue)
+    "Insert Org Mode source code blocks"
+    ("s" (progn (insert "<s")
+                (call-interactively #'org-cycle))
+     "Generic Org Mode source block")
+    ("e" (progn (insert "<s")
+                (call-interactively #'org-cycle)
+                (insert "emacs-lisp")
+                (forward-line 1)
+                (call-interactively #'org-cycle)))
+    ("q" nil "quit")))
+
+(defun schweers/org-TeX-string (beg end &optional point)
+  "Insert a pair of TeX string delimiters (`` and '').
+
+Put these back to back with point between them, or around the region, if
+active.  Extend the region to contain the new delimiters too."
+  (interactive "rd")
+  (unless point
+    (setf point (point)))
+  (if (not (use-region-p))
+      (progn
+        (insert "``''")
+        (backward-char 2))
+    (let ((at-beginning-p (= beg point)))
+      (goto-char end)
+      (insert "''")
+      (when at-beginning-p
+        (push-mark (point)))
+      (goto-char beg)
+      (insert "``")
+      (if at-beginning-p
+          (backward-char 2)
+        (push-mark (- (point) 2))
+        (goto-char (+ 4 end)))
+      (setf deactivate-mark nil))))
+
+(define-key org-mode-map (kbd "M-\"") #'schweers/org-TeX-string)
 
 (provide 'setup-org)
 

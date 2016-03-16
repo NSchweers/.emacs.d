@@ -2,7 +2,8 @@
 (require 'package)
 
 ;; Add melpa to package repos
-(let ((m '("melpa" . "http://melpa.org/packages/")))
+(dolist (m '(("melpa-stable" . "http://stable.melpa.org/packages/")
+             ("melpa" . "http://melpa.org/packages/")))
   (unless (member m package-archives)
     (add-to-list 'package-archives m t)))
 
@@ -53,6 +54,7 @@ re-downloaded in order to locate PACKAGE."
      cider
      clojure-mode
      dash-functional
+     dired+
      elpy
      expand-region
 ;;;     flx-ido ; May have become obsolete, due to helm.
@@ -66,8 +68,10 @@ re-downloaded in order to locate PACKAGE."
 ;;;     ido-ubiquitous ; May have become obsolete, due to helm.
 ;;;     ido-vertical-mode ; May have become obsolete, due to helm.
      jabber
+     lispy
      lua-mode
      magit
+     ;; monky
      multiple-cursors
      names
      org
@@ -77,12 +81,15 @@ re-downloaded in order to locate PACKAGE."
      shell-command
      slime
      smex
-     undo-tree)))
+     undo-tree
+     use-package)))
 
-(condition-case nil
-    (init--install-packages)
-  (error
-   (package-refresh-contents)
-   (init--install-packages)))
+(defun install-my-packages ()
+  (interactive)
+  (condition-case nil
+      (init--install-packages)
+    (error
+     (package-refresh-contents)
+     (init--install-packages))))
 
 (provide 'setup-package)

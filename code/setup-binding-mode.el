@@ -2,9 +2,18 @@
 
 (defvar *schweers-bindings* (make-sparse-keymap))
 
+(defun do-backspace (&optional _argument)
+  "This command is a dummy, to perform the command which is associated with DEL
+(i.e. backspace).  This is a workaround to make paredit work nicely with my own
+  minor mode."
+  (interactive "P")
+  (call-interactively (lookup-key paredit-mode-map (kbd "DEL"))))
+
+;(call-interactively (lookup-key global-map (kbd "DEL"))
 (define-key *schweers-bindings* (kbd "C-w") 'backward-kill-word)
 (define-key *schweers-bindings* (kbd "C-c C-w") 'kill-region)
-(define-key *schweers-bindings* (kbd "C-h") 'delete-backward-char)
+(define-key *schweers-bindings* (kbd "C-h") 'lispy-delete-backward)
+;; (define-key *schweers-bindings* (kbd "C-h") )
 (define-key *schweers-bindings* (kbd "<f1>") 'help-command)
 (define-key *schweers-bindings*
   (kbd "M-t")
@@ -149,6 +158,7 @@
     ("s" enlarge-window-horizontally "wider")
     ("-" shrink-window-if-larger-than-buffer "short (aggressive)")
     ("+" balance-windows "balance")
+    ("t" toggle-frame-split "frame split")
     ("q" nil "quit")))
 
 (define-key *schweers-bindings*
@@ -163,11 +173,13 @@
     ("Q" toggle-debug-on-quit "debug on quit")
     ("r" dired-toggle-read-only "dired: read-only")
     ("w" whitespace-mode "whitespace mode")
+    ("l" org-toggle-link-display "Org: toggle link display")
     ("q" nil "quit")))
 
 (define-key *schweers-bindings* (kbd "M-o") 'occur)
 (define-key *schweers-bindings* (kbd "C-x C-b") 'ibuffer-other-window)
 (define-key *schweers-bindings* (kbd "M-j") 'eval-print-last-sexp)
+(define-key *schweers-bindings* (kbd "C-x C-SPC") 'show-marks)
 
 (define-minor-mode schweers-bindings-mode
   "This minor mode binds my own keybindings."
