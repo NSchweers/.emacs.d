@@ -7,7 +7,8 @@
   (setq magit-repo-dirs (list (s-join "/" (list (getenv "HOME") "code"))
                               user-emacs-directory))
   (setq magit-repo-dirs (list (getenv "HOME")))
-  (setq magit-last-seen-setup-instructions "1.4.0"))
+  (setq magit-last-seen-setup-instructions "1.4.0")
+  :demand)
 
 ;; Bind C-c g to magit-status
 ;; (global-set-key (kbd "C-c g") 'magit-status)

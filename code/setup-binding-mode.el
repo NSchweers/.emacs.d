@@ -2,17 +2,17 @@
 
 (defvar *schweers-bindings* (make-sparse-keymap))
 
-(defun do-backspace (&optional _argument)
-  "This command is a dummy, to perform the command which is associated with DEL
-(i.e. backspace).  This is a workaround to make paredit work nicely with my own
-  minor mode."
-  (interactive "P")
-  (call-interactively (lookup-key paredit-mode-map (kbd "DEL"))))
+;; (defun do-backspace (&optional _argument)
+;;   "This command is a dummy, to perform the command which is associated with DEL
+;; (i.e. backspace).  This is a workaround to make paredit work nicely with my own
+;;   minor mode."
+;;   (interactive "P")
+;;   (call-interactively (lookup-key paredit-mode-map (kbd "DEL"))))
 
 ;(call-interactively (lookup-key global-map (kbd "DEL"))
 (define-key *schweers-bindings* (kbd "C-w") 'backward-kill-word)
 (define-key *schweers-bindings* (kbd "C-c C-w") 'kill-region)
-(define-key *schweers-bindings* (kbd "C-h") 'lispy-delete-backward)
+(define-key *schweers-bindings* (kbd "C-h") 'backward-delete-char)
 ;; (define-key *schweers-bindings* (kbd "C-h") )
 (define-key *schweers-bindings* (kbd "<f1>") 'help-command)
 (define-key *schweers-bindings*

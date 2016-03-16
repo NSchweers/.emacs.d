@@ -173,7 +173,8 @@
         (-lambda ((key b-or-n hint))
           `(,key (lambda ()
                    (interactive)
-                   (switch-to-buffer ,b-or-n)) ,hint))
+                   (switch-to-buffer ,b-or-n))
+                 ,hint))
         heads)
        '(("q" nil "quit" :color blue))))))
 
