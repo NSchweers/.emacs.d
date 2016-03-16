@@ -13,8 +13,8 @@
 ;; Add our dir for code to the load-path, so code from there can be required.  
 (add-to-list 'load-path (expand-file-name "code" user-emacs-directory))
 (add-to-list 'load-path (expand-file-name "site-lisp" user-emacs-directory))
-(dolist (d '("site-lisp/mc16basm" "site-lisp/mc16bemu"))
-  (add-to-list 'load-path (expand-file-name d user-emacs-directory)))
+;; (dolist (d '("site-lisp/mc16basm" "site-lisp/mc16bemu"))
+;;   (add-to-list 'load-path (expand-file-name d user-emacs-directory)))
 
 (require 'cl-lib)
 ;(require 'use-package)
@@ -24,25 +24,8 @@
 ;; (add-to-list 'load-path (expand-file-name "site-lisp/mc16bemu"
 ;;                                           user-emacs-directory))
 
-(setq custom-file (expand-file-name "custom.el" user-emacs-directory))
-(load custom-file)
-
-;; (defmacro load-lisp-from-path (&rest files)
-;;   "Load all files in FILES with demoted errors."
-;;   `(dolist (f ',files)
-;;      (with-demoted-errors (load (if (symbolp f) (symbol-name f) f)))))
-
-
-;; Write backup files to a sepatate directory.
-(setq backup-directory-alist
-      `(("." . ,(expand-file-name "backups" user-emacs-directory))))
-;; Make backups of files, even when the're in version control.
-(setq vc-make-backup-files t)
-
-(setq-default save-place t)
-(setq save-place-file (expand-file-name ".places" user-emacs-directory))
-
 (defmacro load-lisp-from-path (&rest files)
+  "Load files (strings or symbols) and execute forms (everything else)."
   (declare (indent 0))
   (let ((code '(progn)))
     (dolist (f files (reverse code))
@@ -56,22 +39,23 @@
 
 (load-lisp-from-path
   appearance
+  sane-defaults
   setup-package
-  (require 'use-package)
+  (install-my-packages)
+  ;; (require 'use-package)
   (eval-after-load "dash" '(dash-enable-font-lock))
   (require 'dash)
   (require 'dash-functional)
-  (require 'hydra)
+  setup-hydra
   misc
   saveplace
-  sane-defaults
   ;; setup-evil
   setup-guide-keys
   ;; setup-paredit
   setup-lispy
   setup-autocomplete
   setup-magit
-  setup-monky
+  ;; setup-monky
   setup-keybindings
   setup-elpy
   setup-ace-window
@@ -87,16 +71,16 @@
   setup-browse-kill-ring
   setup-slime
   setup-expand-region
-;;  setup-names
+  ;;  setup-names
   setup-eldoc
   setup-jabber-otr
   setup-helm
   setup-ace-jump-mode
   setup-clhs
   setup-gud
-  ;;  setup-emms
   setup-dired
   setup-forth
+  setup-undo-tree
   setup-binding-mode)
 
 (require 'server)

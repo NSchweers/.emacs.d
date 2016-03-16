@@ -24,6 +24,9 @@
  '(jabber-vcard-avatars-retrieve nil)
  '(mew-rc-file "~/.emacs.d/mew")
  '(openwith-associations nil)
+ '(org-export-backends
+   (quote
+    (ascii html icalendar latex beamer texinfo odt md man)))
  '(org-latex-default-packages-alist
    (quote
     (("AUTO" "inputenc" t)
@@ -42,8 +45,7 @@
      ("" "amssymb" t)
      ("hidelinks" "hyperref" nil)
      "\\tolerance=1000")))
- '(org-export-backends
-   '(ascii html icalendar latex beamer texinfo odt md man))
+ '(package-selected-packages (quote (s dash-functional hydra use-package dash)))
  '(rcirc-default-nick "schweers")
  '(rcirc-default-user-name "schweers")
  '(rcirc-fill-column (quote frame-width))

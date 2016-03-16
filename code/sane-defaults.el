@@ -1,6 +1,21 @@
 ;; -*- lexical-binding: t -*-
+
+;; Put the customization file in a place where it belongs
+(setq custom-file (expand-file-name "custom.el" user-emacs-directory))
+(load custom-file)
+
+;; Write backup files to a sepatate directory.
+(setq backup-directory-alist
+      `(("." . ,(expand-file-name "backups" user-emacs-directory))))
+;; Make backups of files, even when the're in version control.
+(setq vc-make-backup-files t)
+
+(setq-default save-place t)
+(setq save-place-file (expand-file-name ".places" user-emacs-directory))
+
 ;; Allow pasting selection outside of Emacs
-(setq x-select-enable-clipboard t)
+;; (setq x-select-enable-clipboard t)
+;; (setf select-enable-clipboard t)
 
 ;; Fundamental Mode has to go in favor of Org Mode!
 ;(set-default 'major-mode 'org-mode)
@@ -82,15 +97,12 @@
 
 ;; org-mode: Don't ruin S-arrow to switch windows please (use M-+ and M--
 ;; instead to toggle)
-(setq org-replace-disputed-keys nil)
-
-;; Fontify org-mode code blocks
-(setq org-src-fontify-natively t)
+;; (setq org-replace-disputed-keys nil)
 
 ;; Represent undo-history as an actual tree (visualize with C-x u)
-(with-demoted-errors (setq undo-tree-mode-lighter "")
-                     (require 'undo-tree)
-                     (global-undo-tree-mode 1))
+;; (with-demoted-errors (setq undo-tree-mode-lighter "")
+;;                      (require 'undo-tree)
+;;                      (global-undo-tree-mode 1))
 
 ;; Sentences do not need double spaces to end. Period.
 ; (set-default 'sentence-end-double-space nil)
@@ -163,7 +175,8 @@
 ;;   (lambda (m) (define-key m (kbd "C-h") 'delete-backward-char)))
 
 ;; Set lexical-binding in the *scratch* buffer to t
-(with-current-buffer (get-buffer "*scratch*")
-  (setq lexical-binding t))
+(add-hook 'after-init-hook
+          (lambda () (with-current-buffer (get-buffer "*scratch*")
+                       (setq lexical-binding t))))
 
 (provide 'sane-defaults)
