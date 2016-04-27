@@ -3,13 +3,11 @@
 (use-package slime
   :ensure ac-slime
   :init
+  (require 'slime-autoloads)
   (cond ((eq system-type 'windows-nt)
          (setq inferior-lisp-program "sbcl"))
         ((eq system-type 'gnu/linux)
          (setq inferior-lisp-program "sbcl")))
-  :config
-  (require 'slime-autoloads)
-
   (add-to-list 'slime-contribs 'slime-fancy)
 
   (require 'ac-slime)
