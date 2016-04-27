@@ -202,3 +202,15 @@
    | Better than   | 93.21% |
 ** Simply Password
    o1FaTwJXgr
+** Lisp for the Web (ebook, no payment required
+
+https://leanpub.com/lispweb
+   
+   <2016-04-01 Fri>
+** GNU mailutils with TLS:
+
+add WITH_GNUTLS=yes as environment variable to ./configure, together with
+MU_DEFAULT_SCHEME=mh. 
+   
+   <2016-04-25 Mon>
+   [[file:~/code/src/mailutils-2.2/configure::#%20Check%20whether%20--with-gnutls%20was%20given.][file:~/code/src/mailutils-2.2/configure::# Check whether --with-gnutls was given.]]

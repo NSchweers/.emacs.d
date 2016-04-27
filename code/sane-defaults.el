@@ -174,9 +174,15 @@
 ;;              minibuffer-local-filename-must-match-map)
 ;;   (lambda (m) (define-key m (kbd "C-h") 'delete-backward-char)))
 
-;; Set lexical-binding in the *scratch* buffer to t
+(setf compilation-scroll-output t)
+
+;; Set lexical-binding in the *scratch* buffer to t -- for some reason this
+;; doesn’t work :(
 (add-hook 'after-init-hook
           (lambda () (with-current-buffer (get-buffer "*scratch*")
                        (setq lexical-binding t))))
+
+(define-key minibuffer-local-map (kbd "C-h") 'backward-delete-char)
+
 
 (provide 'sane-defaults)
