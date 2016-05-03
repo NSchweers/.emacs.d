@@ -45,7 +45,7 @@
      ("" "amssymb" t)
      ("hidelinks" "hyperref" nil)
      "\\tolerance=1000")))
- '(package-selected-packages (quote (s dash-functional hydra use-package dash)))
+ '(package-selected-packages (quote (diminish s dash-functional hydra use-package dash)))
  '(rcirc-default-nick "schweers")
  '(rcirc-default-user-name "schweers")
  '(rcirc-fill-column (quote frame-width))
@@ -58,8 +58,8 @@
       ("#neo" "#informatik-ag")
       nil nil))))
  '(send-mail-function (quote smtpmail-send-it))
- '(smtpmail-smtp-server "smtp.1und1.de")
- '(smtpmail-smtp-service 25))
+ '(smtpmail-smtp-server "smtp.1und1.de" t)
+ '(smtpmail-smtp-service 25 t))
 
 (custom-set-faces
  ;; custom-set-faces was added by Custom.

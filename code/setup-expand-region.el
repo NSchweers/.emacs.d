@@ -1,7 +1,10 @@
 ;; -*- lexical-binding: t -*-
 
-(use-package expand-region
-  :bind ("C-=" . er/expand-region))
+(pc expand-region
+  (:bind (("C-=" . er/expand-region))))
+
+;; (use-package expand-region
+;;   :bind ("C-=" . er/expand-region))
 
 ;; (global-set-key (kbd "C-=") 'er/expand-region)
 

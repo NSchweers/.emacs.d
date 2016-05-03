@@ -1,5 +1,8 @@
 ;; -*- lexical-binding: t -*-
-(use-package ace-link
-  :config (ace-link-setup-default))
+(pc ace-link
+  (:post-install (ace-link-setup-default)))
+
+;; (use-package ace-link
+;;   :config (ace-link-setup-default))
 
 (provide 'setup-ace-link)

@@ -1,14 +1,25 @@
 ;; -*- lexical-binding: t -*-
-(use-package magit
-  :init
-  (require 's)
-  :bind ("C-c g" . magit-status)
-  :config
-  (setq magit-repo-dirs (list (s-join "/" (list (getenv "HOME") "code"))
-                              user-emacs-directory))
-  (setq magit-repo-dirs (list (getenv "HOME")))
-  (setq magit-last-seen-setup-instructions "1.4.0")
-  :demand)
+
+(pc magit
+  (:pre-install
+   (require 's))
+  (:bind (("C-c g" . magit-status)))
+  (:post-install
+   (setf magit-repo-dirs (list (s-join "/" (list (getenv "HOME") "code"))
+                               user-emacs-directory)
+         magit-repo-dirs (list (getenv "HOME"))
+         magit-last-seen-setup-instructions "1.4.0")))
+
+;; (use-package magit
+;;   :init
+;;   (require 's)
+;;   :bind ("C-c g" . magit-status)
+;;   :config
+;;   (setq magit-repo-dirs (list (s-join "/" (list (getenv "HOME") "code"))
+;;                               user-emacs-directory))
+;;   (setq magit-repo-dirs (list (getenv "HOME")))
+;;   (setq magit-last-seen-setup-instructions "1.4.0")
+;;   :demand)
 
 ;; Bind C-c g to magit-status
 ;; (global-set-key (kbd "C-c g") 'magit-status)
