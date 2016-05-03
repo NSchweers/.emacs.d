@@ -1,6 +1,7 @@
 ;; -*- lexical-binding: t -*-
 
 (require 'seq)
+(require 'subr-x)
 
 ;; (defun pc//get-package-desc (&rest pkgs)
 ;;   "Returns a non-nil if at least one of the packages given in PKGS exists.
@@ -15,10 +16,11 @@
 ;;     nil))
 
 (defmacro pc (pkg &rest clauses)
+  (declare (indent 1))
   (let ((pkg-desc (make-symbol "pkg-desc"))
         (get-package-desc (make-symbol "get-package-desc")))
     `(progn
-       (flet
+       (cl-flet
            ((,get-package-desc
              (&rest pkgs)
              "Returns a non-nil if at least one of the packages given in PKGS exists.
@@ -38,10 +40,16 @@ descriptor for the first matching package. "
                  (cdr pre-inst))
            (unless (package-installed-p ',pkg)
              (package-install ',pkg ,(cdr (assoc :dont-select clauses))))
+           ,@(let ((req-form (assoc :require clauses)))
+               (if (not (null (cdr req-form)))
+                   (if (not (null (cddr req-form)))
+                       (error "too many forms in :require clause.")
+                     `(,(cadr req-form)))
+                 `((require ',pkg))))
            ,@(if-let ((post-inst (assoc :post-install clauses)))
                  (cdr post-inst))
            ,@(if-let ((bind (assoc :bind clauses)))
                  (cl-loop for c in (cadr bind) collect
-                          `(global-set-key (kbd ,(car c)) ,(cdr c)))))))))
+                          `(global-set-key (kbd ,(car c)) ',(cdr c)))))))))
 
 (provide 'pc)

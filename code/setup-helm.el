@@ -46,18 +46,17 @@
 ;;           (cl-loop for c in (cadr bind) collect
 ;;                    `(global-set-key (kbd ,(car c)) ',(cdr c))))))
 
-(require 'pc)
-
 (pc helm
     (:post-install
      (require 'helm-config)
      (setq helm-man-or-woman-function 'woman)
      (setq helm-man-or-woman-function 'Man-getpage-in-background)
      (helm-mode 1)
-     (provide 'setup-helm))
+     (provide 'setup-helm)
+     (diminish 'helm-mode))
     (:bind
-     (("M-x" . 'helm-M-x)
-      ("C-M-y" . 'helm-show-kill-ring)
-      ("C-x C-f" . 'helm-find-files))))
+     (("M-x" . helm-M-x)
+      ("C-M-y" . helm-show-kill-ring)
+      ("C-x C-f" . helm-find-files))))
 
 (provide 'setup-helm)

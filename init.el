@@ -1,7 +1,14 @@
 ;; -*- lexical-binding: t -*-
 
+
+;; Added by Package.el.  This must come before configurations of
+;; installed packages.  Don't delete this line.  If you don't want it,
+;; just comment it out by adding a semicolon to the start of the line.
+;; You may delete these explanatory comments.
+(package-initialize)
+
 (setq inhibit-startup-message t)
-(setq user-init-file (buffer-file-name))
+;; (setq user-init-file (buffer-file-name))
 
 ;; For Emacs 24.4 to prevent loading outdated compiled files
 (setq load-prefer-newer t)
@@ -42,11 +49,10 @@
   appearance
   sane-defaults
   setup-package
-  (install-my-packages)
+  ;; (install-my-packages)
   ;; (require 'use-package)
-  (eval-after-load "dash" '(dash-enable-font-lock))
-  (require 'dash)
-  (require 'dash-functional)
+  (require 'pc)
+  setup-dash
   setup-hydra
   misc
   saveplace
@@ -68,6 +74,7 @@
   setup-ace-link
   setup-browse-kill-ring
   setup-slime
+  setup-geiser
   setup-expand-region
   setup-eldoc
   setup-jabber-otr
@@ -78,6 +85,7 @@
   setup-dired
   setup-forth
   setup-undo-tree
+  setup-diminish
   setup-binding-mode)
 
 (require 'server)

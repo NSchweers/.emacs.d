@@ -19,7 +19,7 @@
   (package-install 'dash))
 (require 'dash)
 
-(setf use-package-always-ensure t)
+;; (setf use-package-always-ensure t)
 
 (defun packages-install (packages)
   (--each packages
