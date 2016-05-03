@@ -29,7 +29,8 @@
   (declare (indent 0))
   (let ((code '(progn)))
     (dolist (f files (reverse code))
-      (cond ((symbolp f) (push `(with-demoted-errors (load ,(symbol-name f))) code))
+      (cond ((symbolp f)
+             (push `(with-demoted-errors (load ,(symbol-name f))) code))
             ((stringp f) (push `(with-demoted-errors (load ,f)) code))
             ((consp f) (push `(with-demoted-errors ,f) code))
             (t
