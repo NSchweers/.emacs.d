@@ -19,32 +19,34 @@
 
 ;; (provide 'setup-helm)
 
-(require 'seq)
+;; (require 'seq)
 
-(defun pc//package-exists-p (&rest pkgs)
-  "Returns t if at least one of the packages given in PKGS exists.
+;; (defun pc//package-exists-p (&rest pkgs)
+;;   "Returns t if at least one of the packages given in PKGS exists.
 
-Returns nil otherwise."
-  (cl-block 'return
-    (package--mapc
-     (lambda (p)
-       (if (memq (package-desc-name p) pkgs)
-           (cl-return-from 'return t))))
-    nil))
+;; Returns nil otherwise."
+;;   (cl-block 'return
+;;     (package--mapc
+;;      (lambda (p)
+;;        (if (memq (package-desc-name p) pkgs)
+;;            (cl-return-from 'return t))))
+;;     nil))
 
-(defmacro pc (pkg &rest clauses)
-  `(progn
-     (when (not (pc//package-exists-p ',pkg))
-       (error "Package does not exist: %s" ',pkg))
-     ,@(if-let ((pre-inst (assoc :pre-install clauses)))
-          (cdr pre-inst))
-     (unless (package-installed-p ',pkg)
-       (package-install ',pkg))
-     ,@(if-let ((post-inst (assoc :post-install clauses)))
-          (cdr post-inst))
-     ,@(if-let ((bind (assoc :bind clauses)))
-          (cl-loop for c in (cadr bind) collect
-                   `(global-set-key (kbd ,(car c)) ',(cdr c))))))
+;; (defmacro pc (pkg &rest clauses)
+;;   `(progn
+;;      (when (not (pc//package-exists-p ',pkg))
+;;        (error "Package does not exist: %s" ',pkg))
+;;      ,@(if-let ((pre-inst (assoc :pre-install clauses)))
+;;           (cdr pre-inst))
+;;      (unless (package-installed-p ',pkg)
+;;        (package-install ',pkg))
+;;      ,@(if-let ((post-inst (assoc :post-install clauses)))
+;;           (cdr post-inst))
+;;      ,@(if-let ((bind (assoc :bind clauses)))
+;;           (cl-loop for c in (cadr bind) collect
+;;                    `(global-set-key (kbd ,(car c)) ',(cdr c))))))
+
+(require 'pc)
 
 (pc helm
     (:post-install
@@ -54,6 +56,8 @@ Returns nil otherwise."
      (helm-mode 1)
      (provide 'setup-helm))
     (:bind
-     (("M-x" . helm-M-x)
-      ("C-M-y" . helm-show-kill-ring)
-      ("C-x C-f" . helm-find-files))))
+     (("M-x" . 'helm-M-x)
+      ("C-M-y" . 'helm-show-kill-ring)
+      ("C-x C-f" . 'helm-find-files))))
+
+(provide 'setup-helm)
