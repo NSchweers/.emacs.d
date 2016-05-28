@@ -12,9 +12,20 @@
 ;(call-interactively (lookup-key global-map (kbd "DEL"))
 (define-key *schweers-bindings* (kbd "C-w") 'backward-kill-word)
 (define-key *schweers-bindings* (kbd "C-c C-w") 'kill-region)
-(define-key *schweers-bindings* (kbd "C-h") 'backward-delete-char)
+;; (define-key *schweers-bindings* (kbd "C-h") 'backward-delete-char)
 ;; (define-key *schweers-bindings* (kbd "C-h") )
+
+(defun use-arrows! ()
+  (interactive)
+  (error "Use the arrow keys, that’s what you have a proper layout for!"))
+
 (define-key *schweers-bindings* (kbd "<f1>") 'help-command)
+
+;; Use the arrow keys on the keyboard, damnit! That’s what they’re there for!
+(define-key *schweers-bindings* (kbd "C-f") #'use-arrows!)
+(define-key *schweers-bindings* (kbd "C-b") #'use-arrows!)
+(define-key *schweers-bindings* (kbd "C-n") #'use-arrows!)
+(define-key *schweers-bindings* (kbd "C-p") #'use-arrows!)
 (define-key *schweers-bindings*
   (kbd "M-t")
   (let ((hydra-transpose/custom-prefix-arg nil))

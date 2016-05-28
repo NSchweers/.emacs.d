@@ -45,7 +45,9 @@
      ("" "amssymb" t)
      ("hidelinks" "hyperref" nil)
      "\\tolerance=1000")))
- '(package-selected-packages (quote (diminish s dash-functional hydra use-package dash)))
+ '(package-selected-packages
+   (quote
+    (geiser diminish s dash-functional hydra use-package dash)))
  '(rcirc-default-nick "schweers")
  '(rcirc-default-user-name "schweers")
  '(rcirc-fill-column (quote frame-width))
