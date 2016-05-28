@@ -6,7 +6,7 @@
 ;; ;; Note on rebinding C-h: One merely needs to press any "help" key (e.g. F1).
 ;; (global-set-key (kbd "C-h") 'delete-backward-char)
 ;; (global-set-key (kbd "<f1>") 'help-command)
-(define-key isearch-mode-map (kbd "C-h") 'isearch-del-char)
+;; (define-key isearch-mode-map (kbd "C-h") 'isearch-del-char)
 
 ;; (with-demoted-errors (require 'smex)
 ;;                      (global-set-key (kbd "M-x") 'smex)
