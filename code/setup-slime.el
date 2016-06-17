@@ -15,7 +15,8 @@
    (require 'ac-slime)
    (add-hook 'slime-mode-hook 'set-up-slime-ac)
    (add-hook 'slime-repl-mode-hook 'set-up-slime-ac)
-   (add-to-list 'ac-modes 'slime-repl-mode)))
+   (add-to-list 'ac-modes 'slime-repl-mode)
+   (slime-setup '(slime-repl))))
 
 ;; (use-package slime
 ;;   :ensure ac-slime

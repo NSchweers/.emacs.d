@@ -191,6 +191,7 @@
 (define-key *schweers-bindings* (kbd "C-x C-b") 'ibuffer-other-window)
 (define-key *schweers-bindings* (kbd "M-j") 'eval-print-last-sexp)
 (define-key *schweers-bindings* (kbd "C-x C-SPC") 'show-marks)
+(define-key *schweers-bindings* (kbd "C-M-l") 'misc/mark-line)
 
 (define-minor-mode schweers-bindings-mode
   "This minor mode binds my own keybindings."

@@ -13,8 +13,10 @@
 (global-font-lock-mode t)
 
 ;; Have the scrollbar on the right.  
-(when window-system
-  (set-scroll-bar-mode 'right))
+;; (when window-system
+;;   (set-scroll-bar-mode 'right))
+
+(with-demoted-errors (set-scroll-bar-mode 'right))
 
 ;; Always show line and column numbers.  
 (column-number-mode 1)

@@ -373,8 +373,14 @@ Got this from here: http://www.emacswiki.org/emacs/ToggleWindowSplit"
     (if split-vertically-p
         (split-window-horizontally)
       (split-window-vertically)) ; gives us a split with the other window twice
-    (switch-to-buffer nil))) ; restore the original window in this part of the
-                                        ; frame
+    (switch-to-buffer nil))) ; frame
+                                        ; restore the original window in this part of the
+
+(defun misc/mark-line ()
+  (interactive)
+  (beginning-of-line)
+  (push-mark (point) t t)
+  (end-of-line))
 
 (defun tea-timer (duration &optional description)
   (interactive "sDuration: \nsEnter a description: ")
@@ -398,5 +404,65 @@ Got this from here: http://www.emacswiki.org/emacs/ToggleWindowSplit"
 
 ;; (start-process "teetimer-sound-aplay" " teetimer-sound-aplay"
 ;;                "aplay" "/home/schweers/downloads/alarm-clock.wav")
+
+;; (defun rip/read-input-entry ()
+;;   (let* ((b (point))
+;;          (e (progn (end-of-line)
+;;                    (point)))
+;;          (s (buffer-substring b e)))
+;;     (-if-let (m (string-match-p
+;;                  (s-concat "\\(\\([[:digit:]]+\\):\\)?"
+;;                            "\\([[:digit:]]\\{1,2\\}\\):"
+;;                            "\\([[:digit:]]\\{1,2\\}\\)$")
+;;                  s))
+;;         (prog1 (list
+;;                 :from (s-trim (buffer-substring-no-properties (+ b m) e))
+;;                 :name (s-trim (buffer-substring-no-properties b (+ b m))))
+;;           (beginning-of-line)
+;;           (forward-line 1)))))
+
+;; (defun rip/all-entries (buffer-or-name)
+;;   (with-current-buffer (get-buffer buffer-or-name)
+;;     (save-mark-and-excursion
+;;      (loop for line = (rip/read-input-entry)
+;;            while line collect line))))
+
+;; (rip/all-entries "rip-input.org")
+
+;; (defun rip/all-entries-with-times (buffer-or-name)
+;;   (let ((lines (rip/all-entries buffer-or-name)))
+;;     (seq-reduce
+;;      (lambda (acc l)
+;;        (cons l (cons (plist-put (car acc) :to (plist-get l :from)) (cdr acc))))
+;;      (cdr lines) (list (car lines)))))
+
+;; (defvar *rip/cmd-name* "ffmpeg")
+;; (defvar *rip/buf-name* "ffmpeg")
+;; (defvar *rip/proc-name* *rip/cmd-name*)
+;; (defvar *rip/current-input-file*)
+
+;; (setf *rip/current-input-file* "/home/schweers/dwhelper/The Best of Schubert.mp4")
+
+;; (defun rip/process-entry (e trackname)
+;;   (apply #'start-process *rip/proc-name* *rip/buf-name* *rip/cmd-name*
+;;          `("-i" ,*rip/current-input-file* "-vn" "-acodec" "libvorbis" "-aq"
+;;            "5" "-ss" ,(plist-get e :from)
+;;            ,@(when (plist-get e :to)
+;;                `("-to"
+;;                  ,(plist-get e :to)))
+;;            ,trackname)))
+
+;; (defvar *proc*
+;;   (rip/procces-entry
+;;    (second (reverse (rip/all-entries-with-times "rip-input.org")))))
+
+;; (defun rip/rip-file (in-file target-dir)
+;;   (seq-map
+;;    (let ((i 0))
+;;      (lambda (e)
+;;        (incf i)
+;;        (rip/process-entry e (format "%s/track%s.ogg" target-dir i))))
+;;    (let ((*rip/current-input-file* in-file))
+;;      (reverse (rip/all-entries-with-times "rip-input.org")))))
 
 (provide 'misc)
