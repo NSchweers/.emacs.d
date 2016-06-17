@@ -47,7 +47,7 @@
      "\\tolerance=1000")))
  '(package-selected-packages
    (quote
-    (geiser diminish s dash-functional hydra use-package dash)))
+    (w3m json-mode f geiser diminish s dash-functional hydra use-package dash)))
  '(rcirc-default-nick "schweers")
  '(rcirc-default-user-name "schweers")
  '(rcirc-fill-column (quote frame-width))

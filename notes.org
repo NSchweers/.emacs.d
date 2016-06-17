@@ -214,3 +214,35 @@ MU_DEFAULT_SCHEME=mh.
    
    <2016-04-25 Mon>
    [[file:~/code/src/mailutils-2.2/configure::#%20Check%20whether%20--with-gnutls%20was%20given.][file:~/code/src/mailutils-2.2/configure::# Check whether --with-gnutls was given.]]
+** Features the next LISP needs
+
+   - Delimited and composable continuations (as in racket?)
+   - Conditions and Restarts
+   - CLOS + MOP
+   - Dynamic/Special variables
+   - Packages/Namespaces/whatever
+   - Arbitrary objects as functions (maps should be functions of their keys)
+     - This may necessitate the language to be a LISP-1
+   - Both pattern and procedural macros
+   - Pattern Matching (or at least destructuring) at all levels
+   - Lexical closures (like, duh!)
+   - Multiple values
+   - short names!
+   - Read macros
+   - syntax for at least the following:
+     - lists
+     - symbols
+     - numbers
+     - hashtables
+     - strings
+   - bignums (including auto conversion and cond. raising)
+   - fractions
+   - algebraic data types
+   - functional types (hashes etc)
+   - Erlang style Actors?
+   - parens, bracket, etc should not be equivalent
+   - Good FFI
+   - Save and load state to persistent storage?
+   
+   <2016-06-15 Wed>
+   [[file:~/.emacs.d/notes.org::*GNU%20mailutils%20with%20TLS:][GNU mailutils with TLS:]]

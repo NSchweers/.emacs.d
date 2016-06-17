@@ -20,25 +20,28 @@
     (insert "\n")))
 
 (pc auctex
+  (:require nil)
   (:post-install
-   
-   (add-hook 'LaTeX-mode-hook (lambda ()
-                                (TeX-PDF-mode)
-                                ;; (push '(pdf . pdfsync)
-                                ;;       TeX-source-correlate-method)
-                                (define-key LaTeX-mode-map
-                                  [remap backward-delete-char]
-                                  'delete-backward-char)
-                                (define-key LaTeX-mode-map (kbd "M-\"")
-                                  #'schweers/org-TeX-string)
-                                (TeX-source-correlate-mode 1)
-                                (flyspell-mode 1)
-                                (setf (cdr (assoc "subsection"
-                                                  LaTeX-section-label))
-                                      "subsec:"
-                                      (cdr (assoc "subsubsection"
-                                                  LaTeX-section-label))
-                                      "subsubsec:")))))
+   (setf LaTeX-command "latex")
+   (add-hook
+    'LaTeX-mode-hook
+    (lambda ()
+      (TeX-PDF-mode)
+      ;; (push '(pdf . pdfsync)
+      ;;       TeX-source-correlate-method)
+      (define-key LaTeX-mode-map
+        [remap backward-delete-char]
+        'delete-backward-char)
+      (define-key LaTeX-mode-map (kbd "M-\"")
+        #'schweers/org-TeX-string)
+      (TeX-source-correlate-mode 1)
+      (flyspell-mode 1)
+      (setf (cdr (assoc "subsection"
+                        LaTeX-section-label))
+            "subsec:"
+            (cdr (assoc "subsubsection"
+                        LaTeX-section-label))
+            "subsubsec:")))))
 
 ;; (use-package tex-site
 ;;   :ensure auctex

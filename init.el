@@ -48,6 +48,8 @@
   appearance
   sane-defaults
   setup-package
+  (pc f)
+  (pc json-mode)
   ;; (install-my-packages)
   ;; (require 'use-package)
   (require 'pc)

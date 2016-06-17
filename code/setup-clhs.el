@@ -26,6 +26,7 @@ other window."
 
            (define-key help-map (kbd "h")
              'schweers/browse-hyperspec-in-w3m-other-window))
-  (warn "CLHS is not installed!"))
+  (warn "CLHS is not installed! (use (ql:quickload \"clhs\") to install and get
+             further instructions."))
 
 (provide 'setup-clhs)
