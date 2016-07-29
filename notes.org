@@ -200,6 +200,12 @@
    | Correct Words |     86 |
    | Wrong Words   |      0 |
    | Better than   | 93.21% |
+
+   | WPM           |    101 |
+   | Keystrokes    |    503 |
+   | Correct Words |     93 |
+   | Wrong Words   |      0 |
+   | Better than   | 94.49% |
 ** Simply Password
    o1FaTwJXgr
 ** Lisp for the Web (ebook, no payment required
@@ -243,6 +249,7 @@ MU_DEFAULT_SCHEME=mh.
    - parens, bracket, etc should not be equivalent
    - Good FFI
    - Save and load state to persistent storage?
+   - Type and other compiler hints?
    
    <2016-06-15 Wed>
    [[file:~/.emacs.d/notes.org::*GNU%20mailutils%20with%20TLS:][GNU mailutils with TLS:]]

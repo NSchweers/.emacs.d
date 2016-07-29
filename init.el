@@ -87,6 +87,7 @@
   setup-forth
   setup-undo-tree
   setup-diminish
+  setup-clojure
   setup-binding-mode)
 
 (require 'server)
