@@ -5,35 +5,35 @@
    (require 'setup-bbdb))
   (:post-install
    (setq gnus-home-directory (expand-file-name "code" user-emacs-directory))
-   (setq user-mail-address "NSchweers@online.de")
+   (setq user-mail-address "NSchweers@mailbox.org")
    (setq user-full-name "Nathanael Schweers")
 
-                                        ;(setq nntp-send-authinfo (expand-file-name ".authfile.gpg" (getenv "HOME")))
+   ;; (setq nntp-send-authinfo (expand-file-name ".authfile.gpg" (getenv "HOME")))
 
    (setq gnus-select-method
-         '(nnimap "1&1"
-                  (nnimap-address "imap.1und1.de")
-                  (nnimap-authenticator login)
-                  (nnimap-server-port 993)
-                  (nnimap-stream ssl))
-         gnus-secondary-select-methods
-         '((nnimap "mailbox.org"
+         '(nnimap "mailbox.org"
                    (nnimap-address "imap.mailbox.org")
                    (nnimap-authenticator login)
                    (nnimap-server-port 143)
-                   (nnimap-stream starttls))))
+                   (nnimap-stream starttls))
+         gnus-secondary-select-methods
+         '((nnimap "1&1"
+                  (nnimap-address "imap.1und1.de")
+                  (nnimap-authenticator login)
+                  (nnimap-server-port 993)
+                  (nnimap-stream ssl))))
 
    ;; (nnimap-authinfo-file
    ;;  (expand-file-name ".authinfo" (getenv "HOME")))
 
    (setq message-send-mail-function 'smtpmail-send-it
-         smtpmail-starttls-credentials '(("smtp.1und1.de" 587 nil nil))
-         smtpmail-auth-credentials '(("smtp.1und1.de" 587
-                                      "NSchweers@online.de" nil))
-         smtpmail-default-smtp-server "smtp.1und1.de"
-         smtpmail-smtp-server "smtp.1und1.de"
+         smtpmail-starttls-credentials '(("smtp.mailbox.org" 587 nil nil))
+         smtpmail-auth-credentials '(("smtp.mailbox.org" 587
+                                      "NSchweers@mailbox.org" nil))
+         smtpmail-default-smtp-server "smtp.mailbox.org"
+         smtpmail-smtp-server "smtp.mailbox.org"
          smtpmail-smtp-service 587
-                                        ;gnus-ignored-newsgroups "^to\.\\|^[0-9. ]+\\( \\|$\\)\\|^[\"]\"[#'()]"
+         ;; gnus-ignored-newsgroups "^to\.\\|^[0-9. ]+\\( \\|$\\)\\|^[\"]\"[#'()]"
          )
 
    (setq nnimap-inbox "INBOX")

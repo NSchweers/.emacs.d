@@ -217,8 +217,7 @@ If STAGE is non-nil, also stage the file with magit."
         (forward-line -3)
         (indent-for-tab-command)
         (when stage
-          (magit-stage-file (buffer-file-name))
-          (warn "Check whether staging occurred or not, it seems to be buggy!"))
+          (magit-stage-file (buffer-file-name)))
         (save-buffer)))))
 
 (defun misc/hurra ()
@@ -381,6 +380,44 @@ Got this from here: http://www.emacswiki.org/emacs/ToggleWindowSplit"
   (beginning-of-line)
   (push-mark (point) t t)
   (end-of-line))
+
+(defcustom tea-timer/alarm-clock-uri
+  "http://www.orangefreesounds.com/wp-content/uploads/Zip/Old-alarm-clock-ringing.zip"
+  "The command `tea-timer' will fetch the sound to play from this uri.")
+
+(defcustom tea-timer/fname-regexp
+  "\\(?:\\(?:mp3\\)\\|\\(?:mp4\\)\\|\\(?:ogg\\)\\|\\(?:wav\\)\\)\\)$"
+  "A regexp which matches audio files.
+
+The first matching file in an archive will be used as the sound of the alarm.")
+
+(defun tea-timer/fetch-file (uri)
+  "Fetch and possibly extract the file behind the uri.
+
+Returns a local uri.  This function also tries to guess which file to pick if
+pointed to a zip file containing more than one file."
+
+  (let ((fname
+         (f-join
+          "~/tmp"
+          (f-filename (url-filename
+                       (url-generic-parse-url tea-timer/alarm-clock-uri))))))
+    (let ((curl-proc
+           (start-process
+            "curl" " curl-buffer" "curl" "-o" fname tea-timer/alarm-clock-uri)))
+      (set-process-sentinel
+       curl-proc
+       (lambda (proc status)
+         (when (not (process-live-p proc))
+           (let ((unzip-proc
+                  (start-process
+                   "unzip" " unzip-buffer" "unzip" fname
+                   "-d" (f-dirname fname) fname)))
+             (set-process-sentinel
+              unzip-proc
+              (lambda (proc status)
+                (when (not process-live-p proc)
+                  (f-move (f-join (f-dirname fname) ()))))))))))))
 
 (defun tea-timer (duration &optional description)
   (interactive "sDuration: \nsEnter a description: ")

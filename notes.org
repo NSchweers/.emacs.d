@@ -253,3 +253,7 @@ MU_DEFAULT_SCHEME=mh.
    
    <2016-06-15 Wed>
    [[file:~/.emacs.d/notes.org::*GNU%20mailutils%20with%20TLS:][GNU mailutils with TLS:]]
+** Try out Emacs Hyperbole
+   
+   <2016-07-29 Fri>
+   [[help:hyperbole]]
