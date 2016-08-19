@@ -8,7 +8,7 @@
  '(auth-sources (quote ("~/.emacs.d/authinfo.gpg")))
  '(calendar-week-start-day 1)
  '(elmo-imap4-default-authenticate-type (quote clear))
- '(erc-autojoin-channels-alist (quote (("freenode.net" "#emacs" "#neo"))))
+ '(erc-autojoin-channels-alist (quote (("freenode.net" "#neo"))))
  '(erc-nick "schweers")
  '(erc-prompt-for-channel-key t)
  '(erc-timestamp-format-right " [%H:%M:%S]")
@@ -47,7 +47,7 @@
      "\\tolerance=1000")))
  '(package-selected-packages
    (quote
-    (clojure-mode w3m json-mode f geiser diminish s dash-functional hydra use-package dash)))
+    (cider racer cargo clojure-mode w3m json-mode f geiser diminish s dash-functional hydra use-package dash)))
  '(rcirc-default-nick "schweers")
  '(rcirc-default-user-name "schweers")
  '(rcirc-fill-column (quote frame-width))

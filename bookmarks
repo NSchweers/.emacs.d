@@ -4,9 +4,9 @@
 ;;; -*- End Of Bookmark File Format Version Stamp -*-
 (("org-capture-last-stored"
  (filename . "~/.emacs.d/notes.org")
- (front-context-string . "** GNU mailutils")
- (rear-context-string . "2016-04-01 Fri>\n")
- (position . 8569))
+ (front-context-string . "** Try out Emacs")
+ (rear-context-string . "ils with TLS:]]\n")
+ (position . 10122))
 (front-context-string . "** TODO Take a l")
 (rear-context-string . "[2015-01-31 Sa]\n")
 (position . 4778)
