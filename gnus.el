@@ -47,6 +47,8 @@
 
 (ad-activate 'mm-url-insert)
 
+(setf gnus-gcc-mark-as-read t)
+
 (add-hook 'message-mode-hook (lambda ()
                                (turn-on-orgtbl)
                                (define-key message-mode-map (kbd "C-c C-w")

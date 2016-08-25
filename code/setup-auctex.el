@@ -1,7 +1,5 @@
 ;; -*- lexical-binding: t -*-
 
-;;; Why the hell is it called tex-site?
-
 (defun schweers/LaTeX-put-lisp-block (caption label)
   (interactive "*MCaption: \nMLabel: ")
   (let ((create-par? (not (and (looking-at-p "$")
@@ -18,6 +16,23 @@
       (insert "\n"))
     (beginning-of-line (if create-par? -2 -3))
     (insert "\n")))
+
+(defun schweers/lispinline ()
+  "Insert a `lispinline' lstlisting at point."
+  (interactive)
+  (insert "\\begin{lstlisting}[style=lispinline]\n\n\\end{lstlisting}")
+  (forward-line -1))
+
+(defun schweers/lispcode (caption label)
+  "Insert a `lispcode' lstlisting at point."
+  (interactive "MCaption: \nMLabel: ")
+  (insert
+   (format
+    "\\begin{lstlisting}%s\n\n%s"
+    (format "[style=lispcode,label={%s},caption={%s},numbers=left]"
+            label caption)
+    "\\end{lstlisting}"))
+  (forward-line -1))
 
 (pc auctex
   (:require nil)
@@ -41,7 +56,10 @@
             "subsec:"
             (cdr (assoc "subsubsection"
                         LaTeX-section-label))
-            "subsubsec:")))))
+            "subsubsec:")
+      (outline-minor-mode 1)))))
+
+;;; Why the hell is it called tex-site?
 
 ;; (use-package tex-site
 ;;   :ensure auctex

@@ -88,6 +88,7 @@
   setup-undo-tree
   setup-diminish
   setup-clojure
+  setup-projectile
   setup-binding-mode)
 
 (require 'server)
