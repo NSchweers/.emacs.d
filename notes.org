@@ -257,3 +257,27 @@ MU_DEFAULT_SCHEME=mh.
    
    <2016-07-29 Fri>
    [[help:hyperbole]]
+** Kontodaten Sophie
+   | Datum | Wert                        |
+   |-------+-----------------------------|
+   | Name  | Sophie Lichtenstein         |
+   | IBAN  | DE94 6649 0000 0011 0524 01 |
+   | BIC   | GENODE61OG1                 |
+** Rename 
+   
+   <2016-09-08 Thu>
+   [[file:~/code/Masterthesis/thesis.tex::\fun{el-reader//getch}%20instead.%20As%20soon%20as%20\fun{getch}%20does%20not%20return%20a][file:~/code/Masterthesis/thesis.tex::\fun{el-reader//getch} instead. As soon as \fun{getch} does not return a]]
+** Type folding in GNU Guile
+   
+   <2016-09-09 Fri>
+   [[gnus:nnrss:wingolog#2@wingolog.nnrss][Email from nobody: type folding in guile]]
+** On high performance languages (and guile?)
+   
+   <2016-09-09 Fri>
+   [[gnus:nnrss:wingolog#3@wingolog.nnrss][Email from nobody: two paths, one peak: a view fr]]
+** Self hosting in guile
+   
+   <2016-09-09 Fri>
+   [[gnus:nnrss:wingolog#5@wingolog.nnrss][Email from nobody: the half strap: self-hosting a]]
+** The World at War documentary
+   Part 1: 27:00

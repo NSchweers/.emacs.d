@@ -7,7 +7,8 @@
 (show-paren-mode 1)
 
 ;; Use a smaller font
-(set-face-attribute 'default nil :height 80)
+(defvar schweers/default-font-height 80)
+(set-face-attribute 'default nil :height schweers/default-font-height)
 
 ;; Enable syntax highlighting for older Emacsen that have it off
 (global-font-lock-mode t)

@@ -45,6 +45,7 @@
               f))))))
 
 (load-lisp-from-path
+  setup-lisp-common
   appearance
   sane-defaults
   setup-package
@@ -89,6 +90,7 @@
   setup-diminish
   setup-clojure
   setup-projectile
+  setup-paren-face
   setup-binding-mode)
 
 (require 'server)

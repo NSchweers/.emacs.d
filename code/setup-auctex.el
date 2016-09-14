@@ -20,19 +20,35 @@
 (defun schweers/lispinline ()
   "Insert a `lispinline' lstlisting at point."
   (interactive)
-  (insert "\\begin{lstlisting}[style=lispinline]\n\n\\end{lstlisting}")
-  (forward-line -1))
+  (goto-char
+   (save-mark-and-excursion
+    (let ((beg (point)))
+      (insert "\\begin{lstlisting}[style=lispinline]\n\n\\end{lstlisting}")
+      (let ((end (point)))
+        (goto-char beg)
+        (fill-paragraph)
+        (goto-char end)
+        (forward-line -1)
+        (point))))))
 
 (defun schweers/lispcode (caption label)
   "Insert a `lispcode' lstlisting at point."
   (interactive "MCaption: \nMLabel: ")
-  (insert
-   (format
-    "\\begin{lstlisting}%s\n\n%s"
-    (format "[style=lispcode,label={%s},caption={%s},numbers=left]"
-            label caption)
-    "\\end{lstlisting}"))
-  (forward-line -1))
+  (goto-char
+   (save-mark-and-excursion
+    (let ((beg (point)))
+      (insert
+       (format
+        "\\begin{lstlisting}%s\n\n%s"
+        (format "[style=lispcode,label={%s},caption={%s},numbers=left]"
+                label caption)
+        "\\end{lstlisting}"))
+      (let ((end (point)))
+        (goto-char beg)
+        (fill-paragraph)
+        (goto-char end)
+        (forward-line -1)
+        (point))))))
 
 (pc auctex
   (:require nil)
