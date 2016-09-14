@@ -430,6 +430,59 @@ pointed to a zip file containing more than one file."
                   "/home/schweers/downloads/alarm-clock.wav")
                  (message "%s" description))))
 
+(defun schweers/adjust-font-height (fn arg)
+  "Calls FN with the current font height and ARG.  Sets height to result."
+  (set-face-attribute
+   'default nil :height
+   (funcall fn (face-attribute 'default :height) arg)))
+
+(defun schweers/get-adjustment (arg)
+  "Depending on ARG, return an int.
+
+The returned integer represents by how much the font height shall be adjusted.
+
+ARG is supposed to be in the form of a raw prefix argument.
+
+If ARG is - set to the default font size \(see ‘schweers/default-font-height’\).
+If ARG is an integer, return it as is.
+If ARG is a list containing one int, return its log base 4 as an integer
+\(i.e. how often C-u was pressed\) multiplied by 10.
+If ARG is nil return 10."
+  (cond ((null arg) 10)
+        ((and (listp arg)
+              (= (length arg) 1)
+              (integerp (car arg)))
+         (* 10 (floor (log (car arg) 4))))
+        ((and (symbolp arg) (eq arg '-))
+         schweers/default-font-height)
+        ((integerp arg) 10)))
+
+(defun schweers/increase-font (arg)
+  "Increase the font size by 10 points.
+If a prefix is given, increase by PREFIX points.
+If C-u is pressed repeatedly, the font size is increased by 10 times the number
+  of keystrokes."
+  (interactive "P\n")
+  (schweers/adjust-font-height
+   (if (and (symbolp arg) (eq arg '-))
+       (lambda (_cur new)
+         new)
+     #'+)
+   (schweers/get-adjustment arg)))
+
+(defun schweers/decrease-font (arg)
+  "Increase the font size by 10 points.
+If a prefix is given,decrease by PREFIX points.
+If C-u is pressed repeatedly, the font size is decreased by 10 times the number
+  of keystrokes."
+  (interactive "P\n")
+  (schweers/adjust-font-height
+   (if (and (symbolp arg) (eq arg '-))
+       (lambda (_cur new)
+         new)
+     #'-)
+   (schweers/get-adjustment arg)))
+
 ;; (defcustom )
 
 ;; (defun tee (name)

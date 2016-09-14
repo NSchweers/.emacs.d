@@ -5,10 +5,7 @@
           ("C-M-2" . lispy-arglist-inline)
           ("C-M-3" . lispy-right)))
   (:post-install
-   (dolist (m '(clojure-mode-hook cider-repl-mode-hook emacs-lisp-mode-hook
-                                  lisp-mode-hook slime-repl-mode-hook
-                                  scheme-mode geiser-mode-hook
-                                  geiser-repl-mode-hook))
+   (dolist (m schweers/*lisp-mode-hooks*)
      (add-hook m (lambda ()
                    (lispy-mode 1)
                    (subword-mode -1)

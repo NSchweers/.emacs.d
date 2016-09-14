@@ -1,5 +1,7 @@
 ;; -*- lexical-binding: t -*-
 
+(pc org)
+
 (defun setup-org/define-newline-keys ()
   (define-key org-mode-map (kbd "RET") 'org-return-indent)
   (define-key org-mode-map (kbd "C-j") 'org-return))
