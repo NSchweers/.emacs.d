@@ -127,6 +127,38 @@ active.  Extend the region to contain the new delimiters too."
 
 (define-key org-mode-map (kbd "M-\"") #'schweers/org-TeX-string)
 
+(defun ded/org-show-next-heading-tidily ()
+  "Show next entry, keeping other entries closed."
+  (interactive)
+  (if (save-excursion (end-of-line) (outline-invisible-p))
+      (progn (org-show-entry) (show-children))
+    (outline-next-heading)
+    (unless (and (bolp) (org-on-heading-p))
+      ;; (org-up-heading-safe)
+      ;; (hide-subtree)
+      (error "Boundary reached"))
+    (org-overview)
+    (org-reveal t)
+    (org-show-entry)
+    (show-children)))
+
+(defun ded/org-show-previous-heading-tidily ()
+  "Show previous entry, keeping other entries closed."
+  (interactive)
+  (let ((pos (point)))
+    (outline-previous-heading)
+    (unless (and (< (point) pos) (bolp) (org-on-heading-p))
+      (goto-char pos)
+      (hide-subtree)
+      (error "Boundary reached"))
+    (org-overview)
+    (org-reveal t)
+    (org-show-entry)
+    (show-children)))
+
+(define-key org-mode-map (kbd "<f8>") 'ded/org-show-previous-heading-tidily)
+(define-key org-mode-map (kbd "<f9>") 'ded/org-show-next-heading-tidily)
+
 (provide 'setup-org)
 
 ;; (defun my-org/fund-to-org (f &rest args)

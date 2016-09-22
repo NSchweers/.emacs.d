@@ -8,7 +8,7 @@
  '(auth-sources (quote ("~/.emacs.d/authinfo.gpg")))
  '(calendar-week-start-day 1)
  '(elmo-imap4-default-authenticate-type (quote clear))
- '(erc-autojoin-channels-alist (quote (("freenode.net" "#neo"))))
+ '(erc-autojoin-channels-alist (quote (("freenode.net" "#org-mode" "#neo"))))
  '(erc-nick "schweers")
  '(erc-prompt-for-channel-key t)
  '(erc-timestamp-format-right " [%H:%M:%S]")
@@ -47,7 +47,7 @@
      "\\tolerance=1000")))
  '(package-selected-packages
    (quote
-    (undo-tree ace-jump-mode helm jabber expand-region ac-slime browse-kill-ring ace-link multiple-cursors bbdb auctex elpy magit auto-complete lispy guide-key org paren-face crux helm-projectile projectile cider racer cargo clojure-mode w3m json-mode f geiser diminish s dash-functional hydra use-package dash)))
+    (shell-command undo-tree ace-jump-mode helm jabber expand-region ac-slime browse-kill-ring ace-link multiple-cursors bbdb auctex elpy magit auto-complete lispy guide-key org paren-face crux helm-projectile projectile cider racer cargo clojure-mode w3m json-mode f geiser diminish s dash-functional hydra use-package dash)))
  '(rcirc-default-nick "schweers")
  '(rcirc-default-user-name "schweers")
  '(rcirc-fill-column (quote frame-width))

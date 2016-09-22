@@ -55,6 +55,7 @@
   ;; (require 'use-package)
   (require 'pc)
   setup-dash
+  setup-shell
   setup-hydra
   misc
   saveplace
@@ -91,6 +92,7 @@
   setup-clojure
   setup-projectile
   setup-paren-face
+  setup-w3m
   setup-binding-mode)
 
 (require 'server)

@@ -1,6 +1,8 @@
 ;; -*- lexical-binding: t -*-
 
-(global-set-key
+(require 'gud)
+
+(define-key c-mode-map
  (kbd "<f9>")
  (defhydra hydra-gud (:color pink)
    "GUD"
