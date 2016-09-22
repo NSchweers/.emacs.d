@@ -15,6 +15,14 @@
 ;;            (cl-return-from 'return p))))
 ;;     nil))
 
+(defun pc/get-package-desc (&rest pkgs)
+  (cl-block 'return
+    (package--mapc
+     (lambda (p)
+       (if (memq (package-desc-name p) pkgs)
+           (cl-return-from 'return p))))
+    nil))
+
 (defmacro pc (pkg &rest clauses)
   (declare (indent 1))
   (let ((pkg-desc (make-symbol "pkg-desc"))

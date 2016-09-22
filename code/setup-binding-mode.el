@@ -198,7 +198,8 @@ As someone who uses a proper keyboard layout, the arrow keys are a viable option
 (define-key *schweers-bindings* (kbd "M-o") 'occur)
 (define-key *schweers-bindings* (kbd "C-x C-b") 'ibuffer-other-window)
 (define-key *schweers-bindings* (kbd "M-j") 'eval-print-last-sexp)
-(define-key *schweers-bindings* (kbd "C-x C-SPC") 'show-marks)
+(define-key *schweers-bindings* (kbd "C-x C-SPC") 'helm-all-mark-rings)
+(define-key *schweers-bindings* (kbd "C-c C-j") 'helm-mark-ring)
 (define-key *schweers-bindings* (kbd "C-M-l") 'misc/mark-line)
 
 (define-key *schweers-bindings* (kbd "<f6>") 'schweers/increase-font)
