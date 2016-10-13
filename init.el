@@ -93,6 +93,7 @@
   setup-projectile
   setup-paren-face
   setup-w3m
+  setup-markdown
   setup-binding-mode)
 
 (require 'server)
