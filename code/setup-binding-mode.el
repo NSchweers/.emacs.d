@@ -205,6 +205,8 @@ As someone who uses a proper keyboard layout, the arrow keys are a viable option
 (define-key *schweers-bindings* (kbd "<f6>") 'schweers/increase-font)
 (define-key *schweers-bindings* (kbd "<f7>") 'schweers/decrease-font)
 
+(define-key *schweers-bindings* (kbd "C-x k") 'schweers/kill-buffer)
+
 (define-minor-mode schweers-bindings-mode
   "This minor mode binds my own keybindings."
   :keymap *schweers-bindings*)

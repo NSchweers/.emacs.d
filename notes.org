@@ -1,7 +1,7 @@
 * Tasks
 ** TODO Learn to use Conqueror (browser)
    [2014-07-07 Mon]
-** TODO Take a closer look at mark commands and modes.  
+** DONE Take a closer look at mark commands and modes.  
 
    Items of note include
    - Visible Mark
@@ -14,7 +14,7 @@
    be found at misc.el (misc/next-word-at-point), but is commented out.  
    [2014-07-07 Mon]
    [[file:~/.emacs.d/code/misc.el]]
-** TODO Look at emacs repeat command.
+** DONE Look at emacs repeat command.
 
    See here: 
    http://www.masteringemacs.org/articles/2011/07/15/repeating-commands-emacs/
@@ -28,7 +28,7 @@
 ** DONE Look at ibuffer
    [2014-07-07 Mon]
    [[info:calc#Embedded%20Mode%20Overview][info:calc#Embedded Mode Overview]]
-** TODO Look at eshell
+** DONE Look at eshell
 
    http://www.masteringemacs.org/articles/2010/12/13/complete-guide-mastering-eshell/
    [2014-07-07 Mon]
@@ -51,7 +51,7 @@
 ** DONE Look at eldoc
    [2014-07-13 Sun]
    [[file:~/.emacs.d/notes.org::*Tasks][Tasks]]
-** TODO Take a closer look at elnode.
+** DONE Take a closer look at elnode.
 
    Possibly after a node.js crashcourse.  
    [2014-07-13 Sun]
@@ -61,9 +61,6 @@
    I believe it is already installed, yet it is unused.  Which is a shame, as
    it seems to be /really/ awesome.  
    [2014-07-15 Tue]
-** TODO Read up on the π-calculus. 
-   [2014-11-23 Sun]
-   [[file:~/code/his-project/model.py]]
 ** Sophia MC server
 
    url: http://hill_of_tara.aternos.me
@@ -76,10 +73,6 @@
    It may seem weird and clunky in the beginning, but it should be worth some
    effort.  
    [2015-01-08 Thu]
-** TODO Take a look at this video (it’s on lisp)
-
-   http://www.youtube.com/watch?v=2Op3QLzMgSY
-   [2015-01-10 Sat]
 ** TODO Look at this article on finite state machines for parsing protocols
 
    http://www.cs.dartmouth.edu/~pete/pubs/LangSec-2014-fsm-parsers.pdf
@@ -111,14 +104,6 @@
    http://endlessparentheses.com/new-on-elpa-speed-of-thought-lisp.html?source=rss
    [2015-02-10 Tue]
    [[file:/mnt/data/video/serien/spartacus/vengance/Spartacus.S02E03.720p.HDTV.x264-IMMERSE.mkv]]
-** TODO Look at LaTeX paper helpers
-   
-   - writing smell detector
-   - chrisper
-   - academic-writing-check
-
-   
-   [2015-02-06 Fri]
 ** TODO Add a hook to `TeX-LaTeX-sentinel'.
 
    Maybe one can add advice first to `TeX-LaTeX-sentinel', which adds advice to
@@ -146,7 +131,7 @@
 ** DONE Mail link to Truly ergonomic to Vanessa
    [2015-02-24 Di]
    [[file:~/.emacs.d/code/setup-slime.el::(require%20'ac-slime)][file:~/.emacs.d/code/setup-slime.el::(require 'ac-slime)]]
-** TODO Threema backup
+** DONE Threema backup
 
    Y5NN-OY7Y-AB5Q-F4PH-57IQ-6SRW-UARN-ZD7Y-J62G-2NI7-6HUU-CFV2-RE3M-SCRC-
    YDWI-V2SO-VBKL-EEXM-FRNG-JTZH
@@ -154,7 +139,7 @@
 
    [2015-03-27 Fr]
    [[file:~/.emacs.d/code/setup-slime.el::(cond%20((eq%20system-type%20'windows-nt)][file:~/.emacs.d/code/setup-slime.el::(cond ((eq system-type 'windows-nt)]]
-** TODO Bind custom keys in a minor mode?
+** DONE Bind custom keys in a minor mode?
 
    Seen this in a comment on http://masteringemacs.org:
 
@@ -163,7 +148,7 @@
    that way you dont have to play whackamole with other modes that want the same
    binding.
    [2015-05-30 Sat]
-** TODO Complete the function `schweers/ask-to-commit-on-exit
+** DONE Complete the function `schweers/ask-to-commit-on-exit
    
    <2015-05-31 Sun>
    [[file:~/.emacs.d/code/misc.el::%3B%3B%3B%20Don%E2%80%99t%20use%20this%20yet,%20it%E2%80%99s%20not%20working%20yet!][file:~/.emacs.d/code/misc.el::;;; Don’t use this yet, it’s not working yet!]]
@@ -178,6 +163,20 @@
    
    <2015-10-27 Tue>
    [[file:~/.emacs.d/code/misc.el::(defcustom%20)][file:~/.emacs.d/code/misc.el::(defcustom )]]
+** TODO DAK krams machen
+   
+   <2016-10-22 Sat>
+   [[gnus:INBOX#129977986.20161020075828@wi-de.de][Email from Wilhelm Schweers: DAK-Brief]]
+** TODO Geld an Mindfactory überweisen
+   
+   <2016-10-25 Tue>
+   [[gnus:nnimap%2B1&1:INBOX#7fbbc719cb5b02656b3e2fd8354df73b@www.mindfactory.de][Email from Mindfactory AG: Bestellbestätigung 4917503 vom]]
+** TODO Write some code to allow offlineimap to get its password from a GPG file.
+
+   https://pythonhosted.org/python-gnupg/
+   
+   <2016-10-31 Mon>
+   [[file:~/.offlineimaprc::##########%20Advanced%20settings][file:~/.offlineimaprc::########## Advanced settings]]
 * Notes
 ** Vice City hidden packages
    Collected 100 - 81 (incl.) from

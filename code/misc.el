@@ -483,6 +483,15 @@ If C-u is pressed repeatedly, the font size is decreased by 10 times the number
      #'-)
    (schweers/get-adjustment arg)))
 
+(defun schweers/kill-buffer (arg)
+  "Kill current buffer, unless called with prefix.
+
+If prefix is present, ask which buffer to kill. "
+  (interactive "P")
+  (if arg
+      (call-interactively 'kill-buffer)
+    (kill-buffer (current-buffer))))
+
 ;; (defcustom )
 
 ;; (defun tee (name)
