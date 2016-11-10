@@ -14,7 +14,10 @@
 ;(add-to-list 'magic-fallback-mode-alist '((lambda () t) . org-mode))
 
 (setq org-default-notes-file
-      (expand-file-name "notes.org" user-emacs-directory))
+      (expand-file-name "notes.org" user-emacs-directory)
+      org-special-ctrl-a/e t
+      org-special-ctrl-k t
+      org-special-ctrl-o t)
 
 ;; Fontify org-mode code blocks
 (setq org-src-fontify-natively t)

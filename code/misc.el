@@ -182,22 +182,32 @@
 
 (setq save-interprogram-paste-before-kill t)
 
-(defun misc/new-setup (name &optional stage)
+(defun schweers/new-setup (name &optional stage)
   "Create a new setup file, called setup-NAME.el in
 ~/.emacs.d/code/ which enables lexical scoping, contains the
 appropriate provide and places point at the right position. 
 
 If STAGE is non-nil, also stage the file with magit."
   ;; (interactive "MWhich package do you want to set up? \n")
-  (interactive (list (read-string "Which package do you want to set up? ")
-                     (if current-prefix-arg
-                         (let ((p (if (consp current-prefix-arg)
-                                      (car current-prefix-arg)
-                                    current-prefix-arg)))
-                           (if (or (null p) (eq p '-) (< p 0))
-                               nil
-                             t))
-                       (y-or-n-p "Do you want to stage the file with magit? "))))
+  (interactive (list (read-string "Name of package to set up: ")
+                     (cond
+                      ((null current-prefix-arg)
+                       (y-or-n-p "Do you want to stage the file with magit? "))
+                      ((let ((p (if (consp current-prefix-arg)
+                                    (car current-prefix-arg)
+                                  current-prefix-arg)))
+                         (or (eq p '-) (< p 0)))
+                       nil)
+                      (t t))
+                     ;; (if current-prefix-arg
+                     ;;     (let ((p (if (consp current-prefix-arg)
+                     ;;                  (car current-prefix-arg)
+                     ;;                current-prefix-arg)))
+                     ;;       (if (or (null p) (eq p '-) (< p 0))
+                     ;;           nil
+                     ;;         t))
+                     ;;   (y-or-n-p "Do you want to stage the file with magit? "))
+                     ))
   (let ((proper-name (s-concat "setup-" name ".el")))
     (save-excursion
       (find-file
@@ -207,18 +217,15 @@ If STAGE is non-nil, also stage the file with magit."
       (when (or (buffer-narrowed-p) (/= (point-min) (point-max)))
         (error "File is not empty and/or the corresponding buffer is narrowed"))
       (goto-char (point-min))
-      (if (not (string= (buffer-string) ""))
-          (progn
-            (forward-line 2)
-            (indent-for-tab-command))
-        (insert ";; -*- lexical-binding: t -*-\n\n\n\n(provide '")
-        (insert (substring proper-name 0 (- (length proper-name) 3)))
-        (insert ")\n")
-        (forward-line -3)
-        (indent-for-tab-command)
-        (when stage
-          (magit-stage-file (buffer-file-name)))
-        (save-buffer)))))
+      (insert ";; -*- lexical-binding: t -*-\n\n\n\n(provide '")
+      (insert (substring proper-name 0 (- (length proper-name) 3)))
+      (insert ")\n")
+      (forward-line -3)
+      (indent-for-tab-command)
+      (save-buffer)
+      (when stage
+        (magit-stage-file (buffer-file-name)))
+      (buffer-file-name))))
 
 (defun misc/hurra ()
   "Calls xdg-open (i.e. a browser) for a youtube search link for the song
@@ -491,6 +498,44 @@ If prefix is present, ask which buffer to kill. "
   (if arg
       (call-interactively 'kill-buffer)
     (kill-buffer (current-buffer))))
+
+
+(let ((fname "code/setup-org.el"))
+  (and (string-match-p "^setup" (f-base fname))
+       (string-match-p "\\.el$" fname)))
+
+
+
+(defun schweers/list-setup-files ()
+  (f-entries (expand-file-name "code" user-emacs-directory)
+             (lambda (fname)
+               (and (string-match-p "^setup" (f-base fname))
+                    (string-match-p "\\.el$" fname)))))
+
+(defun schweers/list-setup-names ()
+  (seq-map
+   (lambda (setup)
+     (substring (f-base setup) 6))
+   (schweers/list-setup-files)))
+
+(defun schweers/switch-to-setup-file (mode other-window-p)
+  "Switch to the file which sets up MODE-NAME.
+
+If OTHER-WINDOW-P is non-nil, open the file in other window."
+  (interactive
+   (list (completing-read "Switch to setup file: "
+                          (schweers/list-setup-names))
+         current-prefix-arg))
+  (let ((fname? (assoc
+                 mode
+                 (cl-loop for f in (schweers/list-setup-files)
+                          for s in (schweers/list-setup-names)
+                          collect `(,s . ,f)))))
+    (unless fname?
+      (setf fname? (list mode (schweers/new-setup mode t))))
+    (if other-window-p
+        (find-file-other-window (cdr fname?))
+      (find-file (cdr fname?)))))
 
 ;; (defcustom )
 

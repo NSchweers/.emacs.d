@@ -1,23 +1,24 @@
 (require 'setup-bbdb)
 
-(setq gnus-home-directory (expand-file-name "code" user-emacs-directory))
-(setq user-mail-address "NSchweers@mailbox.org")
-(setq user-full-name "Nathanael Schweers")
+(setf gnus-home-directory (expand-file-name "code" user-emacs-directory)
+      user-mail-address "NSchweers@mailbox.org"
+      user-full-name "Nathanael Schweers")
 
-(setq gnus-select-method
-      '(nnimap "mailbox.org"
-               (nnimap-address "imap.mailbox.org")
-               (nnimap-authenticator login)
-               (nnimap-server-port 143)
-               (nnimap-stream starttls))
-      gnus-secondary-select-methods
-      '((nnimap "1&1"
-                (nnimap-address "imap.1und1.de")
-                (nnimap-authenticator login)
-                (nnimap-server-port 993)
-                (nnimap-stream ssl))))
+(setf
+ gnus-select-method
+ '(nnimap "mailbox.org"
+          (nnimap-address "imap.mailbox.org")
+          (nnimap-authenticator login)
+          (nnimap-server-port 143)
+          (nnimap-stream starttls))
+ gnus-secondary-select-methods
+ '((nnimap "1&1"
+           (nnimap-address "imap.1und1.de")
+           (nnimap-authenticator login)
+           (nnimap-server-port 993)
+           (nnimap-stream ssl))))
 
-(setq message-send-mail-function 'smtpmail-send-it
+(setf message-send-mail-function 'smtpmail-send-it
       smtpmail-starttls-credentials '(("smtp.mailbox.org" 587 nil nil))
       smtpmail-auth-credentials '(("smtp.mailbox.org" 587
                                    "NSchweers@mailbox.org" nil))
@@ -25,7 +26,7 @@
       smtpmail-smtp-server "smtp.mailbox.org"
       smtpmail-smtp-service 587)
 
-(setq nnimap-inbox "INBOX")
+;; (setq nnimap-inbox "INBOX")
 
 (setf nnrss-directory (expand-file-name "News/rss" user-emacs-directory))
 
