@@ -94,6 +94,7 @@
   setup-paren-face
   setup-w3m
   setup-markdown
+  setup-elfeed
   setup-binding-mode)
 
 (require 'server)
