@@ -1,6 +1,5 @@
 ;; -*- lexical-binding: t -*-
 
-
 (pc elfeed
   (:post-install
    (setf elfeed-feeds
