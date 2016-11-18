@@ -280,3 +280,11 @@ MU_DEFAULT_SCHEME=mh.
    [[gnus:nnrss:wingolog#5@wingolog.nnrss][Email from nobody: the half strap: self-hosting a]]
 ** The World at War documentary
    Part 1: 27:00
+** Android Kontakte
+
+Offenbar legen (manche?) Android Kontakt-Apps ihre Daten als SQLite ab!
+
+Dann könnte man was dran machen, um doppelte Kontakte zu syncen.
+   
+   <2016-11-14 Mo>
+   [[gnus:INBOX/PUG#92734a72-7fba-6297-37c2-0dee8bf98cb5@zarrabi.de][Email from Darius Zarrabi: Re: {PUG} off-topic - Samsung ]]
