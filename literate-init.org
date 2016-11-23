@@ -1,4 +1,4 @@
-#+PROPERTY: header-args :noweb yes
+#+PROPERTY: header-args :tangle literate-init.el
 
 * Activate lexical scope
 As Emacs started out without lexical scope, it has to be enabled by the
@@ -1036,6 +1036,9 @@ The title says it all.
 #+END_SRC
 
 ** TODO A non-complete tea timer
+   :PROPERTIES:
+   :header-args: :tangle no
+   :END:
 Maybe I’ll finish this some day.
 
 #+BEGIN_SRC emacs-lisp
@@ -1525,7 +1528,7 @@ shamelessly +stole+ borrowed this code from someplace online.
     "Show next entry, keeping other entries closed."
     (interactive)
     (if (save-excursion (end-of-line) (outline-invisible-p))
-        (progn (org-show-entry) (show-children))
+        (progn (org-show-entry) (outline-show-children))
       (outline-next-heading)
       (unless (and (bolp) (org-on-heading-p))
         ;; (org-up-heading-safe)
@@ -1534,7 +1537,7 @@ shamelessly +stole+ borrowed this code from someplace online.
       (org-overview)
       (org-reveal t)
       (org-show-entry)
-      (show-children)))
+      (outline-show-children)))
 
   (defun ded/org-show-previous-heading-tidily ()
     "Show previous entry, keeping other entries closed."
@@ -1543,12 +1546,12 @@ shamelessly +stole+ borrowed this code from someplace online.
       (outline-previous-heading)
       (unless (and (< (point) pos) (bolp) (org-on-heading-p))
         (goto-char pos)
-        (hide-subtree)
+        (outline-hide-subtree)
         (error "Boundary reached"))
       (org-overview)
       (org-reveal t)
       (org-show-entry)
-      (show-children)))
+      (outline-show-children)))
 
   (define-key org-mode-map (kbd "<f8>") 'ded/org-show-previous-heading-tidily)
   (define-key org-mode-map (kbd "<f9>") 'ded/org-show-next-heading-tidily)
@@ -1927,7 +1930,7 @@ directories (like .git).
 #+BEGIN_SRC emacs-lisp
   (pc projectile
     (:post-install
-     (projectile-global-mode)
+     (projectile-mode)
      ;; (define-key projectile-mode-map (kbd "s-M-p") 'projectile-command-map)
      ))
 
@@ -2234,4 +2237,39 @@ way I only need to start Emacs once and can use emacsclient from then on.
   (require 'server)
   (unless (server-running-p)
     (server-start))
+#+END_SRC
+* Boot up with our literate config
+Using literate programming with Org Mode to configure Emacs is fine, but it has
+a small problem: loading can be really slow.  To address this, the following has
+to be done:
+
+- Tangle the org file if .org is newer than .el, or no .el exists
+- Compile .el if it it newer than .elc, or no .elc exists
+
+The following function should do exactly that.
+
+#+BEGIN_SRC emacs-lisp :tangle bootstrap.el
+  (setf lexical-binding t)
+
+  ;; NOTE: THIS FILE WAS TANGLED FROM literate-init.org.  DO NOT CHANGE THIS FILE
+  ;; DIRECTLY!
+
+  (defun load-literate-init ()
+    "Tangles, compiles and loads the literate init file."
+    (interactive)
+    (require 'org)
+    (let* ((lit-name
+            (expand-file-name "literate-init.org" user-emacs-directory))
+           (el-name (expand-file-name "literate-init.el" user-emacs-directory))
+           (elc-name (expand-file-name "literate-init.elc" user-emacs-directory)))
+      (when (or (not (file-exists-p el-name))
+                (time-less-p (nth 4 (file-attributes el-name))
+                             (nth 4 (file-attributes lit-name))))
+        (org-babel-tangle-file lit-name))
+      (when (or (not (file-exists-p elc-name))
+                (time-less-p (nth 4 (file-attributes elc-name))
+                             (nth 4 (file-attributes el-name))))
+        (byte-compile-file el-name))
+      (load elc-name)))
+
 #+END_SRC
