@@ -1388,7 +1388,7 @@ Also, I want the notes file which I use with org-capture to reside inside my
 .emacs.d directory.  This might as well change in the future.
 #+begin_src emacs-lisp
   (setf org-default-notes-file
-        (expand-file-name "notes.org" user-emacs-directory)
+        (expand-file-name ".emacs_data/notes.org" (getenv "HOME"))
         org-special-ctrl-a/e t
         org-special-ctrl-k t
         org-special-ctrl-o t)
