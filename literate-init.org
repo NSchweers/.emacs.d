@@ -1813,6 +1813,18 @@ This only works on elisp, so its not activated for all lisps I use.
   (add-hook 'emacs-lisp-mode-hook (-partial 'eldoc-mode))
 #+END_SRC
 
+* Install and configure =diminish=
+Diminish is used to prevent the mode line from becoming too cluttered.  Sadly I
+have not yet gotten it to work for =emacs-lisp-mode=.
+
+#+BEGIN_SRC emacs-lisp
+  (pc diminish
+    (:post-install
+     (diminish 'emacs-lisp-mode "EL")
+     (diminish 'lisp-interaction-mode "LIM")
+     (diminish 'auto-revert-mode)))
+#+END_SRC
+
 * Install and configure =helm=
 This is a package which redefines completion.  When I first used Emacs, I was in
 awe at how awesome the completion was.  Then I discovered Ido and was stunned
@@ -1893,18 +1905,6 @@ level.
     (:post-install
      (global-undo-tree-mode 1)
      (diminish 'undo-tree-mode)))
-#+END_SRC
-
-* Install and configure =diminish=
-Diminish is used to prevent the mode line from becoming too cluttered.  Sadly I
-have not yet gotten it to work for =emacs-lisp-mode=.
-
-#+BEGIN_SRC emacs-lisp
-  (pc diminish
-    (:post-install
-     (diminish 'emacs-lisp-mode "EL")
-     (diminish 'lisp-interaction-mode "LIM")
-     (diminish 'auto-revert-mode)))
 #+END_SRC
 
 * Install and configure Emacs for clojure
