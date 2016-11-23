@@ -602,6 +602,21 @@ Make dired guess a destination for file operations.
 #+END_SRC
 * TODO Install and configure async (for dired)
 It can be found here: https://github.com/jwiegley/emacs-async
+
+#+BEGIN_SRC emacs-lisp
+  (pc async)
+
+#+END_SRC
+
+* Configure =dired=
+Dired is a little weird, but also really cool.  I really ought to get it going
+in async mode though.
+
+#+BEGIN_SRC emacs-lisp
+  (autoload 'dired-async-mode "dired-async.el" nil t)
+  (autoload 'dired-toggle-read-only "dired" nil t)
+  (dired-async-mode 1)
+#+END_SRC
 * Configure a few libraries
 Normally, libraries don’t need to be configured, but dash provides some
 font-locking.  Also, these libraries need to be installed before they can be
@@ -1878,14 +1893,6 @@ access to it.
                further instructions."))
 #+END_SRC
 
-* Configure =dired=
-Dired is a little weird, but also really cool.  I really ought to get it going
-in async mode though.
-
-#+BEGIN_SRC emacs-lisp
-  (autoload 'dired-toggle-read-only "dired" nil t)
-#+END_SRC
-
 * Load =forth-mode=
   :PROPERTIES:
   :header-args: :tangle no
@@ -2247,6 +2254,9 @@ to be done:
 - Compile .el if it it newer than .elc, or no .elc exists
 
 The following function should do exactly that.
+
+This code block has to be tangled manually.  Should it ever be changed, it must
+be added to git!  Otherwise Emacs may not be able to boot!
 
 #+BEGIN_SRC emacs-lisp :tangle bootstrap.el
   (setf lexical-binding t)
