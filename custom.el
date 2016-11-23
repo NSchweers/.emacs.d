@@ -5,7 +5,7 @@
  ;; If there is more than one, they won't work right.
  '(ac-use-quick-help t)
  '(auth-source-save-behavior nil)
- '(auth-sources (quote ("~/.emacs.d/authinfo.gpg")))
+ '(auth-sources (quote ("~/.emacs_data/authinfo.gpg")))
  '(calendar-week-start-day 1)
  '(elmo-imap4-default-authenticate-type (quote clear))
  '(erc-autojoin-channels-alist (quote (("freenode.net" "#org-mode" "#neo"))))
