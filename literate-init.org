@@ -1,0 +1,2237 @@
+#+PROPERTY: header-args :noweb yes
+
+* Activate lexical scope
+As Emacs started out without lexical scope, it has to be enabled by the
+programmer on a per-buffer basis.  Normally one can use special syntax in the
+first line, but as I don’t trust Org Modes tangling that much, I’ll just use
+=setf=.
+
+#+begin_src emacs-lisp
+  (setf lexical-binding t)
+#+end_src
+
+* Early setup
+Some things just have to happen really early.
+
+** No splash screen
+#+BEGIN_SRC emacs-lisp
+  (setf inhibit-startup-message t)
+#+END_SRC
+
+** Don’t load old .elc files
+For some reason the default in Emacs is or was to load outdated bytecode files.
+
+#+BEGIN_SRC emacs-lisp
+  (setf load-prefer-newer t)
+#+END_SRC
+
+** Add site-lisp to load path
+The directory site-lisp is not by default part of the load-path.
+
+#+BEGIN_SRC emacs-lisp
+  (add-to-list 'load-path (expand-file-name "site-lisp" user-emacs-directory))
+#+END_SRC
+* Set up the appearance of Emacs
+We set up the appearance very early on so the display doesn’t behave too badly.
+Unfortunately it still flickers and bugs around a little.
+** Remove the GUI elements we don’t like
+First, we remove the toolbar, as no sane person should be using it in Emacs.
+Well, no sane person using Emacs a /lot/ should use it.
+
+#+begin_src emacs-lisp
+  (if (fboundp 'tool-bar-mode) (tool-bar-mode -1))
+#+end_src
+
+#+begin_src emacs-lisp
+  (if (fboundp 'menu-bar-mode) (menu-bar-mode -1))
+#+end_src
+
+** Highlight parentheses
+When point is on a parenthesis, we want to highlight the matching paren.
+
+#+begin_src emacs-lisp
+  (show-paren-mode 1)
+#+end_src
+
+** Font size
+I don’t want a huge font.  As I want to be able to change the font size while
+running Emacs, and I want to be able to return to /my/ default size, I record
+that in a variable.  Then the variable is used to set the fontsize.
+
+#+begin_src emacs-lisp
+(defvar schweers/default-font-height 80)
+(set-face-attribute 'default nil :height schweers/default-font-height)
+#+end_src
+** Global font locking
+   :PROPERTIES:
+   :header-args: :tangle no
+   :END:
+Normally, Emacs enables font locking by default.  The code is still here, but it
+won’t be tangled.
+
+#+begin_src emacs-lisp
+  (global-font-lock-mode t)
+#+end_src
+
+** Scrollbar on the right
+For some reason the default in Emacs is not to put the scrollbar on the right.
+As this only works in window systems, we have to check for that too.
+
+#+begin_src emacs-lisp
+  (when window-system
+    (set-scroll-bar-mode 'right))
+#+end_src
+
+** Line and column numbers
+Always show both line /and/ column numbers in the modeline.
+
+#+begin_src emacs-lisp
+  (column-number-mode 1)
+  (line-number-mode 1)
+#+end_src
+
+** Show empty lines after buffer end.
+I want to see empty lines at the end of the buffer.
+
+#+begin_src emacs-lisp
+  (set-default 'indicate-empty-lines t)
+#+end_src
+
+** Mouse support in xterm
+When we have a terminal session, but it’s in an xterm, we can still use the
+mouse.  But, we have to activate it.
+
+#+begin_src emacs-lisp
+  (xterm-mouse-mode 1)
+#+end_src
+
+** Maximize the current frame
+Unfortunately this doesn’t work terribly well.  I’m not sure if there is a
+better way to do this.  I especially would like to not touch the windows system,
+as there are too many, and some of them are just plain weird.
+
+#+begin_src emacs-lisp
+  (when window-system
+    (set-frame-parameter nil 'fullscreen 'maximized))
+#+end_src
+
+** Disable cursor blinking
+This too also only works when using a window system.  On the other hand, it’s
+not needed on a terminal.
+
+#+begin_src emacs-lisp
+  (when window-system
+    (blink-cursor-mode -1))
+#+end_src
+
+** Disable beeping
+Don’t ever beep.  I’d rather have a flashing screen.
+
+#+begin_src emacs-lisp
+  (setf visible-bell t)
+#+end_src
+
+** Set the region color
+As my second screen isn’t in a terribly good shape, the default region color is
+barely readable.  Normally I’d use customize, but the customize facility thinks
+(or used to think) that Emacs is running with -q, even when it isn’t.
+
+#+begin_src emacs-lisp
+  (face-spec-set 'region
+                 '((t (:distant-foreground "royal blue"
+                                           :background "cornflower blue"))))
+#+end_src
+
+** Change the threshold for vertical or horizontal split
+As I generally prefer putting windows next to each other rather than stacking
+them, I changed the threshold.
+
+#+begin_src emacs-lisp
+  (setf split-height-threshold 180)
+#+end_src
+
+* Initialize the package system
+We have to initialize the package system before using it, so we do that here.
+
+We have to =require= the package system, as it is not loaded by default.
+I use an alist of repositories (currently only two) which are added to the
+package archives unless they are already present.  I’m not sure I even need to
+check, as =add-to-list= may do that anyway.
+
+#+begin_src emacs-lisp
+  (require 'package)
+
+  ;; Add melpa to package repos
+  (dolist (m '(("melpa-stable" . "http://stable.melpa.org/packages/")
+               ("melpa" . "http://melpa.org/packages/")))
+    (unless (member m package-archives)
+      (add-to-list 'package-archives m t)))
+#+end_src
+
+As soon as the archives have been added, the package system can be initialized.
+As a poor man’s check, I look for a file named after one of the archives.  If it
+doesn’t (yet) exist, the archives have to be fetched.
+
+#+begin_src emacs-lisp
+  (package-initialize)
+
+  (unless (file-exists-p (expand-file-name
+                          "elpa/archives/melpa"
+                          user-emacs-directory))
+    (package-refresh-contents))
+#+end_src
+
+I used to have a whole lot more code, which can be found in the [[file:code/setup-package.el][original file]].
+I hope this is no longer needed.  I never really liked having it, but is was
+once necessary.
+* Set up some more sane defaults
+Emacs is full of variables etc. which have defaults which are highly outdated.
+This is the reason for the proliferation of so many Emacs starter kits.
+
+While my visual settings may also fall into this category, I wanted to separate
+them for technical reasons: I want the visual settings to be activated before
+doing the heavy lifting, as much of the loading I do is quite time-consuming.
+
+** Set a proper place for =custom.el=
+By default Emacs still uses the home directory of the user directly.  This is a
+quite sad relic of the old days on UNIX.  Nowadays one should put all Emacs
+related files into a directory and make said directory a git (or hg, or
+whatever) repository.  A consequence of this policy is that Emacs places its
+customize settings directly into =user-init-file=.  The variable =custom-file=
+holds the place to use.  After setting the place, the file is loaded.
+
+#+begin_src emacs-lisp
+  (setf custom-file (expand-file-name "custom.el" user-emacs-directory))
+  (load custom-file)
+#+end_src
+
+Possibly I should stop using customize altogether.
+
+** Place backups at a sane position
+Backup files should be written to a separate directory, as to not annoy other
+users who may browse the same tree.  This is particularly true of mounted
+network shares.  Luckily, the widespread use of version control pretty much
+makes this a non-issue.  Still, it may be useful for TRAMP.
+
+The second line makes sure that backup files are even created when Emacs thinks
+we’re using version control.  Note that I don’t ever use =vc-mode=, as =magit=
+is the best interface to git there ever was, and git can interface with most
+other systems, to make them more usable and sane (I’m looking at you SVN)!
+
+#+begin_src emacs-lisp
+  (setf backup-directory-alist
+        `(("." . ,(expand-file-name "backups" user-emacs-directory)))
+        vc-make-backup-files t)
+#+end_src
+
+** Save where point is/was in a visited file
+Emacs can keep track of where point last was in a file.  The data needed for
+this is saved in a file.  The name for this file can be found in the variable
+=save-place-file=.
+
+#+begin_src emacs-lisp
+  (setf save-place-file (expand-file-name ".places" user-emacs-directory))
+  (save-place-mode 1)
+#+end_src
+
+** Automatically refresh dired
+I want dired to do autorefresh, but be quiet about it.
+
+#+begin_src emacs-lisp
+  (setf global-auto-revert-non-file-buffers t
+        auto-revert-verbose nil)
+#+end_src
+
+** Echo keystrokes
+Normally Emacs waites for a while before showing the keys which were pressed, if
+the given keys are not sufficient to form a command (i.e. they result in a
+keymap).
+
+I want this to happen quickly.
+
+#+begin_src emacs-lisp
+  (setf echo-keystrokes 0.1)
+#+end_src
+
+** Disable shift-selection
+As I use the region the way it’s supposed to be used in Emacs, I don’t need any
+shift selection.  Also, it interferes with switching windows using shift with
+the arrow keys.  Nevermind that both scenarios are a problem in Org Mode.
+
+#+begin_src emacs-lisp
+  (setf shift-select-mode nil)
+#+end_src
+
+** Use automatic, transparent compression of files.
+Emacs can transparently open compressed files (among other things).  It can also
+transparently open encrypted files and archives!  To activate autocompression,
+we need to activate a mode.
+
+#+begin_src emacs-lisp
+  (auto-compression-mode 1)
+#+end_src
+
+** Enable UTF-8 for everything
+I’m not entirely sure how this piece of code works, I just scraped it from
+Magnar Sveen’s config.
+
+#+begin_src emacs-lisp
+  ;; UTF-8 please
+  (setf locale-coding-system 'utf-8) ; pretty
+  (set-terminal-coding-system 'utf-8) ; pretty
+  (set-keyboard-coding-system 'utf-8) ; pretty
+  (set-selection-coding-system 'utf-8) ; please
+  (prefer-coding-system 'utf-8) ; with sugar on top
+#+end_src
+
+** Activate transient mark mode
+As any program which is used in the 21st century, Emacs can select text.  Unlike
+any other program in this century, it doesn’t do so by default.  At least not in
+a way anyone would expect.  To enable this behavior, enable
+=transient-mark-mode=.
+
+#+begin_src emacs-lisp
+  (transient-mark-mode 1)
+  (make-variable-buffer-local 'transient-mark-mode)
+  (put 'transient-mark-mode 'permanent-local t)
+  (setq-default transient-mark-mode t)
+#+end_src
+
+** Delete selected text on backspace or delete
+For historic reasons, Emacs does not delete the selected text on backspace or
+delete, but deletes one character and disables the region (selection).  To
+rectify this, we need another mode.
+
+#+begin_src emacs-lisp
+  (delete-selection-mode 1)
+#+end_src
+
+** Set the desired line width
+Emacs breaks lines at 72 characters, not 80, by default.  This can be changed
+with a variable.  Also, there is a global minor mode and a function to do this
+as one types.
+
+#+begin_src emacs-lisp
+  (setq-default fill-column 80)
+  (setq-default auto-fill-function 'do-auto-fill)
+  (auto-fill-mode 1)
+#+end_src
+
+** Save a list of recent files
+Save a list of recently opened files.  This can be accessed via C-x f.  I have
+to admit that I have never used this, and helm barfs on buffer history for some
+reason.  I’m not sure whether or not this is related.
+
+#+begin_src emacs-lisp
+  (recentf-mode 1)
+  (setq recentf-max-saved-items 100) ;; just 20 is too recent
+#+end_src
+
+** Save minibuffer history
+Emacs can also save the history of the minibuffer.  Like, duh!  Again we need a
+mode and a variable.
+
+#+begin_src emacs-lisp
+  (savehist-mode 1)
+  (setf history-length 1000)
+#+end_src
+
+** Setup winner mode
+I’ve never really gotten around to doing this, but maybe I will some day.  It
+seems Emacs can save window configurations and switch between them.  I have no
+idea how well this works.  It can be activated by enabling a global minor mode.
+
+#+begin_src emacs-lisp
+  (winner-mode 1)
+#+end_src
+
+** Never indent tabs
+While this tends to break Makefiles, in general one doesn’t want tabs in source
+code.  Yes, this is subject to flamewars, but I’ve settled it for myself.
+
+#+begin_src emacs-lisp
+  (set-default 'indent-tabs-mode nil)
+#+end_src
+
+** Navigate sillycased words with subword mode
+Thanks to =global-subword-mode= one can navigate words with weird casing in any
+mode!
+
+#+begin_src emacs-lisp
+  (global-subword-mode 1)
+#+end_src
+
+** Enable recursive minibuffers
+Emacs is capable of nesting minibuffers, but as this feature can be very
+confusing to newcomers, it is disabled by default.  I want it though.
+
+#+begin_src emacs-lisp
+(setf enable-recursive-minibuffers t)
+#+end_src
+
+** Allow for more memory consumption
+This may sound wrong, but I want Emacs to be able to use lots of memory.
+Garbage collection is a very expensive operation (not in general, but in Emacs),
+so I don’t want it to happen too often.  This is why I allow Emacs to allocate
+lots of memory.
+
+#+begin_src emacs-lisp
+  (setf gc-cons-threshold 20000000
+        gc-cons-percentage 0.3)
+#+end_src
+
+** Add directory name to non-unique buffer names
+Emacs buffers typically only have the name of the file itself as the buffer
+name.  When this is not enough, I’d like Emacs to add the directory name to
+/both/ buffers in order to make the names unique.  By default Emacs simply adds
+a number in angle brackets to the end of the name.  This may work for info
+buffers, but not for files in general.
+
+#+begin_src emacs-lisp
+  (with-demoted-errors (require 'uniquify)
+                       (setq uniquify-buffer-name-style 'forward))
+#+end_src
+
+** Make ediff more sane
+I’m not sure what exactly this does, but I’ve been using it like this since I’ve
+been using it at all, and I like it how it is.  So I’m not changing it.
+
+#+begin_src emacs-lisp
+  (setf ediff-diff-options "-w"
+        ediff-split-window-function 'split-window-horizontally
+        ediff-window-setup-function 'ediff-setup-windows-plain)
+
+#+end_src
+
+** Change =eval-expression-print-level=
+Nic says eval-expression-print-level needs to be set to nil (turned off) so that
+you can always see what's happening.
+
+#+begin_src emacs-lisp
+  (setf eval-expression-print-level nil)
+#+end_src
+
+** Sane mouse scrolling
+For the longest time Emacs’ scrolling has annoyed me.  It’s even worse that
+pointer acceleration on a mouse.  I also scraped this from Magnar Sveen’s
+config.
+
+#+begin_src emacs-lisp
+  (setq mouse-wheel-scroll-amount '(5 ((shift) . 5)))
+
+  (setq mouse-wheel-progressive-speed nil) ;; don't accelerate scrolling
+
+  (setq mouse-wheel-follow-mouse 't) ;; scroll window under mouse
+
+  (setq scroll-step 1) ;; keyboard scroll one line at a time
+
+  ;; Have proper scrolling.  
+  (setf scroll-margin 0
+        scroll-conservatively 0
+        scroll-up-aggressively 0.01
+        scroll-down-aggressively 0.01)
+  (setq-default scroll-up-aggressively 0.01
+                scroll-down-aggressively 0.01)
+#+end_src
+
+** Set the diary file to a sane position
+As mentioned elsewhere, Emacs tends to pollute the users home directory.  Here,
+diary files are placed into ~/.emacs.d/.
+
+#+begin_src emacs-lisp
+  (setf diary-file "~/.emacs.d/diary")
+#+end_src
+
+** Enable narrowing and region operations
+These operations are disabled by default, because they confuse newcomers.  I’m
+not a newcomer anymore ;)
+
+#+begin_src emacs-lisp
+  ;; Run at full power please
+  (put 'downcase-region 'disabled nil)
+  (put 'upcase-region 'disabled nil)
+  (put 'narrow-to-region 'disabled nil)
+  (put 'narrow-to-page 'disabled nil)
+#+end_src
+
+** Replace yes-or-no questions with y-or-n
+Some operations which are considered more dangerous need confirmation by the
+user.  Some even need more explicit confirmation by requiring the user to enter
+yes and even press return.  I don’t like that.
+
+#+begin_src emacs-lisp
+  (fset 'yes-or-no-p 'y-or-n-p)
+#+end_src
+
+** Shrink the minibuffer after expanding it
+The minibuffer automatically expands when the entered text becomes too long for
+one line or when a linebreak is entered, but by default it doesn’t shrink again.
+
+#+begin_src emacs-lisp
+  (setf resize-mini-windows t)
+
+#+end_src
+
+** Place the TAGS file
+#+begin_src emacs-lisp
+  ;; (add-to-list 'tags-table-list (expand-file-name "TAGS" user-emacs-directory))
+  (add-to-list 'tags-table-list (expand-file-name "code/src/emacs-25.1/src/TAGS" (getenv "HOME")))
+
+#+end_src
+
+** Scroll the compilation buffer
+By default compilation buffers don’t scroll.  Also, stop scrolling on the first
+error.
+
+#+begin_src emacs-lisp
+  (setf compilation-scroll-output t)
+  ;;we want to have the compilation window scroll automatically
+  (setq compilation-scroll-output 'first-error)
+  (setq-default compile-command "make -k -j4 ")
+#+end_src
+
+** Enable lexical binding in the scratch buffer
+Normally the scratch buffer does not have lexical binding.  This is a sensible
+default, but I still don’t like it, as I’m very used to having closures and all
+the other goodies that lexical binding gives me.  I’m not sure this works.
+
+#+begin_src emacs-lisp
+  (add-hook 'after-init-hook
+            (lambda () (with-current-buffer (get-buffer "*scratch*")
+                         (setf lexical-binding t))))
+
+#+end_src
+
+** Enable desktop mode
+Emacs’ desktop save mode can save some state from one session to the next.  This
+code enables it, and also makes Emacs try to save its state when killed while in
+server mode.
+
+#+BEGIN_SRC emacs-lisp
+  (desktop-save-mode 1)
+  ;;with this we try to save the desktop file when the emacs server is killed.
+  (add-hook 'kill-emacs-hook (lambda () (desktop-save user-emacs-directory)))
+#+END_SRC
+
+** Save the clipboard to the kill-ring
+Normally, Emacs treats the clipboard, or primary selection, or whatever the host
+OS has, a bit differently than its own kill-ring.  This may be for legitimate
+reasons, probably mainly historic.  At any rate, I want Emacs to place the
+contents the OS supplies into the kill-ring.
+
+#+BEGIN_SRC emacs-lisp
+  (setf save-interprogram-paste-before-kill t)
+#+END_SRC
+* Define a configuration macro
+While this macro is far from perfect, it is good enough to be used.
+
+This macro checks whether a given package is installed and installs it if
+necessary.  For details, see the docstring.
+
+#+BEGIN_SRC emacs-lisp
+  (require 'seq)
+  (require 'subr-x)
+
+  (defun pc/get-package-desc (&rest pkgs)
+    (cl-block 'return
+      (package--mapc
+       (lambda (p)
+         (if (memq (package-desc-name p) pkgs)
+             (cl-return-from 'return p))))
+      nil))
+
+  (defmacro pc (pkg &rest clauses)
+    "Install PKG if not installed.  Configure according to CLAUSES.
+
+  A clause is always a list, where the first element is a symbol.
+  It may be one of the following:
+
+  \(:pre-install &rest body\) Evaluate body before installing
+
+  \(:dont-select\) if an installation is necessary, don’t select PKG
+  as installed manually.
+
+  \(:require &optional feature\) Constructs and evaluates a require form.  If
+  FEATURE is given, require FEATURE.  Otherwise require PKG.  This is
+  evaluated immediately after installation.
+
+  \(:post-install &rest body\) Evaluate body after installation.
+
+  \(:bind alist\) Bind keys globally.  Performed after :post-install actions."
+    (declare (indent 1))
+    (let ((pkg-desc (make-symbol "pkg-desc"))
+          (get-package-desc (make-symbol "get-package-desc")))
+      `(progn
+         (cl-flet
+             ((,get-package-desc
+               (&rest pkgs)
+               "Returns a non-nil if at least one of the packages given in PKGS exists.
+
+  Returns nil otherwise.  The return value is the package
+  descriptor for the first matching package. "
+               (cl-block 'return
+                 (package--mapc
+                  (lambda (p)
+                    (if (memq (package-desc-name p) pkgs)
+                        (cl-return-from 'return p))))
+                 nil)))
+           (when (not (,get-package-desc ',pkg))
+             (error "Package does not exist: %s" ',pkg))
+           (let ((,pkg-desc (,get-package-desc ',pkg)))
+             ,@(if-let ((pre-inst (assoc :pre-install clauses)))
+                   (cdr pre-inst))
+             (unless (package-installed-p ',pkg)
+               (package-install ',pkg ,(cdr (assoc :dont-select clauses))))
+             ,@(let ((req-form (assoc :require clauses)))
+                 (if (not (null (cdr req-form)))
+                     (if (not (null (cddr req-form)))
+                         (error "too many forms in :require clause.")
+                       `(,(cadr req-form)))
+                   `((require ',pkg))))
+             ,@(if-let ((post-inst (assoc :post-install clauses)))
+                   (cdr post-inst))
+             ,@(if-let ((bind (assoc :bind clauses)))
+                   (cl-loop for c in (cadr bind) collect
+                            `(global-set-key (kbd ,(car c)) ',(cdr c)))))))))
+#+END_SRC
+* Configure =dired=
+Make dired guess a destination for file operations.
+
+#+BEGIN_SRC emacs-lisp
+  (setf dired-dwim-target t)
+#+END_SRC
+* TODO Install and configure async (for dired)
+It can be found here: https://github.com/jwiegley/emacs-async
+* Configure a few libraries
+Normally, libraries don’t need to be configured, but dash provides some
+font-locking.  Also, these libraries need to be installed before they can be
+used.
+
+Now that the =pc= macro has been defined, it can be used:
+
+#+BEGIN_SRC emacs-lisp
+  (pc dash
+    (:post-install
+     (setf dash-enable-fontlock t)))
+
+  (pc dash-functional)
+#+END_SRC
+
+Also, some other libraries can now be installed:
+
+#+BEGIN_SRC emacs-lisp
+  (pc f)
+  (pc json-mode)
+  (pc s)
+#+END_SRC
+
+The package [[https://github.com/abo-abo/hydra][hydra]] makes it easy to define several commands which share a prefix,
+and provide a nice UI.
+
+#+BEGIN_SRC emacs-lisp
+  (pc hydra)
+#+END_SRC
+
+* Setup the shells
+Emacs provides several different ways to run a shell.  All of them are
+configured here.
+
+** Completion for =shell-command=
+Emacs comes with a built-in command =shell-command=, by default bound to M-!,
+which runs a shell command.  Thanks to the package =shell-command=,
+shell-completion can be used.
+
+The function =comint-kill-output-to-kill-ring= is bound to C-o in order to make
+it easy to paste/yank the output anywhere, by placing it in the kill-ring.
+
+#+BEGIN_SRC emacs-lisp
+  (defun comint-kill-output-to-kill-ring (arg)
+    "Kills all output from last command and puts it in kill buffer
+  Does not delete the prompt."
+    (interactive "P")
+    (let ((proc (get-buffer-process (current-buffer)))
+          (replacement nil)
+          (inhibit-read-only t))
+      (save-excursion
+        (let ((pmark (progn (goto-char (process-mark proc))
+                            (forward-line 0)
+                            (point-marker))))
+          ;; Add the text to the kill ring.
+          (copy-region-as-kill comint-last-input-end pmark)
+          (unless arg
+            (delete-region comint-last-input-end pmark)
+            (goto-char (process-mark proc))
+            (setq replacement (concat "*** output flushed to kill ring ***\n"
+                                      (buffer-substring pmark (point))))
+            (delete-region pmark (point)))))
+      ;; Output message and put back prompt
+      (comint-output-filter proc replacement)))
+
+  (pc shell-command
+    (:pre-install
+     (autoload 'bash-completion-dynamic-complete
+       "bash-completion"
+       "BASH completion hook")
+     (add-hook 'shell-dynamic-complete-functions
+               'bash-completion-dynamic-complete)
+     (add-hook 'shell-command-complete-functions
+               'bash-completion-dynamic-complete))
+    (:post-install
+     (shell-command-completion-mode)
+     
+     (defun comint-delchar-or-eof-or-kill-buffer (arg)
+       (interactive "p")
+       (if (null (get-buffer-process (current-buffer)))
+           (kill-buffer)
+         (comint-delchar-or-maybe-eof arg)))
+
+     (add-hook 'shell-mode-hook
+               (lambda ()
+                 (define-key shell-mode-map (kbd "C-d")
+                   'comint-delchar-or-eof-or-kill-buffer)
+                 (define-key shell-mode-map (kbd "C-c C-o")
+                   'comint-kill-output-to-kill-ring)))))
+#+END_SRC
+
+* TODO Miscellaneous stuff
+This section needs to be reorganized badly.  It is a conglomeration of code I
+have accumulated over the years.  Some of it was copied, some other stuff was
+written by myself.
+
+** Reloading and recompiling
+These functions are probably no longer of much use.  For now they stay.  They
+are/were used to ensure that .elc files are kept up to date with their source
+files.
+
+#+BEGIN_SRC emacs-lisp
+  (require 's)
+  (require 'dash)
+  (require 'dash-functional)
+
+  (defun recompile-emacs-d ()
+    (interactive)
+    (byte-recompile-directory (expand-file-name "code" user-emacs-directory) 0 t)
+    (byte-compile-file (or user-init-file
+                           (expand-file-name "init.el" user-emacs-directory))))
+
+  (defun file-in-emacs-d? (filename)
+    (s-starts-with? (expand-file-name user-emacs-directory)
+                    (expand-file-name filename)))
+
+  (defun recompile-if-emacs-d ()
+    (let ((filename (buffer-file-name (current-buffer))
+           ))
+      (if (and (file-in-emacs-d? filename) (s-ends-with? ".el" filename))
+          (condition-case nil
+              (byte-compile-file filename)
+            (error
+             (ignore-errors (delete-file (byte-compile-dest-file filename))))))))
+
+  (defun reload-emacs-conf ()
+    (interactive)
+    (load user-init-file))
+
+  ;; Autocompile any elisp files in our emacs directory.
+  (add-hook 'after-save-hook 'recompile-if-emacs-d)
+
+  ;; Open the init file on startup.
+  (find-file-noselect (expand-file-name "init.el" user-emacs-directory))
+#+END_SRC
+
+** Buffer switching
+A function to switch to the scratch buffer, because that is something I do very
+often.  Also, a macro which generates a hydra, which then can switch between
+buffers.  Note that these are used/bound elsewhere.
+
+#+BEGIN_SRC emacs-lisp
+  (defun misc/switch-to-scratch ()
+    (interactive)
+    (switch-to-buffer "*scratch*"))
+
+  (defmacro misc/buffer-switch-hydra (hydra-name short-name key-prefix
+                                                 &rest heads)
+    (declare (indent 3))
+    `(global-set-key
+      (kbd ,key-prefix)
+      ,(append
+        `(defhydra ,hydra-name (:color pink) ,short-name)
+        (append
+         (-map
+          (-lambda ((key b-or-n hint))
+            `(,key (lambda ()
+                     (interactive)
+                     (switch-to-buffer ,b-or-n))
+                   ,hint))
+          heads)
+         '(("q" nil "quit" :color blue))))))
+#+END_SRC
+
+** Create new setup files
+This piece of code was used before I switched to having a literate
+configuration.  It could create a new file, with a proper name and location.  It
+also put in some boilerplate (like enabling lexical binding and adding a
+=provide= clause), as well as placed point properly.  It also prompts the user
+to add the new file to git (with magit).
+
+#+BEGIN_SRC emacs-lisp
+  (defun schweers/new-setup (name &optional stage)
+    "Create a new setup file, called setup-NAME.el in
+  ~/.emacs.d/code/ which enables lexical scoping, contains the
+  appropriate provide and places point at the right position. 
+
+  If STAGE is non-nil, also stage the file with magit."
+    ;; (interactive "MWhich package do you want to set up? \n")
+    (interactive (list (read-string "Name of package to set up: ")
+                       (cond
+                        ((null current-prefix-arg)
+                         (y-or-n-p "Do you want to stage the file with magit? "))
+                        ((let ((p (if (consp current-prefix-arg)
+                                      (car current-prefix-arg)
+                                    current-prefix-arg)))
+                           (or (eq p '-) (< p 0)))
+                         nil)
+                        (t t))
+                       ;; (if current-prefix-arg
+                       ;;     (let ((p (if (consp current-prefix-arg)
+                       ;;                  (car current-prefix-arg)
+                       ;;                current-prefix-arg)))
+                       ;;       (if (or (null p) (eq p '-) (< p 0))
+                       ;;           nil
+                       ;;         t))
+                       ;;   (y-or-n-p "Do you want to stage the file with magit? "))
+                       ))
+    (let ((proper-name (s-concat "setup-" name ".el")))
+      (save-excursion
+        (find-file
+         (expand-file-name
+          proper-name
+          (expand-file-name "code" user-emacs-directory)))
+        (when (or (buffer-narrowed-p) (/= (point-min) (point-max)))
+          (error "File is not empty and/or the corresponding buffer is narrowed"))
+        (goto-char (point-min))
+        (insert ";; -*- lexical-binding: t -*-\n\n\n\n(provide '")
+        (insert (substring proper-name 0 (- (length proper-name) 3)))
+        (insert ")\n")
+        (forward-line -3)
+        (indent-for-tab-command)
+        (save-buffer)
+        (when stage
+          (magit-stage-file (buffer-file-name)))
+        (buffer-file-name))))
+#+END_SRC
+
+** TODO Start a browser with a youtube search of the unofficial Emacs anthem
+While Emacs does not have an official anthem, the song „Hurra“ captures it very
+nicely ;)
+
+This does not work anymore, for some reason.  Maybe I’ll debug it at some
+point.
+
+#+BEGIN_SRC emacs-lisp
+  (defun misc/hurra ()
+    "Calls xdg-open (i.e. a browser) for a youtube search link for the song
+  „hurra“.
+
+  This song describes very nicely how it felt before and after knowing Emacs ;)"
+    (interactive)
+    (let* ((p (start-process
+               "hurra" "hurra-out" "xdg-open"
+               (s-concat "https://www.youtube.com/"
+                         "results?search_query=die+%C3%A4rzte+hurra")))
+           (pb (process-buffer p)))
+      (set-process-sentinel
+       p
+       (lambda (_proc e)
+         (cond ((string-match "finished" e)
+                (kill-buffer pb)))))))
+#+END_SRC
+
+** Open the menu of the Olbia restaurant near the FH
+As the section title claims, this code fetches the menu from a local restaurant
+and displays it in Emacs (thanks to docview mode).
+
+The http header has to be stripped, then docview-mode is activated.
+
+#+BEGIN_SRC emacs-lisp
+  (defun misc/olbia (arg)
+    "Downloads the menu of the Pizzeria Olbia in Frankfurt/Main.
+
+  Switches to the apropriate buffer if it already exists."
+    (interactive "P")
+    (let ((b (get-buffer "*Olbia*")))
+      (cond (b (cond ((null arg) (switch-to-buffer b))
+                     (t (switch-to-buffer-other-window b))))
+            (t
+             (url-retrieve
+              "http://pizzeriaolbia.de/index_htm_files/Speisekarte%20032015.pdf"
+              (lambda (_status)
+                (rename-buffer "*Olbia*")
+                (search-forward-regexp "%PDF")
+                (beginning-of-line)
+                (delete-region (point-min) (point))
+                (doc-view-mode)
+                (call-interactively #'misc/olbia)))))))
+#+END_SRC
+
+** Split quoted paragraph in =message-mode=
+In message mode, it can be annoying to break up a quoted paragraph.  This
+function fixes that.
+
+#+BEGIN_SRC emacs-lisp
+  (defun schweers/split-quoted-paragraph ()
+    "Split the quoted paragraph at point, making space for a reply, and fill the
+  rest of the paragraph.  This is useful in message-mode."
+    (interactive)
+    (let ((in-line (not (looking-at "[[:space:]]*$")))
+          (level (save-excursion
+                   (beginning-of-line)
+                   (save-match-data
+                     (if (looking-at ">*")
+                         (- (match-end 0) (match-beginning 0))
+                       0)))))
+      (insert "\n")
+      (delete-horizontal-space)
+      (when (and in-line (> level 0))
+        (insert (s-concat (s-repeat level ">") " ")))
+      (beginning-of-line)
+      (open-line (if in-line 3 2))
+      (forward-line 1)
+      (when in-line
+        (save-excursion
+          (forward-line 2)
+  ;;; This binding is needed, so fill-paragraph won’t create an extra
+  ;;; undo-boundary, which is normally done because of message-mode.
+          (let ((fill-paragraph-function (lambda (&rest _) nil)))
+            (fill-paragraph))))))
+#+END_SRC
+
+** Remake local etags
+This function is probably broken, and not used anyway.
+
+#+BEGIN_SRC emacs-lisp
+  (defun remake-local-etags ()
+    (interactive)
+    (if (not (zerop
+              (call-process "/bin/sh" nil nil nil
+                            "-c" (format "cd %s; etags `find ./ -iname \\*.el`"
+                                         user-emacs-directory))))
+        (warn "etags failed.")))
+#+END_SRC
+
+** Define a named let
+As an exercise I defined a macro to somewhat emulate schemes let recursion.
+This is painfully slow, as it uses real (i.e. non-eliminated) recursion.
+
+#+BEGIN_SRC emacs-lisp
+  (defmacro +let (&rest args)
+    "Allows scheme like recursion.  
+
+  A symbol may be given as an additional first argument, the rest is like `let'.
+  If this extra argument is given, it is the name of a local function, which is
+  created by this macro.  The bindings given in the second argument give the names
+  of the arguments, and the values, with which the function is initially called."
+    (let ((name (car args)))
+      (if (symbolp name)
+          (if (eq name nil)
+              `(let ,@(cdr args))
+            (let ((argnames (-map (lambda (binding)
+                                    (if (consp binding)
+                                        (car binding)
+                                      binding))
+                                  (second args)))
+                  (init-args (-map (lambda (binding)
+                                     (if (consp binding)
+                                         (cadr binding)
+                                       nil))
+                                   (second args))))
+              `(cl-labels ((,name ,argnames ,@(cddr args)))
+                 (,name ,@init-args))))
+        `(let ,@args))))
+#+END_SRC
+
+** Define a helper function for the dates of the critical mass
+The critical mass in Frankfurt has a weird cycle, which normal calendar programs
+cannot handle.  Luckily, Emacs has a Lisp VM \o/
+
+#+BEGIN_SRC emacs-lisp
+  (defun schweers/critical-mass-friday (date)
+    (let ((friday?
+           (+ 5 (do ((sunday? 1 (1+ sunday?)))
+                    ((zerop (calendar-day-of-week
+                             (list (first date) sunday? (third date))))
+                     sunday?)))))
+      (if (calendar-date-is-valid-p (list (first date) friday? (third date)))
+          (if (calendar-date-equal (list (first date) friday? (third date)) date)
+              "Critical Mass Frankfurt (19:00)"
+            nil)
+        (error "Bug in critical mass ffm friday"))))
+#+END_SRC
+
+** List all Lisp callable C functions
+I wanted to know which functions are implemented in C, so I “wrote” this
+function.
+
+#+BEGIN_SRC emacs-lisp
+  (defun misc/list-C-funs ()
+    (interactive)
+    (cl-labels
+        ;; I copied and bastardized this from `describe-function-1'
+        ((from-C-source-p
+          (function)
+          (let* ((advised (and (symbolp function)
+                               (featurep 'nadvice)
+                               (advice--p (advice--symbol-function function))))
+                 ;; If the function is advised, use the symbol that has the
+                 ;; real definition, if that symbol is already set up.
+                 (real-function
+                  (or (and advised
+                           (advice--cd*r (advice--symbol-function function)))
+                      function))
+                 ;; Get the real definition.
+                 (def (if (symbolp real-function)
+                          (or (symbol-function real-function)
+                              (signal 'void-function (list real-function)))
+                        real-function))
+                 (file-name (find-lisp-object-file-name function def)))
+            (eq file-name 'C-source))))
+      (with-current-buffer (generate-new-buffer "C functions")
+        (insert "The following functions are implemented in C:\n\n")
+        (mapatoms
+         (lambda (x)
+           (if (and (fboundp x) (from-C-source-p x))
+               (insert (symbol-name x) "\n"))))
+        (switch-to-buffer-other-window (current-buffer)))))
+#+END_SRC
+
+** TODO Toggle frame split
+Toggle the way in which the frame is split.  Very fragile, probably not used at
+all.
+
+#+BEGIN_SRC emacs-lisp
+  (defun toggle-frame-split ()
+    "If the frame is split vertically, split it horizontally or vice versa.
+  Assumes that the frame is only split into two.
+
+  Got this from here: http://www.emacswiki.org/emacs/ToggleWindowSplit"
+    (interactive)
+    (unless (= (length (window-list)) 2) (error "Can only toggle a frame split in two"))
+    (let ((split-vertically-p (window-combined-p)))
+      (delete-window) ; closes current window
+      (if split-vertically-p
+          (split-window-horizontally)
+        (split-window-vertically)) ; gives us a split with the other window twice
+      (switch-to-buffer nil))) ; frame
+                                          ; restore the original window in this part of the
+#+END_SRC
+
+** Mark the current line
+The title says it all.
+
+#+BEGIN_SRC emacs-lisp
+  (defun misc/mark-line ()
+    (interactive)
+    (beginning-of-line)
+    (push-mark (point) t t)
+    (end-of-line))
+#+END_SRC
+
+** TODO A non-complete tea timer
+Maybe I’ll finish this some day.
+
+#+BEGIN_SRC emacs-lisp
+  (defcustom tea-timer/alarm-clock-uri
+    "http://www.orangefreesounds.com/wp-content/uploads/Zip/Old-alarm-clock-ringing.zip"
+    "The command `tea-timer' will fetch the sound to play from this uri.")
+
+  (defcustom tea-timer/fname-regexp
+    "\\(?:\\(?:mp3\\)\\|\\(?:mp4\\)\\|\\(?:ogg\\)\\|\\(?:wav\\)\\)\\)$"
+    "A regexp which matches audio files.
+
+  The first matching file in an archive will be used as the sound of the alarm.")
+
+  (defun tea-timer/fetch-file (uri)
+    "Fetch and possibly extract the file behind the uri.
+
+  Returns a local uri.  This function also tries to guess which file to pick if
+  pointed to a zip file containing more than one file."
+
+    (let ((fname
+           (f-join
+            "~/tmp"
+            (f-filename (url-filename
+                         (url-generic-parse-url tea-timer/alarm-clock-uri))))))
+      (let ((curl-proc
+             (start-process
+              "curl" " curl-buffer" "curl" "-o" fname tea-timer/alarm-clock-uri)))
+        (set-process-sentinel
+         curl-proc
+         (lambda (proc status)
+           (when (not (process-live-p proc))
+             (let ((unzip-proc
+                    (start-process
+                     "unzip" " unzip-buffer" "unzip" fname
+                     "-d" (f-dirname fname) fname)))
+               (set-process-sentinel
+                unzip-proc
+                (lambda (proc status)
+                  (when (not process-live-p proc)
+                    (f-move (f-join (f-dirname fname) ()))))))))))))
+
+  (defun tea-timer (duration &optional description)
+    (interactive "sDuration: \nsEnter a description: ")
+    (run-at-time duration nil
+                 (lambda ()
+                   (start-process
+                    "teetimer-sound-aplay"
+                    " teetimer-sound-aplay"
+                    "aplay"
+                    "/home/schweers/downloads/alarm-clock.wav")
+                   (message "%s" description))))
+
+  ;; (defun tee (name)
+  ;;   (interactive ))
+
+  ;; (completing-read "Which tee? " '(("Pfefferminz" 3) ("Kamille" 2)
+  ;;                                 ("Earl Gray" 1))
+  ;;                  nil t)
+
+  ;; (start-process "teetimer-sound-aplay" " teetimer-sound-aplay"
+  ;;                "aplay" "/home/schweers/downloads/alarm-clock.wav")
+
+#+END_SRC
+
+** A poor man’s presentation mode
+This code allows me to increase and decrease the font height.  Most importantly,
+it allows me to reset it to /my/ default, not what Emacs thinks is the default.
+
+#+BEGIN_SRC emacs-lisp
+  (defun schweers/adjust-font-height (fn arg)
+    "Calls FN with the current font height and ARG.  Sets height to result."
+    (set-face-attribute
+     'default nil :height
+     (funcall fn (face-attribute 'default :height) arg)))
+
+  (defun schweers/get-adjustment (arg)
+    "Depending on ARG, return an int.
+
+  The returned integer represents by how much the font height shall be adjusted.
+
+  ARG is supposed to be in the form of a raw prefix argument.
+
+  If ARG is - set to the default font size \(see ‘schweers/default-font-height’\).
+  If ARG is an integer, return it as is.
+  If ARG is a list containing one int, return its log base 4 as an integer
+  \(i.e. how often C-u was pressed\) multiplied by 10.
+  If ARG is nil return 10."
+    (cond ((null arg) 10)
+          ((and (listp arg)
+                (= (length arg) 1)
+                (integerp (car arg)))
+           (* 10 (floor (log (car arg) 4))))
+          ((and (symbolp arg) (eq arg '-))
+           schweers/default-font-height)
+          ((integerp arg) 10)))
+
+  (defun schweers/increase-font (arg)
+    "Increase the font size by 10 points.
+  If a prefix is given, increase by PREFIX points.
+  If C-u is pressed repeatedly, the font size is increased by 10 times the number
+    of keystrokes."
+    (interactive "P\n")
+    (schweers/adjust-font-height
+     (if (and (symbolp arg) (eq arg '-))
+         (lambda (_cur new)
+           new)
+       #'+)
+     (schweers/get-adjustment arg)))
+
+  (defun schweers/decrease-font (arg)
+    "Increase the font size by 10 points.
+  If a prefix is given,decrease by PREFIX points.
+  If C-u is pressed repeatedly, the font size is decreased by 10 times the number
+    of keystrokes."
+    (interactive "P\n")
+    (schweers/adjust-font-height
+     (if (and (symbolp arg) (eq arg '-))
+         (lambda (_cur new)
+           new)
+       #'-)
+     (schweers/get-adjustment arg)))
+#+END_SRC
+
+** Kill the current buffer
+When I kill a buffer, it is almost always the buffer I have selected.  So I
+defined a command, which kills the current buffer, unless a prefix is given.  If
+so, it behaves like =kill-buffer=.
+
+#+begin_src emacs-lisp
+  (defun schweers/kill-buffer (arg)
+    "Kill current buffer, unless called with prefix.
+
+  If prefix is present, ask which buffer to kill. "
+    (interactive "P")
+    (if arg
+        (call-interactively 'kill-buffer)
+      (kill-buffer (current-buffer))))
+#+end_src
+
+** Jump to a setup file
+As I previously used separate elisp files which could be compiled and required.
+To ease jumping to such a file, I wrote this code.  It works by exploiting the
+fact, that all such files reside in a folder "code", begin by "setup-" and end
+with ".el".
+
+#+begin_src emacs-lisp
+  (defun schweers/list-setup-files ()
+    (f-entries (expand-file-name "code" user-emacs-directory)
+               (lambda (fname)
+                 (and (string-match-p "^setup" (f-base fname))
+                      (string-match-p "\\.el$" fname)))))
+
+  (defun schweers/list-setup-names ()
+    (seq-map
+     (lambda (setup)
+       (substring (f-base setup) 6))
+     (schweers/list-setup-files)))
+
+  (defun schweers/switch-to-setup-file (mode other-window-p)
+    "Switch to the file which sets up MODE-NAME.
+
+  If OTHER-WINDOW-P is non-nil, open the file in other window."
+    (interactive
+     (list (completing-read "Switch to setup file: "
+                            (schweers/list-setup-names))
+           current-prefix-arg))
+    (let ((fname? (assoc
+                   mode
+                   (cl-loop for f in (schweers/list-setup-files)
+                            for s in (schweers/list-setup-names)
+                            collect `(,s . ,f)))))
+      (unless fname?
+        (setf fname? (list mode (schweers/new-setup mode t))))
+      (if other-window-p
+          (find-file-other-window (cdr fname?))
+        (find-file (cdr fname?)))))
+#+end_src
+
+* Install and configure =guide key=
+The package =guide-key= makes it a little easier to explore prefixed
+keybindings.  The variable =guide-key/guide-key-sequence= holds a list of
+prefixes.  When either of them is pressed, it displays the possible further
+keystrokes at the bottom of the screen.
+
+#+BEGIN_SRC emacs-lisp
+  (pc guide-key
+    (:post-install
+     (setf guide-key/guide-key-sequence '("C-x r" "C-x 4" "C-x 5" "C-x v" "C-x 8"
+                                          "C-x n" "C-c C-x" "C-x c"))
+     (guide-key-mode 1)
+     (setf guide-key/recursive-key-sequence-flag t
+           guide-key/popup-window-position 'bottom
+           guide-key/idle-delay 0.1)))
+#+END_SRC
+
+* Common configuration for all lisps
+As all lisps share some similarities, some settings can be applied to all of
+them.  This is the place to collect them.  A particularly useful package is
+lispy, which is an alternative to paredit.
+
+#+BEGIN_SRC emacs-lisp
+  (defvar schweers/*lisp-mode-hooks*
+    '(clojure-mode-hook cider-repl-mode-hook emacs-lisp-mode-hook
+                        lisp-mode-hook slime-repl-mode-hook
+                        scheme-mode geiser-mode-hook
+                        geiser-repl-mode-hook))
+
+  (pc lispy
+    (:bind (("C-M-1" . lispy-describe-inline)
+            ("C-M-2" . lispy-arglist-inline)
+            ("C-M-3" . lispy-right)))
+    (:post-install
+     (dolist (m schweers/*lisp-mode-hooks*)
+       (add-hook m (lambda ()
+                     (lispy-mode 1)
+                     (subword-mode -1)
+                     (define-key lispy-mode-map [remap backward-delete-char]
+                       'lispy-delete-backward))))
+
+     (defun schweers/lispy-M-paren ()
+       (interactive)
+       (let ((current-prefix-arg '(2)))
+         (call-interactively 'lispy-parens)))
+     
+     (define-key lispy-mode-map (kbd "M-(") 'schweers/lispy-M-paren)))
+#+END_SRC
+
+* TODO Configure =autocomplete=
+Autocomplete is quite nice, but I’m not sure whether it conflicts with
+=company-mode=.
+
+#+BEGIN_SRC emacs-lisp
+  (pc auto-complete
+    (:require (require 'auto-complete-config))
+    (:post-install
+     (add-to-list 'ac-user-dictionary-files (concat user-emacs-directory "ac-dict"))
+     (ac-config-default)
+     (ac-set-trigger-key "TAB")
+     ;; (add-hook 'slime-mode-hook 'set-up-slime-ac)
+     ;; (add-hook 'slime-repl-mode 'set-up-slime-ac)
+     ;; (eval-after-load "auto-complete"
+     ;;   '(add-to-list 'ac-modes 'slime-repl-mode))
+     ))
+#+END_SRC
+
+* Configure =magit=
+As far as I know, magit is simply the best interface to git.  As I normally
+place all my code under ~/code, I tell magit this is the case.
+
+#+BEGIN_SRC emacs-lisp
+  (pc magit
+    (:pre-install
+     (require 's))
+    (:bind (("C-c g" . magit-status)))
+    (:post-install
+     (setf magit-repo-dirs (list (s-join "/" (list (getenv "HOME") "code"))
+                                 user-emacs-directory)
+           magit-repo-dirs (list (getenv "HOME"))
+           magit-last-seen-setup-instructions "1.4.0")))
+#+END_SRC
+
+* Some global keybindings
+Most of my global keybindings are part of my own minor mode, but for a few of
+them it is easier to make them truly global.
+
+#+BEGIN_SRC emacs-lisp
+  (global-set-key (kbd "C-c M-x") 'execute-extended-command)
+  (global-set-key (kbd "M-S-<f10>") 'menu-bar-mode)
+
+  (defhydra hydra-page (ctl-x-map "" :pre (widen))
+    "page"
+    ("]" forward-page "next")
+    ("[" backward-page "prev")
+    ("n" narrow-to-page "narrow" :bind nil :exit t)
+    ("q" nil "quit"))
+
+  (windmove-default-keybindings)
+
+  (global-set-key (kbd "<C-tab>") 'completion-at-point)
+
+  (misc/buffer-switch-hydra hydra-irc "channel" "C-c i"
+    ("n" "#neo" "neo")
+    ("e" "#emacs" "emacs")
+    ("f" "irc.freenode.net:6667" "freenode"))
+
+  (global-set-key (kbd "C-c c") 'org-capture)
+
+#+END_SRC
+
+* Configure python for =elpy=
+Elpy is sort of an IDE for python in Emacs.  I don’t really like it, but it’s
+better than nothing.  Also, it shows where one deviates from Guido’s personal
+favorites, so he won’t cry too much when reading my code.
+
+#+BEGIN_SRC emacs-lisp
+  (pc elpy
+    (:post-install
+     (add-hook 'python-mode-hook
+               (lambda () (setf fill-column 79)))
+     (elpy-enable)))
+#+END_SRC
+
+* Configure and bind =ace-window=
+Ace window makes switching windows much more pleasant.  Instead of switching
+from one to the next, one can directly jump to any visible window.  Note that
+this is a little weird when using more than one frame.
+
+#+BEGIN_SRC emacs-lisp
+  (pc ace-window
+      (:bind (("C-x o" . ace-window)))
+      (:post-install
+       (setq aw-scope 'frame)
+       (setq aw-keys '(?b ?n ?r ?s ?g ?o ?e ?i ?t ?c))))
+#+END_SRC
+
+* Setup Org Mode
+As Org Mode is a huge application in its own right, it needs a lot of
+configuration.
+
+** Setup indentation
+The first step is that I’d like Org Mode to indent when I enter a newline by
+default.
+
+#+begin_src emacs-lisp
+  (defun setup-org/define-newline-keys ()
+    (define-key org-mode-map (kbd "RET") 'org-return-indent)
+    (define-key org-mode-map (kbd "C-j") 'org-return))
+#+end_src
+
+** Setup notes
+Also, I want the notes file which I use with org-capture to reside inside my
+.emacs.d directory.  This might as well change in the future.
+#+begin_src emacs-lisp
+  (setf org-default-notes-file
+        (expand-file-name "notes.org" user-emacs-directory)
+        org-special-ctrl-a/e t
+        org-special-ctrl-k t
+        org-special-ctrl-o t)
+#+end_src
+
+** Org is the new Fundamental
+   :PROPERTIES:
+   :header-args: :tangle no
+   :END:
+I want Org Mode to be the default major mode instead of fundamental mode.  This
+should be the right thing for the vast majority of files, as Org Mode is all
+ASCII text anyway.  I’m not really sure this works though, so I’ve left it out
+for now.
+
+#+begin_src emacs-lisp
+  (add-to-list 'magic-fallback-mode-alist '((lambda () t) . org-mode))
+#+end_src
+
+One of the great features of Org Mode is that it can work with source blocks
+(like in this file!).  It can also fontify them properly, using the appropriate
+modes.  Why this is not the default is beyond me.
+
+** Setup font-locking
+#+begin_src emacs-lisp
+  (setf org-src-fontify-natively t)
+#+end_src
+
+** Export to LaTeX/PDF
+Org Mode can export to LaTeX, hence to PDF, but it needs some help in doing so.
+This next block of code imports the new exporter and configures it for some
+classes that are not by default configured.
+
+#+begin_src emacs-lisp
+  (require 'ox-latex)
+
+  (add-hook 'org-mode-hook
+            (lambda ()
+              (add-to-list 'org-latex-classes
+                           '("IEEEtran"
+                             "\\documentclass[conference]{IEEEtran}"
+                             ("\\section{%s}" . "\\section*{%s}")
+                             ("\\subsection{%s}" . "\\subsection*{%s}")
+                             ("\\subsubsection{%s}" . "\\subsubsection*{%s}")
+                             ("\\paragraph{%s}" . "\\paragraph*{%s}")
+                             ("\\subparagraph{%s}" . "\\subparagraph*{%s}")))
+              (add-to-list 'org-latex-classes
+                           '("scrartcl"
+                             "\\documentclass{scrartcl}"
+                             ("\\section{%s}" . "\\section*{%s}")
+                             ("\\subsection{%s}" . "\\subsection*{%s}")
+                             ("\\subsubsection{%s}" . "\\subsubsection*{%s}")
+                             ("\\paragraph{%s}" . "\\paragraph*{%s}")
+                             ("\\subparagraph{%s}" . "\\subparagraph*{%s}")))
+              (flyspell-mode 1)
+              (define-key org-mode-map [remap backward-delete-char]
+                'org-delete-backward-char)))
+#+end_src
+
+Also, I want source code blocks to be syntax colored.  Sadly, this is not the
+same coloring as in source blocks.  Instead, the LaTeX package =minted= is used.
+
+#+begin_src emacs-lisp
+  (setf org-latex-listings 'minted)
+  ;; (add-to-list 'org-latex-packages-alist '("" "listings"))
+  ;; (add-to-list 'org-latex-packages-alist '("" "color"))
+  (add-to-list 'org-latex-packages-alist '("" "minted"))
+
+  (setf
+   org-latex-pdf-process
+   '("pdflatex -shell-escape -interaction nonstopmode -output-directory %o %f"
+     "pdflatex -shell-escape -interaction nonstopmode -output-directory %o %f"
+     "pdflatex -shell-escape -interaction nonstopmode -output-directory %o %f"))
+#+end_src
+
+** Add font-locking for html output
+Just as LaTeX output may be syntax highlighted, I want something similar for
+html.
+
+#+BEGIN_SRC emacs-lisp
+  (pc htmlize)
+#+END_SRC
+
+** Add a template/shortcut for Org Mode comment blocks
+Org Mode files can contain comments, just like any other language.  They may
+begin with a # to comment a line, or may be a block like a source block.
+
+#+begin_src emacs-lisp
+  (add-to-list 'org-structure-template-alist '("C" "#+BEGIN_COMMENT\n?\n#+END_COMMENT"))
+
+#+end_src
+
+** Add a capture template
+The command =org-capture= can capture in many formats and to many files.  I took
+the default and only slightly changed it.
+
+#+begin_src emacs-lisp
+  (setf org-capture-templates
+        `(("t" "Task" entry
+           (file+headline ,org-default-notes-file
+                          "Tasks")
+           "* TODO %?\n  %i\n  %t\n  %a")
+          ("n" "Notes" entry
+           (file+headline ,org-default-notes-file
+                          "Notes")
+           "* %?\n  %i\n  %t\n  %a")))
+
+#+end_src
+
+** Make Org Mode use TeX string delimiters
+This command either inserts the empty TeX string ``'' at point, or surrounds the
+region with these quote characters.  It does not deactivate the region.  Also,
+the region contains the newly inserted quotes.
+
+#+begin_src emacs-lisp
+  (defun schweers/org-TeX-string (beg end &optional point)
+    "Insert a pair of TeX string delimiters (`` and '').
+
+  Put these back to back with point between them, or around the region, if
+  active.  Extend the region to contain the new delimiters too."
+    (interactive "rd")
+    (unless point
+      (setf point (point)))
+    (if (not (use-region-p))
+        (progn
+          (insert "``''")
+          (backward-char 2))
+      (let ((at-beginning-p (= beg point)))
+        (goto-char end)
+        (insert "''")
+        (when at-beginning-p
+          (push-mark (point)))
+        (goto-char beg)
+        (insert "``")
+        (if at-beginning-p
+            (backward-char 2)
+          (push-mark (- (point) 2))
+          (goto-char (+ 4 end)))
+        (setf deactivate-mark nil))))
+
+  (define-key org-mode-map (kbd "M-\"") #'schweers/org-TeX-string)
+
+#+end_src
+
+** A poor man’s presenter in Org Mode
+Org Mode can be used as a poor man’s presenter.  This can come in handy when one
+wants a live Emacs session, for instance because one wants to demonstrate
+features of Emacs.  I did this for the presentation of my master thesis.  I
+shamelessly +stole+ borrowed this code from someplace online.
+
+#+begin_src emacs-lisp
+  (defun ded/org-show-next-heading-tidily ()
+    "Show next entry, keeping other entries closed."
+    (interactive)
+    (if (save-excursion (end-of-line) (outline-invisible-p))
+        (progn (org-show-entry) (show-children))
+      (outline-next-heading)
+      (unless (and (bolp) (org-on-heading-p))
+        ;; (org-up-heading-safe)
+        ;; (hide-subtree)
+        (error "Boundary reached"))
+      (org-overview)
+      (org-reveal t)
+      (org-show-entry)
+      (show-children)))
+
+  (defun ded/org-show-previous-heading-tidily ()
+    "Show previous entry, keeping other entries closed."
+    (interactive)
+    (let ((pos (point)))
+      (outline-previous-heading)
+      (unless (and (< (point) pos) (bolp) (org-on-heading-p))
+        (goto-char pos)
+        (hide-subtree)
+        (error "Boundary reached"))
+      (org-overview)
+      (org-reveal t)
+      (org-show-entry)
+      (show-children)))
+
+  (define-key org-mode-map (kbd "<f8>") 'ded/org-show-previous-heading-tidily)
+  (define-key org-mode-map (kbd "<f9>") 'ded/org-show-next-heading-tidily)
+#+end_src
+
+* Configure spell checking
+I don’t remember why I put this in here the way it is, but it seems to work
+somehow.  The command =ispell-change-dictionary= can be used to switch the
+active dictionary.
+
+#+BEGIN_SRC emacs-lisp
+  (require 'ispell)
+
+  (add-to-list
+   'ispell-local-dictionary-alist
+   '("deutsch-hunspell"
+     "[[:alpha:]]"
+     "[^[:alpha:]]"
+     "['ß]"
+     nil
+     ("-d" "de_DE")                       ; Dictionary file name
+     nil
+     iso-8859-1))
+
+  (add-to-list
+   'ispell-local-dictionary-alist
+   '("english-hunspell"
+     "[[:alpha:]]"
+     "[^[:alpha:]]"
+     "[']"
+     nil
+     ("-d" "en_US")
+     nil
+     iso-8859-1))
+#+END_SRC
+
+* Configure =AUCTeX=
+AUCTeX is /the/ major mode for editing LaTeX, although I do prefer Org Mode
+whenever possible.
+
+** A few shortcuts for my thesis
+In my master thesis I used lots of code blocks, most of them some lisp or other.
+I needed a few shortcuts to place them.  I may never use them again.
+
+#+begin_src emacs-lisp
+  (defun schweers/LaTeX-put-lisp-block (caption label)
+    (interactive "*MCaption: \nMLabel: ")
+    (let ((create-par? (not (and (looking-at-p "$")
+                                 (looking-back "^" (max (- (point) 2) 1))))))
+      (when create-par?
+        (insert "\n\n"))
+      (insert "\\begin{lstlisting}[style=lispcode")
+      (when caption
+        (insert ",caption={" caption "}"))
+      (when label
+        (insert ",label={" label "}"))
+      (insert "}\n\\end{lstlisting}")
+      (when create-par?
+        (insert "\n"))
+      (beginning-of-line (if create-par? -2 -3))
+      (insert "\n")))
+
+  (defun schweers/lispinline ()
+    "Insert a `lispinline' lstlisting at point."
+    (interactive)
+    (goto-char
+     (save-mark-and-excursion
+      (let ((beg (point)))
+        (insert "\\begin{lstlisting}[style=lispinline]\n\n\\end{lstlisting}")
+        (let ((end (point)))
+          (goto-char beg)
+          (fill-paragraph)
+          (goto-char end)
+          (forward-line -1)
+          (point))))))
+
+  (defun schweers/lispcode (caption label)
+    "Insert a `lispcode' lstlisting at point."
+    (interactive "MCaption: \nMLabel: ")
+    (goto-char
+     (save-mark-and-excursion
+      (let ((beg (point)))
+        (insert
+         (format
+          "\\begin{lstlisting}%s\n\n%s"
+          (format "[style=lispcode,label={%s},caption={%s},numbers=left]"
+                  label caption)
+          "\\end{lstlisting}"))
+        (let ((end (point)))
+          (goto-char beg)
+          (fill-paragraph)
+          (goto-char end)
+          (forward-line -1)
+          (point))))))
+#+end_src
+
+** Install and configure AUCTeX
+Sadly, AUCTeX does not come with Emacs, so it must be installed.  Also, we want
+to create PDF files by default (no DVI files please).  Also, activate synctex so
+one can jump from the TeX source to the PDF location and vice versa.
+
+Another useful thing I do here is to activate outline mode, as it provides some
+more jump locations.
+
+#+begin_src emacs-lisp
+  (pc auctex
+    (:require nil)
+    (:post-install
+     (setf LaTeX-command "latex")
+     (add-hook
+      'LaTeX-mode-hook
+      (lambda ()
+        (TeX-PDF-mode)
+        ;; (push '(pdf . pdfsync)
+        ;;       TeX-source-correlate-method)
+        (define-key LaTeX-mode-map
+          [remap backward-delete-char]
+          'delete-backward-char)
+        (define-key LaTeX-mode-map (kbd "M-\"")
+          #'schweers/org-TeX-string)
+        (TeX-source-correlate-mode 1)
+        (flyspell-mode 1)
+        (setf (cdr (assoc "subsection"
+                          LaTeX-section-label))
+              "subsec:"
+              (cdr (assoc "subsubsection"
+                          LaTeX-section-label))
+              "subsubsec:")
+        (outline-minor-mode 1)))))
+#+end_src
+
+* Install and configure =bbdb=
+While BBDB is a little weird, it does not need a lot of configuration.  I
+basically only tell it that I’m not an American.
+
+#+BEGIN_SRC emacs-lisp
+  (pc bbdb
+    (:post-install
+     (setf bbdb-north-american-phone-number nil
+           bbdb-phone-style nil)))
+#+END_SRC
+
+* Install =gnus=
+While my gnus file is quite large, for some reason gnus insists on having its
+own file.  I’ve convinced it to please not use the home directory for this.  The
+rest of the configuration can be found in gnus.el.
+
+#+BEGIN_SRC emacs-lisp
+  (pc gnus
+    (:post-install
+     (load (expand-file-name "gnus.el" user-emacs-directory))))
+
+#+END_SRC
+
+* Install and configure =multiple-cursors=
+Multiple cursors is a nice shorthand for keyboard macros.  They save a lot of
+time when one is not /exactly/ sure what needs to be done.
+
+#+BEGIN_SRC emacs-lisp
+  (pc multiple-cursors
+    (:bind (("C-S-c C-S-c" . mc/edit-lines)
+            ("C->" . mc/mark-next-like-this)
+            ("C-<" . mc/mark-previous-like-this)
+            ("C-c C-<" . mc/mark-all-like-this))))
+
+#+END_SRC
+
+* Install and configure =erc=
+As IRC is also just text, I naturally pull it into Emacs.  This should go
+without saying.
+
+#+BEGIN_SRC emacs-lisp
+  (pc erc
+    (:post-install
+     (and (load-library "erc-highlight-nicknames")
+          (add-to-list 'erc-modules 'highlight-nicknames)
+          (erc-update-modules))
+     (add-hook 'erc-mode-hook
+               (lambda ()
+                 (-partial 'auto-fill-mode 0)
+                 (show-paren-mode nil)))))
+#+END_SRC
+
+* Install and configure =ace-link=
+I installed this quite a while back.  It is really nice, but sadly I’ve
+forgotten how to use it because I hardly need it.
+
+#+BEGIN_SRC emacs-lisp
+  (pc ace-link
+    (:post-install (ace-link-setup-default)))
+#+END_SRC
+
+* Install and configure =browse-kill-ring=
+This extension alone is a good reason to switch to Emacs.  No matter where one
+is coming from!  This gives me access to everything I have ever killed/cut in
+the current Emacs session.  Also, its searchable!  Helm provides something
+similar, but I slightly prefer =browse-kill-ring= to helms alternative.
+
+C-y works the same as ever.  If followed by M-y it also behaves as vanilla
+Emacs.  If M-y was not preceded by C-y, a new window is created (if needed) to
+display the contents of the kill ring.
+
+#+BEGIN_SRC emacs-lisp
+  (pc browse-kill-ring
+    (:post-install
+     (browse-kill-ring-default-keybindings)))
+#+END_SRC
+
+* Install and configure =SLIME=
+SLIME makes interaction with a Common Lisp process almost as seamless as
+interacting with the elisp VM underlying Emacs!
+
+#+BEGIN_SRC emacs-lisp
+  (pc ac-slime)
+
+  (pc slime
+    (:require nil)
+    (:post-install
+     (require 'slime-autoloads)
+     (cond ((eq system-type 'windows-nt)
+            (setq inferior-lisp-program "sbcl"))
+           ((eq system-type 'gnu/linux)
+            (setq inferior-lisp-program "sbcl")))
+     (add-to-list 'slime-contribs 'slime-fancy)
+
+     (require 'ac-slime)
+     (add-hook 'slime-mode-hook 'set-up-slime-ac)
+     (add-hook 'slime-repl-mode-hook 'set-up-slime-ac)
+     (add-to-list 'ac-modes 'slime-repl-mode)
+     (slime-setup '(slime-repl))))
+#+END_SRC
+
+* Install and configure =geiser=
+Geiser is to scheme what SLIME is to Common Lisp.  Sadly it needs some more
+love.  Also it behaves a little strangely due to the fact that it supports more
+than one backend.
+
+#+BEGIN_SRC emacs-lisp
+  (pc geiser
+    (:post-install
+     ;; (setf geiser-racket-binary "/usr/local/bin/racket")
+     ))
+#+END_SRC
+
+* Install and configure =expand-region=
+This is a package I hardly use, although it seems to be really cool.  Maybe I
+don’t use it because I already have lispy.
+
+#+BEGIN_SRC emacs-lisp
+  (pc expand-region
+    (:bind (("C-=" . er/expand-region))))
+#+END_SRC
+
+* Activate eldoc on lisp buffers
+This only works on elisp, so its not activated for all lisps I use.
+
+#+BEGIN_SRC emacs-lisp
+  (add-hook 'lisp-interaction-mode-hook (-partial 'eldoc-mode))
+  (add-hook 'emacs-lisp-mode-hook (-partial 'eldoc-mode))
+#+END_SRC
+
+* Install and configure =helm=
+This is a package which redefines completion.  When I first used Emacs, I was in
+awe at how awesome the completion was.  Then I discovered Ido and was stunned
+again.  Then I discovered helm and was stunned yet once more.  It really is that
+awesome, even though it is a bit intrusive.
+
+#+BEGIN_SRC emacs-lisp
+  (pc helm
+      (:post-install
+       (require 'helm-config)
+       (setq helm-man-or-woman-function 'woman)
+       (setq helm-man-or-woman-function 'Man-getpage-in-background)
+       (helm-mode 1)
+       (provide 'setup-helm)
+       (diminish 'helm-mode))
+      (:bind
+       (("M-x" . helm-M-x)
+        ("C-M-y" . helm-show-kill-ring)
+        ("C-x C-f" . helm-find-files))))
+#+END_SRC
+
+* Make it easy to look something up in the CL Hyperspec
+The hyperspec it /the/ definitive resource on Common Lisp, so I want quick
+access to it.
+
+#+BEGIN_SRC emacs-lisp
+  (if (file-exists-p (expand-file-name "quicklisp/clhs-use-local.el"
+                                       (getenv "HOME")))
+      (progn (load (expand-file-name "quicklisp/clhs-use-local.el" (getenv "HOME")))
+
+             (defun schweers/browse-with-w3m (url &rest _args)
+               (other-window 1)
+               (w3m url t)
+               (other-window -1))
+
+             (defun schweers/browse-local-hyperspec ()
+               (let ((browse-url-browser-function 'schweers/browse-with-w3m))
+                 (if (<= (length (window-list)) 1)
+                     (split-window-sensibly))
+                 (funcall 'slime-documentation-lookup)))
+
+             (defun schweers/browse-hyperspec-in-w3m-other-window ()
+               (interactive)
+               "Open the local hyperspec for the symbol at point in w3m in the
+  other window."
+               (schweers/browse-local-hyperspec))
+
+             (define-key help-map (kbd "h")
+               'schweers/browse-hyperspec-in-w3m-other-window))
+    (warn "CLHS is not installed! (use (ql:quickload \"clhs\") to install and get
+               further instructions."))
+#+END_SRC
+
+* Configure =dired=
+Dired is a little weird, but also really cool.  I really ought to get it going
+in async mode though.
+
+#+BEGIN_SRC emacs-lisp
+  (autoload 'dired-toggle-read-only "dired" nil t)
+#+END_SRC
+
+* Load =forth-mode=
+  :PROPERTIES:
+  :header-args: :tangle no
+  :END:
+In case I want to use forth again.
+
+#+BEGIN_SRC emacs-lisp
+  (load "/usr/share/emacs/site-lisp/gforth.el")
+#+END_SRC
+
+* Install and configure =undo-tree=
+This alone is also a reason to switch to Emacs.  It takes undo to a whole new
+level.
+
+#+BEGIN_SRC emacs-lisp
+  (pc undo-tree
+    (:post-install
+     (global-undo-tree-mode 1)
+     (diminish 'undo-tree-mode)))
+#+END_SRC
+
+* Install and configure =diminish=
+Diminish is used to prevent the mode line from becoming too cluttered.  Sadly I
+have not yet gotten it to work for =emacs-lisp-mode=.
+
+#+BEGIN_SRC emacs-lisp
+  (pc diminish
+    (:post-install
+     (diminish 'emacs-lisp-mode "EL")
+     (diminish 'lisp-interaction-mode "LIM")
+     (diminish 'auto-revert-mode)))
+#+END_SRC
+
+* Install and configure Emacs for clojure
+
+** Install =clojure-mode=
+
+#+BEGIN_SRC emacs-lisp
+  (pc clojure-mode)
+#+END_SRC
+
+** Install =cider=
+Cider is like SLIME and geiser, but for clojure.
+
+#+BEGIN_SRC emacs-lisp
+  (pc cider)
+#+END_SRC
+
+* Install and configure =projectile=
+Sadly I don’t use this that much.  It can be used together with helm.
+Projectile can figure out where a project is by looking for typical files and
+directories (like .git).
+
+#+BEGIN_SRC emacs-lisp
+  (pc projectile
+    (:post-install
+     (projectile-global-mode)
+     ;; (define-key projectile-mode-map (kbd "s-M-p") 'projectile-command-map)
+     ))
+
+  (pc helm-projectile
+    (:post-install
+     (define-key projectile-mode-map (kbd "s-h") 'helm-projectile)))
+#+END_SRC
+
+* Make parenthesis less prominent
+I use =global-paren-face-mode= to make parentheses stand out a little less.
+
+#+BEGIN_SRC emacs-lisp
+  (pc paren-face
+    (:post-install
+     (global-paren-face-mode 1)))
+#+END_SRC
+
+* Install =w3m=
+I use this to browse the hyperspec
+
+#+BEGIN_SRC emacs-lisp
+  (pc w3m)
+#+END_SRC
+
+* Install and configure =elfeed=
+Elfeed is an RSS reader modeled on notmuch, i.e. it uses tags and searches.  It
+works much better than RSS in gnus.
+
+The feeds can also be entered here.
+
+#+BEGIN_SRC emacs-lisp
+  (pc elfeed
+    (:post-install
+     (setf elfeed-feeds
+           '(("http://endlessparentheses.com/atom.xml"
+              endlessparentheses blog emacs)
+             ("http://oremacs.com/atom.xml" oremacs blog emacs)
+             ("http://emacsredux.com/atom.xml" emacsredux blog emacs)
+             ("http://bitstacker.soup.io/rss" bitstacker)
+             ("http://www.copenhagenize.com/feeds/posts/default"
+              copenhagenize bike blog)
+             ("https://feeds.feedburner.com/blogspot/rkEL" der-postillon)
+             ("https://www.eine-zeitung.net/feed/" eine-zeitung)
+             ("https://feeds2.feedburner.com/gbo-zitate" gbo)
+             ("http://ibash.de/neueste-zitate.xml" ibash)
+             ("http://itstartedwithafight.de/feed/" itstartedwithafight bike blog)
+             ("http://irreal.org/blog/?feed=rss2" irreal blog emacs)
+             ("https://www.heise.de/developer/rss/news-atom.xml" heise-developer
+              heise)
+             ("https://www.heise.de/netze/rss/netze-atom.xml" heise-netze heise)
+             ("https://www.heise.de/security/news/news-atom.xml" heise-security
+              heise)
+             ("https://www.heise.de/tp/news-atom.xml" telepolis heise)
+             ("http://cre.fm/feed/opus/" cre podcast)
+             ("https://xkcd.com/rss.xml" xkcd webcomic)
+             ("https://www.tagesschau.de/xml/rss2" tagesschau news)
+             ("https://wingolog.org/feed/atom" wingolog blog)
+             ("http://howardism.org/index.xml" howardism blog emacs)
+             ("http://nullprogram.com/feed/" nullprogram blog emacs)
+             ("http://busy-streets.de/feed/" blog busy-streets bike)))))
+#+END_SRC
+
+* Define a minor mode for keybindings
+I use a separate minor mode which does nothing but bind keys.  This has the
+advantage that other modes cannot quite as easily overwrite my keybindings.
+
+#+begin_src emacs-lisp
+  (defvar *schweers-bindings* (make-sparse-keymap))
+
+  (define-key *schweers-bindings* (kbd "C-w") 'backward-kill-word)
+  (define-key *schweers-bindings* (kbd "C-c C-w") 'kill-region)
+
+  (define-key *schweers-bindings* (kbd "C-S-e") 'eshell)
+
+  (define-key *schweers-bindings* (kbd "s-e") 'eshell)
+  ;; (define-key *schweers-bindings* (kbd "<f1>") 'help-command)
+
+  (defun use-arrows! ()
+    "Complain to the user about not having used the arrow keys.
+
+  As someone who uses a proper keyboard layout, the arrow keys are a viable option
+    (unless using guake *grr*)."
+    (interactive)
+    (error "Use the arrow keys, that’s what you have a proper layout for!"))
+
+  ;; Use the arrow keys on the keyboard, damnit! That’s what they’re there for!
+  ;; (define-key *schweers-bindings* (kbd "C-f") #'use-arrows!)
+  ;; (define-key *schweers-bindings* (kbd "C-b") #'use-arrows!)
+  ;; (define-key *schweers-bindings* (kbd "C-n") #'use-arrows!)
+  ;; (define-key *schweers-bindings* (kbd "C-p") #'use-arrows!)
+
+  (define-key *schweers-bindings*
+    (kbd "M-t")
+    (let ((hydra-transpose/custom-prefix-arg nil))
+      (defhydra hydra-transpose-backward
+        (:pre (if (or (null hydra-transpose/custom-prefix-arg)
+                      (>= hydra-transpose/custom-prefix-arg 0))
+                  (setq hydra-transpose/custom-prefix-arg -1))
+              :color pink)
+        "transpose backward"
+        ("d" hydra-transpose/body "toggle direction" :exit t)
+        ("f" hydra-transpose/body "forward mode" :exit t)
+        ("b" hydra-transpose-backward/body "backward mode" :exit t)
+        ("u" (lambda (arg)
+               (interactive "nPrefix: ")
+               (setq hydra-transpose/custom-prefix-arg (- (abs arg)))
+               (message "prefix: %s" hydra-transpose/custom-prefix-arg))
+         "prefix")
+        ("r" (lambda ()
+               (interactive)
+               (setq hydra-transpose/custom-prefix-arg -1))
+         "reset prefix")
+        ("c" (lambda ()
+               (interactive)
+               (let ((current-prefix-arg
+                      hydra-transpose/custom-prefix-arg))
+                 (call-interactively #'transpose-chars)
+                 (call-interactively #'forward-char)))
+         "chars")
+        ("l" (lambda ()
+               (interactive)
+               (let ((current-prefix-arg
+                      hydra-transpose/custom-prefix-arg))
+                 (call-interactively #'transpose-lines)
+                 (call-interactively #'forward-line))
+               (setq hydra-transpose/custom-prefix-arg -1))
+         "lines")
+        ("w" (lambda ()
+               (interactive)
+               (message "current-prefix: %s" hydra-transpose/custom-prefix-arg)
+               (let ((current-prefix-arg
+                      hydra-transpose/custom-prefix-arg))
+                 (call-interactively #'transpose-words)
+                 (call-interactively #'forward-word))
+               (setq hydra-transpose/custom-prefix-arg -1))
+         "words")
+        ("s" (lambda ()
+               (interactive)
+               (let ((current-prefix-arg
+                      hydra-transpose/custom-prefix-arg))
+                 (call-interactively #'transpose-sexps)
+                 (call-interactively #'forward-sexp))
+               (setq hydra-transpose/custom-prefix-arg -1))
+         "sexps")
+        ("p" (lambda ()
+               (interactive)
+               (let ((current-prefix-arg
+                      hydra-transpose/custom-prefix-arg))
+                 (call-interactively #'transpose-paragraphs)
+                 (call-interactively #'forward-paragraph))
+               (setq hydra-transpose/custom-prefix-arg -1))
+         "paragraphs")
+        ("S" (lambda ()
+               (interactive)
+               (let ((current-prefix-arg
+                      hydra-transpose/custom-prefix-arg))
+                 (call-interactively #'transpose-sentences)
+                 (call-interactively #'forward-sentence))
+               (setq hydra-transpose/custom-prefix-arg -1))
+         "sentences")
+        ("e" org-transpose-element "Org mode elements")
+        ("q" nil "quit"))
+
+     (defhydra hydra-transpose
+       (:pre (if (and (not (null hydra-transpose/custom-prefix-arg))
+                      (< hydra-transpose/custom-prefix-arg 0))
+                 (setq hydra-transpose/custom-prefix-arg nil))
+             :color pink)
+       "transpose"
+       ("d" hydra-transpose-backward/body "toggle direction" :exit t)
+       ("f" hydra-transpose/body "forward mode" :exit t)
+       ("b" hydra-transpose-backward/body "backward mode" :exit t)
+       ("u" (lambda (arg)
+              (interactive "nPrefix: ")
+              (setq hydra-transpose/custom-prefix-arg arg))
+        "prefix")
+       ("r" (lambda ()
+             (interactive)
+             (setq hydra-transpose/custom-prefix-arg nil))
+       "reset prefix")
+       ("c" (lambda ()
+              (interactive)
+              (let ((current-prefix-arg
+                     hydra-transpose/custom-prefix-arg))
+                (call-interactively #'transpose-chars))
+              (setq hydra-transpose/custom-prefix-arg nil))
+        "chars")
+       ("l" (lambda ()
+              (interactive)
+              (let ((current-prefix-arg
+                     hydra-transpose/custom-prefix-arg))
+                (call-interactively #'transpose-lines))
+              (setq hydra-transpose/custom-prefix-arg nil))
+        "lines")
+       ("w" (lambda ()
+              (interactive)
+              (let ((current-prefix-arg
+                     hydra-transpose/custom-prefix-arg))
+                (call-interactively #'transpose-words))
+              (setq hydra-transpose/custom-prefix-arg nil))
+        "words")
+       ("s" (lambda ()
+              (interactive)
+              (let ((current-prefix-arg
+                     hydra-transpose/custom-prefix-arg))
+                (call-interactively #'transpose-sexps))
+              (setq hydra-transpose/custom-prefix-arg nil))
+        "sexps")
+       ("p" (lambda ()
+              (interactive)
+              (let ((current-prefix-arg
+                     hydra-transpose/custom-prefix-arg))
+                (call-interactively #'transpose-paragraphs))
+              (setq hydra-transpose/custom-prefix-arg nil))
+        "paragraphs")
+       ("S" (lambda ()
+              (interactive)
+              (let ((current-prefix-arg
+                     hydra-transpose/custom-prefix-arg))
+                (call-interactively #'transpose-sentences)))
+        "sentences")
+       ("e" org-transpose-element "Org mode elements")
+       ("q" nil "quit"))))
+
+  (define-key *schweers-bindings*
+    (kbd "C-x -")
+    (defhydra hydra-resize-window ()
+      "resize"
+      ("l" enlarge-window "taller")
+      ("r" shrink-window "shorter")
+      ("n" shrink-window-horizontally "narrower")
+      ("s" enlarge-window-horizontally "wider")
+      ("-" shrink-window-if-larger-than-buffer "short (aggressive)")
+      ("+" balance-windows "balance")
+      ("t" toggle-frame-split "frame split")
+      ("q" nil "quit")))
+
+  (define-key *schweers-bindings*
+    (kbd "C-x t")
+    (defhydra hydra-toggle (:color teal)
+      "toggle"
+      ("c" column-number-mode "column number mode")
+      ("d" toggle-debug-on-error "debug on error")
+      ("e" toggle-debug-on-error "debug on error")
+      ("f" auto-fill-mode "auto-fill mode")
+      ("t" toggle-truncate-lines "truncate lines")
+      ("Q" toggle-debug-on-quit "debug on quit")
+      ("r" dired-toggle-read-only "dired: read-only")
+      ("w" whitespace-mode "whitespace mode")
+      ("l" org-toggle-link-display "Org: toggle link display")
+      ("q" nil "quit")))
+
+  (define-key *schweers-bindings* (kbd "M-o") 'occur)
+  (define-key *schweers-bindings* (kbd "C-x C-b") 'ibuffer-other-window)
+  (define-key *schweers-bindings* (kbd "M-j") 'eval-print-last-sexp)
+  (define-key *schweers-bindings* (kbd "C-x C-SPC") 'helm-all-mark-rings)
+  (define-key *schweers-bindings* (kbd "C-c C-j") 'helm-mark-ring)
+  (define-key *schweers-bindings* (kbd "C-M-l") 'misc/mark-line)
+
+  (define-key *schweers-bindings* (kbd "<f6>") 'schweers/increase-font)
+  (define-key *schweers-bindings* (kbd "<f7>") 'schweers/decrease-font)
+
+  (define-key *schweers-bindings* (kbd "C-x k") 'schweers/kill-buffer)
+
+  (global-set-key (kbd "C-S-s") 'misc/switch-to-scratch)
+
+  (define-minor-mode schweers-bindings-mode
+    "This minor mode binds my own keybindings."
+    :keymap *schweers-bindings*)
+
+  (define-globalized-minor-mode schweers-global-bindings-mode
+    schweers-bindings-mode schweers-bindings-mode)
+
+  ;;; Turn it on, already
+  (schweers-global-bindings-mode)
+
+  ;;; As some modes—I’m looking at you, wl-draft-mode—think it’s totally OK to
+  ;;; rebind my keys, I’ll put them into the overriding keymap instead.
+
+  ;; (defun schweers/set-bindings-in-broken-modes ()
+  ;;   (cl-flet
+  ;;       ((find-my-bindings
+  ;;         (e)
+  ;;         (eq (car e) 'schweers-bindings-mode)))
+  ;;     (setq
+  ;;      minor-mode-overriding-map-alist
+  ;;      (-filter #'find-my-bindings minor-mode-map-alist))))
+
+  ;; minor-mode-overriding-map-alist
+  ;; minor-mode-map-alist
+  ;; (add-to-list 'minor-mode-map-alist (car minor-mode-overriding-map-alist))
+
+  ;; (add-hook 'wl-draft-mode-hook #'schweers/set-bindings-in-broken-modes)
+
+  ;; (setq  wl-draft-mode-hook nil)
+
+#+end_src
+
+* Start Emacs in server mode
+If Emacs is not already running as a server, start the server component.  This
+way I only need to start Emacs once and can use emacsclient from then on.
+
+#+BEGIN_SRC emacs-lisp
+  (require 'server)
+  (unless (server-running-p)
+    (server-start))
+#+END_SRC

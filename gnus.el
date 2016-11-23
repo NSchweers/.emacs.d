@@ -1,5 +1,3 @@
-(require 'setup-bbdb)
-
 (setf gnus-home-directory (expand-file-name "code" user-emacs-directory)
       user-mail-address "NSchweers@mailbox.org"
       user-full-name "Nathanael Schweers")
