@@ -1,4 +1,6 @@
 #+PROPERTY: header-args :tangle literate-init.el
+#+TITLE: An Emacs Configuration
+#+AUTHOR: Nathanael Schweers
 
 * Activate lexical scope
 As Emacs started out without lexical scope, it has to be enabled by the
@@ -1388,7 +1390,7 @@ Also, I want the notes file which I use with org-capture to reside inside my
 .emacs.d directory.  This might as well change in the future.
 #+begin_src emacs-lisp
   (setf org-default-notes-file
-        (expand-file-name ".emacs_data/notes.org" (getenv "HOME"))
+        (expand-file-name ".emacs_data/notes.org.gpg" (getenv "HOME"))
         org-special-ctrl-a/e t
         org-special-ctrl-k t
         org-special-ctrl-o t)
@@ -2000,6 +2002,22 @@ The feeds can also be entered here.
              ("http://busy-streets.de/feed/" blog busy-streets bike)))))
 #+END_SRC
 
+* Install and configure avy
+Avy can be used to jump to a position which is visible in the current window.
+
+#+BEGIN_SRC emacs-lisp
+  (pc avy
+    (:post-install
+     (global-set-key
+      (kbd "M-\"")
+      (defhydra hydra-avy (:color teal)
+        "avy-goto"
+        ("c" avy-goto-char "char")
+        ("2" avy-goto-char-2 "char-2")
+        ("g" avy-goto-line "line")
+        ("w" avy-goto-word-1 "word")))))
+
+#+END_SRC
 * Define a minor mode for keybindings
 I use a separate minor mode which does nothing but bind keys.  This has the
 advantage that other modes cannot quite as easily overwrite my keybindings.
