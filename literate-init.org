@@ -233,7 +233,11 @@ this is saved in a file.  The name for this file can be found in the variable
 
 #+begin_src emacs-lisp
   (setf save-place-file (expand-file-name ".places" user-emacs-directory))
-  (save-place-mode 1)
+  (if (version< emacs-version "25.1")
+      (progn
+        (require 'saveplace)
+        (setq-default save-place t))
+    (save-place-mode 1))
 #+end_src
 
 ** Automatically refresh dired
@@ -1958,10 +1962,12 @@ I use =global-paren-face-mode= to make parentheses stand out a little less.
 #+END_SRC
 
 * Install =w3m=
-I use this to browse the hyperspec
+I use this to browse the hyperspec.  Don't require it, as it will fail on
+Windows.
 
 #+BEGIN_SRC emacs-lisp
-  (pc w3m)
+  (pc w3m
+    (:require nil))
 #+END_SRC
 
 * Install and configure =elfeed=
