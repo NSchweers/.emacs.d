@@ -1280,7 +1280,8 @@ lispy, which is an alternative to paredit.
        (let ((current-prefix-arg '(2)))
          (call-interactively 'lispy-parens)))
      
-     (define-key lispy-mode-map (kbd "M-(") 'schweers/lispy-M-paren)))
+     (define-key lispy-mode-map (kbd "M-(") 'schweers/lispy-M-paren)
+     (define-key lispy-mode-map (kbd ":") 'self-insert-command)))
 #+END_SRC
 
 * TODO Configure =autocomplete=
@@ -2002,14 +2003,14 @@ The feeds can also be entered here.
              ("http://busy-streets.de/feed/" blog busy-streets bike)))))
 #+END_SRC
 
-* Install and configure avy
+* Install and configure =avy=
 Avy can be used to jump to a position which is visible in the current window.
 
 #+BEGIN_SRC emacs-lisp
   (pc avy
     (:post-install
      (global-set-key
-      (kbd "M-\"")
+      (kbd "C-\"")
       (defhydra hydra-avy (:color teal)
         "avy-goto"
         ("c" avy-goto-char "char")
@@ -2017,6 +2018,22 @@ Avy can be used to jump to a position which is visible in the current window.
         ("g" avy-goto-line "line")
         ("w" avy-goto-word-1 "word")))))
 
+#+END_SRC
+
+* Install and configure =swiper=
+#+BEGIN_SRC emacs-lisp
+  (pc swiper
+    (:bind
+     (("C-s" . swiper))))
+#+END_SRC
+* Install =lua-mode=
+Lua mode is needed for computercraft.
+
+Luckily, files in a computer inside of computercraft also exist in the
+filesystem outside of minecraft/feed the beast.
+
+#+BEGIN_SRC emacs-lisp
+  (pc lua-mode)
 #+END_SRC
 * Define a minor mode for keybindings
 I use a separate minor mode which does nothing but bind keys.  This has the
