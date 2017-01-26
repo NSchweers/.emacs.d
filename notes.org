@@ -288,3 +288,76 @@ Dann könnte man was dran machen, um doppelte Kontakte zu syncen.
    
    <2016-11-14 Mo>
    [[gnus:INBOX/PUG#92734a72-7fba-6297-37c2-0dee8bf98cb5@zarrabi.de][Email from Darius Zarrabi: Re: {PUG} off-topic - Samsung ]]
+** Fragen an Outdooractive
+
+   - Welche Sprachen verwenden Sie?
+   - Wie viele Mitarbeiter/Programmierer in Stuttgart?
+   - Für welche Plattformen werde ich entwickeln?
+     
+   <2016-12-03 Sat>
+** Kleinanzeigen Anfrage
+Sehr geehrte Frau Polymeris,
+ich habe soeben Ihre Anzeige für eine Wohnung bei den Ebay-Kleinanzeigen
+gesehen, und habe Interesse an diesem Objekt.
+
+Ist die Wohnung noch frei?
+
+Ich selbst bin Informatiker in der Softwareentwicklung und trete am 01.02.2017
+eine Stelle bei Stuttgart an (3400€/Monat).  Meine Lebensgefährtin welche mit
+einziehen möchte ist Mediengestalterin.
+
+Wir würden die Wohnung gerne Besichtigen, hätten allerdings gerne etwas
+Vorlaufzeit für den Termin, da wir erst anreisen müssen.
+
+Mit freundlichen Grüßen,
+Nathanael Schweers
+   
+   <2017-01-07 Sat>
+   [[https://www.ebay-kleinanzeigen.de/s-anzeige/nachmieter-gesucht/575868570-203-9285][Ebay-Kleinanzeigen Link]]
+** Wohnung (UG?) in Sillenbuch Anschreiben
+Meine Lebensgefährtin und ich haben großes Interesse an ihrer Wohnung in
+Sillenbuch.  Haben Sie die Möglichkeit Bilder und/oder einen Grundriss der
+Wohnung zur Verfügung zu stellen?
+
+Wir würden die Wohnung gerne besichtigen, da wir allerdings beide (noch) nicht
+im Raum Stuttgart leben, würden wir uns über eine kurze Vorlaufzeit für einen
+Termin freuen.  Auch wären uns Termine ab Mittags am liebsten.
+
+Ich selbst trete am 01.02.2017 eine Stelle als Softwareentwickler an
+(3400€/Monat), meine Lebensgefährtin ist Mediengestalterin.
+
+Mit freundlichen Grüßen,
+Nathanael Schweers
+
+   <2017-01-07 Sat>
+   [[http://www.cs-wohnungsagentur.de/wohnung/49269426][cs-wohnungsagentur link]]
+** Wohnung in Stuttgart Rohracker 
+Guten Tag,
+
+meine Lebensgefährtin und ich interessieren uns sehr für Ihre Wohnung in
+Stuttgart Rohracker.
+
+Da wir morgen (12.01.2017) sowieso in der Gegend sind (wir haben eine
+recht weite Anreise), wollte ich wissen ob wir sie spontan besichtigen
+können.
+
+Ich trete am 01.02.2017 eine Stelle als Softwareentwickler in Kemnat an
+(3600€/Monat), meine Lebensgefährtin ist Mediengestalterin.
+
+Wir sind beide Nichtraucher und halten keine Tiere.
+
+Mit freundlichen Grüßen,
+Nathanael Schweers
+
+Mail: NSchweers@mailbox.org
+Tel: +4917634675860
+
+   
+   <2017-01-11 Wed>
+   [[gnus:nnfolder%2Barchive:sent.2017-01#87y3yhqxv8.fsf@reisefreund.localdomain][Email from Nathanael Schweers: Wohnung in Rohracker]]
+** Fritz!Box WLAN passwort
+
+Passwort:0331 8588 1211 7024 0581
+   
+   <2017-01-24 Tue>
+   [[info:org#Refile%20and%20copy][info:org#Refile and copy]]
