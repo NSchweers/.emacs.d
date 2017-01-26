@@ -1,4 +1,6 @@
 #+PROPERTY: header-args :tangle literate-init.el
+#+TITLE: An Emacs Configuration
+#+AUTHOR: Nathanael Schweers
 
 * Activate lexical scope
 As Emacs started out without lexical scope, it has to be enabled by the
@@ -602,6 +604,21 @@ Make dired guess a destination for file operations.
 #+END_SRC
 * TODO Install and configure async (for dired)
 It can be found here: https://github.com/jwiegley/emacs-async
+
+#+BEGIN_SRC emacs-lisp
+  (pc async)
+
+#+END_SRC
+
+* Configure =dired=
+Dired is a little weird, but also really cool.  I really ought to get it going
+in async mode though.
+
+#+BEGIN_SRC emacs-lisp
+  (autoload 'dired-async-mode "dired-async.el" nil t)
+  (autoload 'dired-toggle-read-only "dired" nil t)
+  (dired-async-mode 1)
+#+END_SRC
 * Configure a few libraries
 Normally, libraries don’t need to be configured, but dash provides some
 font-locking.  Also, these libraries need to be installed before they can be
@@ -1263,7 +1280,8 @@ lispy, which is an alternative to paredit.
        (let ((current-prefix-arg '(2)))
          (call-interactively 'lispy-parens)))
      
-     (define-key lispy-mode-map (kbd "M-(") 'schweers/lispy-M-paren)))
+     (define-key lispy-mode-map (kbd "M-(") 'schweers/lispy-M-paren)
+     (define-key lispy-mode-map (kbd ":") 'self-insert-command)))
 #+END_SRC
 
 * TODO Configure =autocomplete=
@@ -1373,7 +1391,7 @@ Also, I want the notes file which I use with org-capture to reside inside my
 .emacs.d directory.  This might as well change in the future.
 #+begin_src emacs-lisp
   (setf org-default-notes-file
-        (expand-file-name "notes.org" user-emacs-directory)
+        (expand-file-name ".emacs_data/notes.org.gpg" (getenv "HOME"))
         org-special-ctrl-a/e t
         org-special-ctrl-k t
         org-special-ctrl-o t)
@@ -1878,14 +1896,6 @@ access to it.
                further instructions."))
 #+END_SRC
 
-* Configure =dired=
-Dired is a little weird, but also really cool.  I really ought to get it going
-in async mode though.
-
-#+BEGIN_SRC emacs-lisp
-  (autoload 'dired-toggle-read-only "dired" nil t)
-#+END_SRC
-
 * Load =forth-mode=
   :PROPERTIES:
   :header-args: :tangle no
@@ -1993,6 +2003,38 @@ The feeds can also be entered here.
              ("http://busy-streets.de/feed/" blog busy-streets bike)))))
 #+END_SRC
 
+* Install and configure =avy=
+Avy can be used to jump to a position which is visible in the current window.
+
+#+BEGIN_SRC emacs-lisp
+  (pc avy
+    (:post-install
+     (global-set-key
+      (kbd "C-\"")
+      (defhydra hydra-avy (:color teal)
+        "avy-goto"
+        ("c" avy-goto-char "char")
+        ("2" avy-goto-char-2 "char-2")
+        ("g" avy-goto-line "line")
+        ("w" avy-goto-word-1 "word")))))
+
+#+END_SRC
+
+* Install and configure =swiper=
+#+BEGIN_SRC emacs-lisp
+  (pc swiper
+    (:bind
+     (("C-s" . swiper))))
+#+END_SRC
+* Install =lua-mode=
+Lua mode is needed for computercraft.
+
+Luckily, files in a computer inside of computercraft also exist in the
+filesystem outside of minecraft/feed the beast.
+
+#+BEGIN_SRC emacs-lisp
+  (pc lua-mode)
+#+END_SRC
 * Define a minor mode for keybindings
 I use a separate minor mode which does nothing but bind keys.  This has the
 advantage that other modes cannot quite as easily overwrite my keybindings.
@@ -2248,29 +2290,100 @@ to be done:
 
 The following function should do exactly that.
 
+This code block has to be tangled manually.  Should it ever be changed, it must
+be added to git!  Otherwise Emacs may not be able to boot!
+
 #+BEGIN_SRC emacs-lisp :tangle bootstrap.el
   (setf lexical-binding t)
 
   ;; NOTE: THIS FILE WAS TANGLED FROM literate-init.org.  DO NOT CHANGE THIS FILE
   ;; DIRECTLY!
 
+  ;; I need a macro which abstracts some checks:
+
+  ;; If a file is missing, or is newer than some other file, I want to perform an
+  ;; action.  Said action should rectify the previous check.  If the check at the
+  ;; beginning does not hold, the supplied action must be performed.  If the same
+  ;; check does not hold /after/ the action is performed, an error shall be
+  ;; thrown.
+
+  ;; Example usage:
+
+  ;; (with-postcond (or (not (file-exists-p el-name))
+  ;;                    (time-less-p (nth 5 (file-attributes el-name))
+  ;;                                 (nth 5 (file-attributes lit-name))))
+  ;;     (signal 'postcondition-error)
+  ;;   (org-babel-tangle-file lit-name))
+
+  (defmacro ensure (postcond error-clause fixup &rest body)
+    "Tries to ensure that POSTCOND holds.
+
+  This is accomplished by a series of steps.  First, POSTCOND is
+  checked.  If it holds, the form returns.  If not, body is
+  executed.  Then POSTCOND is checked again.  If it holds, the form
+  returns.  If the check returns nil, or the body signalled any
+  error, the fixup function is tried (if non-nil and a function).
+  The fixup function is given either the error, or nil if none was
+  signalled.
+
+  Then the check is tried again.  If it now holds, the form
+  returns.  If not, body is tried once more.  If it signals an
+  error again, it is presumed to be non-recoverable by this macro,
+  so the error-clause is executed.  If the check does not hold, the
+  error-clause is executed.
+
+  As FIXUP must be a function, the form is evaluated exactly once."
+    (declare (indent 3))
+    (when (or (null postcond)
+              (null error-clause))
+      (error "Postcondition or Error-clause is missing"))
+    (let ((f (make-symbol "f"))
+          (e (make-symbol "e")))
+      `(let ((,f ,fixup))
+         (unless ,postcond
+           (condition-case ,e ,@body
+             (error (if ,f (progn
+                             (funcall ,f ,e)
+                             ,@body)
+                      (signal (car ,e) (cdr ,e)))))
+           (unless ,postcond
+             (when ,f
+               (funcall ,f nil))
+             (unless ,postcond
+               ,@body
+               (unless ,postcond
+                 ,error-clause)))))))
+
+  ;; To make the aforementioned macro a little more useful for my case, I need
+  ;; another function, which serves as a sort of predicate.  It checks whether the
+  ;; first given filename exists, then whether the first is newer than the second.
+
+  (defun missing-or-newer? (a b)
+    "Checks whether the file A exists.  If so, checks whether file B exists and is
+  older than A."
+    (or (not (file-exists-p a))
+        (and (file-exists-p b)
+             (time-less-p
+              (nth 5 (file-attributes a))
+              (nth 5 (file-attributes b))))))
+
   (defun load-literate-init ()
     "Tangles, compiles and loads the literate init file."
     (interactive)
     (require 'org)
-    (let* ((lit-name
-            (expand-file-name "literate-init.org" user-emacs-directory))
-           (el-name (expand-file-name "literate-init.el" user-emacs-directory))
-           (elc-name (expand-file-name "literate-init.elc" user-emacs-directory)))
-      (when (or (not (file-exists-p el-name))
-                (time-less-p (nth 4 (file-attributes el-name))
-                             (nth 4 (file-attributes lit-name))))
-        (org-babel-tangle-file lit-name)
-        (load el-name))
-      (when (or (not (file-exists-p elc-name))
-                (time-less-p (nth 4 (file-attributes elc-name))
-                             (nth 4 (file-attributes el-name))))
+    (let ((lit-name
+           (expand-file-name "literate-init.org" user-emacs-directory))
+          (el-name (expand-file-name "literate-init.el" user-emacs-directory))
+          (elc-name (expand-file-name "literate-init.elc" user-emacs-directory)))
+      (ensure (not (missing-or-newer? el-name lit-name))
+          (error "Could not tangle the literal init file")
+          nil
+        (org-babel-tangle-file lit-name))
+      (ensure (not (missing-or-newer? elc-name el-name))
+          (error "Could not byte-compile literal init, even after loading it.")
+          (lambda (_e)
+            (warn "Need to load non-compiled init file")
+            (load el-name))
         (byte-compile-file el-name))
       (load elc-name)))
-
 #+END_SRC
