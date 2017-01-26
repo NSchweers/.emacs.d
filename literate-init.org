@@ -2001,7 +2001,7 @@ advantage that other modes cannot quite as easily overwrite my keybindings.
   (defvar *schweers-bindings* (make-sparse-keymap))
 
   (define-key *schweers-bindings* (kbd "C-w") 'backward-kill-word)
-  (define-key *schweers-bindings* (kbd "C-c C-w") 'kill-region)
+  (define-key *schweers-bindings* (kbd "C-M-w") 'kill-region)
 
   (define-key *schweers-bindings* (kbd "C-S-e") 'eshell)
 
