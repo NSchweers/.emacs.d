@@ -1270,7 +1270,7 @@ lispy, which is an alternative to paredit.
     (:post-install
      (dolist (m schweers/*lisp-mode-hooks*)
        (add-hook m (lambda ()
-                     (lispy-mode 1)
+                     (evil-lispy-mode 1)
                      (subword-mode -1)
                      (define-key lispy-mode-map [remap backward-delete-char]
                        'lispy-delete-backward))))
@@ -1279,7 +1279,7 @@ lispy, which is an alternative to paredit.
        (interactive)
        (let ((current-prefix-arg '(2)))
          (call-interactively 'lispy-parens)))
-     
+
      (define-key lispy-mode-map (kbd "M-(") 'schweers/lispy-M-paren)
      (define-key lispy-mode-map (kbd ":") 'self-insert-command)))
 #+END_SRC
@@ -2296,6 +2296,51 @@ advantage that other modes cannot quite as easily overwrite my keybindings.
   ;; (setq  wl-draft-mode-hook nil)
 
 #+end_src
+
+* Install and configure evil mode
+Evil provides a layer on top of Emacs to emulate vi like keybindings and modes
+(called “states” in Evil parlance).
+
+There is a special evil package which should be loaded before evil itself, as it
+affects initial buffers like the scratch buffer.  For this reason we install
+evil-leader before evil itself.
+
+#+BEGIN_SRC emacs-lisp
+  (pc evil-leader
+    (:post-install
+     (global-evil-leader-mode 1)))
+
+  (pc evil
+    (:post-install
+     (require 'evil)
+     (evil-mode 1)))
+#+END_SRC
+
+Evil itself is all well and good for the novice user, yet some modes use rather
+different keybindings, hence need extra evil bindings.  This is where Evil
+plugins come to play.
+
+** Setup evil-lispy
+Lispy uses vi-like keybindings, yet implements them in its own magical way,
+hence is by default incompatible with evil-mode.
+#+BEGIN_SRC emacs-lisp
+  (pc evil-lispy)
+#+END_SRC
+
+** Setup evil-magit
+Magit also defines its own peculiar bindings, so again another plugin is
+needed.
+
+#+BEGIN_SRC emacs-lisp
+  (pc evil-magit)
+#+END_SRC
+
+** Setup evil-org
+This mode introduces several bindings, apparently mostly for headings.
+
+#+BEGIN_SRC emacs-lisp
+  (pc evil-org)
+#+END_SRC
 
 * Start Emacs in server mode
 If Emacs is not already running as a server, start the server component.  This
