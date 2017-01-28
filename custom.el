@@ -25,6 +25,7 @@
  '(jabber-vcard-avatars-retrieve nil)
  '(mew-rc-file "~/.emacs.d/mew")
  '(openwith-associations nil)
+ '(org-agenda-files (quote ("~/.emacs_data/notes.org.gpg")))
  '(org-export-backends
    (quote
     (ascii html icalendar latex beamer texinfo odt md man)))
