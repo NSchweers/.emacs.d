@@ -1342,7 +1342,10 @@ them it is easier to make them truly global.
     ("e" "#emacs" "emacs")
     ("f" "irc.freenode.net:6667" "freenode"))
 
+  (global-set-key (kbd "C-c l") 'org-store-link)
   (global-set-key (kbd "C-c c") 'org-capture)
+  (global-set-key (kbd "C-c a") 'org-agenda)
+  (global-set-key (kbd "C-c b") 'org-iswitchb)
 
 #+END_SRC
 
@@ -1439,6 +1442,14 @@ classes that are not by default configured.
                              ("\\subparagraph{%s}" . "\\subparagraph*{%s}")))
               (add-to-list 'org-latex-classes
                            '("scrartcl"
+                             "\\documentclass{scrartcl}"
+                             ("\\section{%s}" . "\\section*{%s}")
+                             ("\\subsection{%s}" . "\\subsection*{%s}")
+                             ("\\subsubsection{%s}" . "\\subsubsection*{%s}")
+                             ("\\paragraph{%s}" . "\\paragraph*{%s}")
+                             ("\\subparagraph{%s}" . "\\subparagraph*{%s}")))
+              (add-to-list 'org-latex-classes
+                           '("scrlttr2"
                              "\\documentclass{scrartcl}"
                              ("\\section{%s}" . "\\section*{%s}")
                              ("\\subsection{%s}" . "\\subsection*{%s}")
@@ -1575,6 +1586,21 @@ shamelessly +stole+ borrowed this code from someplace online.
   (define-key org-mode-map (kbd "<f9>") 'ded/org-show-next-heading-tidily)
 #+end_src
 
+** Set up the archive filename
+Org Mode normally adds the string "_archive" to the file name, yet this doesn’t
+work well with gpg encrypted files.  For this reason I’ll simply put "archive_"
+at the beginning of the new file name.
+
+#+BEGIN_SRC emacs-lisp
+  (setf org-archive-location "archive_%s::")
+#+END_SRC
+** Set up diary integration
+Org Mode can include items from the excellent diary package (which can represent
+recurring events of arbitrary complexity).  Only one variable needs to be set.
+
+#+BEGIN_SRC emacs-lisp
+  (setq org-agenda-include-diary t)
+#+END_SRC
 * Configure spell checking
 I don’t remember why I put this in here the way it is, but it seems to work
 somehow.  The command =ispell-change-dictionary= can be used to switch the

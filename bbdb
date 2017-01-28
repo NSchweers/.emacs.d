@@ -4,6 +4,7 @@
 ["Hendrike" "Bode" nil nil nil (["home" "+494088884641"] ["cell" "+491627656461"]) nil ("Hendrike.Bode@gmx.de") ((creation-date . "2015-04-30 08:41:25 +0000") (timestamp . "2015-05-05 19:54:11 +0000")) nil]
 ["Manuel" "Grob" nil nil nil nil nil ("manuel@grobwiefein.de") ((creation-date . "2015-04-28 12:36:21 +0000") (timestamp . "2015-04-28 12:36:21 +0000")) nil]
 ["David" "Klein" nil nil nil nil nil ("dklein@vistec.net") ((creation-date . "2015-04-28 12:38:18 +0000") (timestamp . "2015-04-28 12:38:18 +0000")) nil]
+["Lutz" "Marx" nil nil nil (["cell" "+491795984476"]) nil ("lmarx@lmarx.de") ((creation-date . "2017-01-26 12:50:25 +0000") (timestamp . "2017-01-26 12:50:25 +0000")) nil]
 ["Franziska" "Mäder" nil nil nil nil nil ("fra.maeder@googlemail.com") ((creation-date . "2015-04-28 12:38:22 +0000") (timestamp . "2015-04-28 12:39:11 +0000")) nil]
 ["Robin" "Müller-Bady" nil nil nil nil nil ("mueller-bady@fb2.fra-uas.de") ((creation-date . "2015-04-28 12:37:48 +0000") (timestamp . "2015-04-28 12:37:48 +0000")) nil]
 ["Heiko" "Niebuhr" nil nil nil nil nil ("post@hniebuhr.de") ((creation-date . "2015-04-28 12:34:50 +0000") (timestamp . "2015-04-28 12:34:50 +0000")) nil]
@@ -12,4 +13,5 @@
 ["Rebekka" "Schweers" nil nil nil (["cell" "+4915229265508"] ["home" "+4961959874700"]) (["home" ("In den Bleichwiesen 8") "Kelkheim" "Hessen" "65779" "Germany"]) ("Rebekka.Schweers@gmx.de") ((creation-date . "2017-01-20 21:24:08 +0000") (timestamp . "2017-01-20 21:24:36 +0000")) nil]
 ["Nathanael" "Schweers" nil nil nil (["home" "06198500583"] ["cell" "+4917634675860"]) (["home" ("Hof Häusel 4" "65817 Eppstein") "Eppstein" "Hessen" "65817" "Germany"]) ("NSchweers@mailbox.org" "NSchweers@online.de") ((creation-date . "2017-01-03 22:00:04 +0000") (timestamp . "2017-01-03 22:00:28 +0000")) nil]
 ["Prof. Dr. Jörg" "Schäfer" nil nil nil nil nil ("jschaefer@fb2.fra-uas.de") ((creation-date . "2015-04-28 12:37:19 +0000") (timestamp . "2015-04-28 12:37:19 +0000")) nil]
+["Joel" "Stein" nil nil nil (["cell" "+4917661740412"]) nil ("js@funkturm.net" "joel@1druck.net") ((creation-date . "2017-01-26 12:48:34 +0000") (timestamp . "2017-01-26 12:49:04 +0000")) nil]
 ["Prof. Dr. Matthias F." "Wagner" nil nil ("Frankfurt UAS") nil nil ("mfwagner@fb2.fra-uas.de") ((creation-date . "2016-09-20 21:42:40 +0000") (timestamp . "2016-09-20 21:42:57 +0000")) nil]
