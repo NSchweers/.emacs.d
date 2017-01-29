@@ -596,7 +596,13 @@ necessary.  For details, see the docstring.
                    (cl-loop for c in (cadr bind) collect
                             `(global-set-key (kbd ,(car c)) ',(cdr c)))))))))
 #+END_SRC
-* Install and configure async (for dired)
+* TODO Configure =dired=
+Make dired guess a destination for file operations.
+
+#+BEGIN_SRC emacs-lisp
+  (setf dired-dwim-target t)
+#+END_SRC
+* TODO Install and configure async (for dired)
 It can be found here: https://github.com/jwiegley/emacs-async
 
 #+BEGIN_SRC emacs-lisp
@@ -605,7 +611,12 @@ It can be found here: https://github.com/jwiegley/emacs-async
 #+END_SRC
 
 * TODO Configure =dired=
+<<<<<<< HEAD
 Dired is a little weird, but also really cool.
+=======
+Dired is a little weird, but also really cool.  I really ought to get it going
+in async mode though.
+>>>>>>> e67b47f... some stuff.  Emacs changed its customization again.
 
 #+BEGIN_SRC emacs-lisp
   (autoload 'dired-async-mode "dired-async.el" nil t)
