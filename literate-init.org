@@ -596,7 +596,7 @@ necessary.  For details, see the docstring.
                    (cl-loop for c in (cadr bind) collect
                             `(global-set-key (kbd ,(car c)) ',(cdr c)))))))))
 #+END_SRC
-* Configure =dired=
+* TODO Configure =dired=
 Make dired guess a destination for file operations.
 
 #+BEGIN_SRC emacs-lisp
@@ -610,7 +610,7 @@ It can be found here: https://github.com/jwiegley/emacs-async
 
 #+END_SRC
 
-* Configure =dired=
+* TODO Configure =dired=
 Dired is a little weird, but also really cool.  I really ought to get it going
 in async mode though.
 
@@ -1887,7 +1887,10 @@ awesome, even though it is a bit intrusive.
       (:bind
        (("M-x" . helm-M-x)
         ("C-M-y" . helm-show-kill-ring)
-        ("C-x C-f" . helm-find-files))))
+        ("C-x C-f" . helm-find-files)
+        ("C-x b" . helm-mini))))
+
+
 #+END_SRC
 
 * Make it easy to look something up in the CL Hyperspec
@@ -2342,6 +2345,30 @@ This mode introduces several bindings, apparently mostly for headings.
   (pc evil-org)
 #+END_SRC
 
+** Setup Helm integration
+Without helm, life in Emacs is pretty meaningless.  Sadly, there is no readily
+installable package to integrate Evil and Helm.
+
+#+BEGIN_SRC emacs-lisp
+  (define-key evil-ex-map "b " 'helm-mini)
+  (define-key evil-ex-map "e" 'helm-find-files)
+#+END_SRC
+
+** Setup evil for info
+Info also has rather non-standard bindings, as one does not edit text here, it
+is advisable to have evil be in emacs state.
+
+#+BEGIN_SRC emacs-lisp
+  (evil-set-initial-state 'Info-mode 'emacs)
+#+END_SRC
+
+As an added bonus, add bindings for j and k in Emacs state, as these are not
+bound in info.
+
+#+BEGIN_SRC emacs-lisp
+  (define-key Info-mode-map (kbd "j") (kbd "C-n"))
+  (define-key Info-mode-map (kbd "k") (kbd "C-p"))
+#+END_SRC
 * Start Emacs in server mode
 If Emacs is not already running as a server, start the server component.  This
 way I only need to start Emacs once and can use emacsclient from then on.
