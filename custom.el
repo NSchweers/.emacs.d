@@ -49,7 +49,7 @@
      "\\tolerance=1000")))
  '(package-selected-packages
    (quote
-    (evil-org evil-lispy evil-magit rust-mode htmlize csharp-mode elfeed evil markdown-mode shell-command undo-tree ace-jump-mode helm jabber expand-region ac-slime browse-kill-ring ace-link multiple-cursors bbdb auctex elpy magit auto-complete lispy guide-key org paren-face crux helm-projectile projectile cider racer cargo clojure-mode w3m json-mode f geiser diminish s dash-functional hydra use-package dash lua-mode)))
+    (bbdb-vcard evil-org evil-lispy evil-magit rust-mode htmlize csharp-mode elfeed evil markdown-mode shell-command undo-tree ace-jump-mode helm jabber expand-region ac-slime browse-kill-ring ace-link multiple-cursors bbdb auctex elpy magit auto-complete lispy guide-key org paren-face crux helm-projectile projectile cider racer cargo clojure-mode w3m json-mode f geiser diminish s dash-functional hydra use-package dash lua-mode)))
  '(rcirc-default-nick "schweers")
  '(rcirc-default-user-name "schweers")
  '(rcirc-fill-column (quote frame-width))
@@ -62,8 +62,8 @@
       ("#neo" "#informatik-ag")
       nil nil))))
  '(send-mail-function (quote smtpmail-send-it))
- '(smtpmail-smtp-server "smtp.1und1.de" t)
- '(smtpmail-smtp-service 25 t))
+ '(smtpmail-smtp-server "smtp.1und1.de")
+ '(smtpmail-smtp-service 25))
 
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
