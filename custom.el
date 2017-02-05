@@ -7,6 +7,7 @@
  '(auth-source-save-behavior nil)
  '(auth-sources (quote ("~/.emacs_data/authinfo.gpg")))
  '(calendar-week-start-day 1)
+ '(collection-roots (quote ("/mnt/data/video/serien/")))
  '(elmo-imap4-default-authenticate-type (quote clear))
  '(erc-autojoin-channels-alist (quote (("freenode.net" "#org-mode" "#neo"))))
  '(erc-nick "schweers")
@@ -24,6 +25,7 @@
  '(jabber-vcard-avatars-retrieve nil)
  '(mew-rc-file "~/.emacs.d/mew")
  '(openwith-associations nil)
+ '(org-agenda-files (quote ("~/.emacs_data/notes.org.gpg")))
  '(org-export-backends
    (quote
     (ascii html icalendar latex beamer texinfo odt md man)))
@@ -47,7 +49,7 @@
      "\\tolerance=1000")))
  '(package-selected-packages
    (quote
-    (htmlize csharp-mode elfeed evil markdown-mode shell-command undo-tree ace-jump-mode helm jabber expand-region ac-slime browse-kill-ring ace-link multiple-cursors bbdb auctex elpy magit auto-complete lispy guide-key org paren-face crux helm-projectile projectile cider racer cargo clojure-mode w3m json-mode f geiser diminish s dash-functional hydra use-package dash)))
+    (bbdb-vcard evil-org evil-lispy evil-magit rust-mode htmlize csharp-mode elfeed evil markdown-mode shell-command undo-tree ace-jump-mode helm jabber expand-region ac-slime browse-kill-ring ace-link multiple-cursors bbdb auctex elpy magit auto-complete lispy guide-key org paren-face crux helm-projectile projectile cider racer cargo clojure-mode w3m json-mode f geiser diminish s dash-functional hydra use-package dash lua-mode)))
  '(rcirc-default-nick "schweers")
  '(rcirc-default-user-name "schweers")
  '(rcirc-fill-column (quote frame-width))
@@ -60,8 +62,8 @@
       ("#neo" "#informatik-ag")
       nil nil))))
  '(send-mail-function (quote smtpmail-send-it))
- '(smtpmail-smtp-server "smtp.1und1.de" t)
- '(smtpmail-smtp-service 25 t))
+ '(smtpmail-smtp-server "smtp.1und1.de")
+ '(smtpmail-smtp-service 25))
 
 (custom-set-faces
  ;; custom-set-faces was added by Custom.

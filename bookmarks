@@ -2,11 +2,16 @@
 ;;; This format is meant to be slightly human-readable;
 ;;; nevertheless, you probably don't want to edit it.
 ;;; -*- End Of Bookmark File Format Version Stamp -*-
-(("org-capture-last-stored"
+(("org-refile-last-stored"
  (filename . "~/.emacs_data/notes.org.gpg")
- (front-context-string . "** Does this wor")
- (rear-context-string . "ic - Samsung ]]\n")
- (position . 11784))
+ (front-context-string . "** Anschreiben W")
+ (rear-context-string . "suche 2016/2017\n")
+ (position . 26804))
+("org-capture-last-stored"
+ (filename . "~/.emacs_data/notes.org.gpg")
+ (front-context-string . "** TODO Liste an")
+ (rear-context-string . "[info:org#Top]]\n")
+ (position . 8412))
 (front-context-string . "** TODO Take a l")
 (rear-context-string . "[2015-01-31 Sa]\n")
 (position . 4778)
