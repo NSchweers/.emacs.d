@@ -596,13 +596,7 @@ necessary.  For details, see the docstring.
                    (cl-loop for c in (cadr bind) collect
                             `(global-set-key (kbd ,(car c)) ',(cdr c)))))))))
 #+END_SRC
-* TODO Configure =dired=
-Make dired guess a destination for file operations.
-
-#+BEGIN_SRC emacs-lisp
-  (setf dired-dwim-target t)
-#+END_SRC
-* TODO Install and configure async (for dired)
+* Install and configure async (for dired)
 It can be found here: https://github.com/jwiegley/emacs-async
 
 #+BEGIN_SRC emacs-lisp
@@ -611,13 +605,19 @@ It can be found here: https://github.com/jwiegley/emacs-async
 #+END_SRC
 
 * TODO Configure =dired=
-Dired is a little weird, but also really cool.  I really ought to get it going
-in async mode though.
+Dired is a little weird, but also really cool.
 
 #+BEGIN_SRC emacs-lisp
   (autoload 'dired-async-mode "dired-async.el" nil t)
   (autoload 'dired-toggle-read-only "dired" nil t)
   (dired-async-mode 1)
+#+END_SRC
+
+Make dired guess a destination for file operations.  If I recall correctly, the
+directory of the buffer in =other-window= can be such a guess.
+
+#+BEGIN_SRC emacs-lisp
+  (setf dired-dwim-target t)
 #+END_SRC
 * Configure a few libraries
 Normally, libraries don’t need to be configured, but dash provides some
@@ -1234,6 +1234,76 @@ with ".el".
         (find-file (cdr fname?)))))
 #+end_src
 
+* Install and configure evil mode
+Evil provides a layer on top of Emacs to emulate vi like keybindings and modes
+(called “states” in Evil parlance).
+
+There is a special evil package which should be loaded before evil itself, as it
+affects initial buffers like the scratch buffer.  For this reason we install
+evil-leader before evil itself.
+
+#+BEGIN_SRC emacs-lisp
+  (pc evil-leader
+    (:post-install
+     (global-evil-leader-mode 1)))
+
+  (pc evil
+    (:post-install
+     (require 'evil)
+     (evil-mode 1)))
+#+END_SRC
+
+Evil itself is all well and good for the novice user, yet some modes use rather
+different keybindings, hence need extra evil bindings.  This is where Evil
+plugins come to play.
+
+** Setup evil-lispy
+Lispy uses vi-like keybindings, yet implements them in its own magical way,
+hence is by default incompatible with evil-mode.
+#+BEGIN_SRC emacs-lisp
+  (pc evil-lispy)
+#+END_SRC
+
+** Setup evil-magit
+Magit also defines its own peculiar bindings, so again another plugin is
+needed.
+
+#+BEGIN_SRC emacs-lisp
+  (pc evil-magit)
+#+END_SRC
+
+** Setup evil-org
+This mode introduces several bindings, apparently mostly for headings.
+
+#+BEGIN_SRC emacs-lisp
+  (pc evil-org)
+#+END_SRC
+
+** Setup Helm integration
+Without helm, life in Emacs is pretty meaningless.  Sadly, there is no readily
+installable package to integrate Evil and Helm.
+
+#+BEGIN_SRC emacs-lisp
+  (define-key evil-ex-map "b " 'helm-mini)
+  (define-key evil-ex-map "e" 'helm-find-files)
+#+END_SRC
+
+** Setup evil for info
+Info also has rather non-standard bindings, as one does not edit text here, it
+is advisable to have evil be in emacs state.
+
+#+BEGIN_SRC emacs-lisp
+  (evil-set-initial-state 'Info-mode 'emacs)
+#+END_SRC
+
+As an added bonus, add bindings for j and k in Emacs state, as these are not
+bound in info.
+
+#+BEGIN_SRC emacs-lisp
+  (define-key Info-mode-map (kbd "j") (kbd "C-n"))
+  (define-key Info-mode-map (kbd "k") (kbd "C-p"))
+#+END_SRC
+
 * Install and configure =guide key=
 The package =guide-key= makes it a little easier to explore prefixed
 keybindings.  The variable =guide-key/guide-key-sequence= holds a list of
@@ -1740,13 +1810,16 @@ basically only tell it that I’m not an American.
 
 * Install =gnus=
 While my gnus file is quite large, for some reason gnus insists on having its
-own file.  I’ve convinced it to please not use the home directory for this.  The
-rest of the configuration can be found in gnus.el.
+own file.  I’ve convinced it to please not use the home directory for this.  I
+used to have this file in ~/.emacs.d, but as its more data than config, I’ve
+moved this file to ~/.emacs_data/gnus.el.
 
 #+BEGIN_SRC emacs-lisp
   (pc gnus
     (:post-install
-     (load (expand-file-name "gnus.el" user-emacs-directory))))
+     (load (expand-file-name
+            "gnus.el"
+            (expand-file-name ".emacs_data" user-emacs-directory)))))
 
 #+END_SRC
 
@@ -2032,6 +2105,14 @@ The feeds can also be entered here.
              ("http://busy-streets.de/feed/" blog busy-streets bike)))))
 #+END_SRC
 
+** Make elfeed be in emacs state by default
+Elfeed binds its keys not expecting evil to be present.  For this reason, elfeed
+should start in emacs state.
+
+#+BEGIN_SRC emacs-lisp
+  (evil-set-initial-state 'elfeed-search-mode 'emacs)
+  (evil-set-initial-state 'elfeed-show-mode 'emacs)
+#+END_SRC
 * Install and configure =avy=
 Avy can be used to jump to a position which is visible in the current window.
 
@@ -2063,6 +2144,11 @@ filesystem outside of minecraft/feed the beast.
 
 #+BEGIN_SRC emacs-lisp
   (pc lua-mode)
+#+END_SRC
+* Install and require =tramp-term=
+Apparently, tramp-term integrates a remote ssh session with TRAMP.
+#+BEGIN_SRC emacs-lisp
+  (pc tramp-term)
 #+END_SRC
 * Define a minor mode for keybindings
 I use a separate minor mode which does nothing but bind keys.  This has the
@@ -2299,76 +2385,6 @@ advantage that other modes cannot quite as easily overwrite my keybindings.
   ;; (setq  wl-draft-mode-hook nil)
 
 #+end_src
-
-* Install and configure evil mode
-Evil provides a layer on top of Emacs to emulate vi like keybindings and modes
-(called “states” in Evil parlance).
-
-There is a special evil package which should be loaded before evil itself, as it
-affects initial buffers like the scratch buffer.  For this reason we install
-evil-leader before evil itself.
-
-#+BEGIN_SRC emacs-lisp
-  (pc evil-leader
-    (:post-install
-     (global-evil-leader-mode 1)))
-
-  (pc evil
-    (:post-install
-     (require 'evil)
-     (evil-mode 1)))
-#+END_SRC
-
-Evil itself is all well and good for the novice user, yet some modes use rather
-different keybindings, hence need extra evil bindings.  This is where Evil
-plugins come to play.
-
-** Setup evil-lispy
-Lispy uses vi-like keybindings, yet implements them in its own magical way,
-hence is by default incompatible with evil-mode.
-#+BEGIN_SRC emacs-lisp
-  (pc evil-lispy)
-#+END_SRC
-
-** Setup evil-magit
-Magit also defines its own peculiar bindings, so again another plugin is
-needed.
-
-#+BEGIN_SRC emacs-lisp
-  (pc evil-magit)
-#+END_SRC
-
-** Setup evil-org
-This mode introduces several bindings, apparently mostly for headings.
-
-#+BEGIN_SRC emacs-lisp
-  (pc evil-org)
-#+END_SRC
-
-** Setup Helm integration
-Without helm, life in Emacs is pretty meaningless.  Sadly, there is no readily
-installable package to integrate Evil and Helm.
-
-#+BEGIN_SRC emacs-lisp
-  (define-key evil-ex-map "b " 'helm-mini)
-  (define-key evil-ex-map "e" 'helm-find-files)
-#+END_SRC
-
-** Setup evil for info
-Info also has rather non-standard bindings, as one does not edit text here, it
-is advisable to have evil be in emacs state.
-
-#+BEGIN_SRC emacs-lisp
-  (evil-set-initial-state 'Info-mode 'emacs)
-#+END_SRC
-
-As an added bonus, add bindings for j and k in Emacs state, as these are not
-bound in info.
-
-#+BEGIN_SRC emacs-lisp
-  (define-key Info-mode-map (kbd "j") (kbd "C-n"))
-  (define-key Info-mode-map (kbd "k") (kbd "C-p"))
-#+END_SRC
 * Start Emacs in server mode
 If Emacs is not already running as a server, start the server component.  This
 way I only need to start Emacs once and can use emacsclient from then on.
