@@ -1246,6 +1246,9 @@ with ".el".
 #+end_src
 
 * Install and configure evil mode
+  :PROPERTIES:
+  :header-args: :tangle no
+  :END:
 Evil provides a layer on top of Emacs to emulate vi like keybindings and modes
 (called “states” in Evil parlance).
 
@@ -1351,7 +1354,7 @@ lispy, which is an alternative to paredit.
     (:post-install
      (dolist (m schweers/*lisp-mode-hooks*)
        (add-hook m (lambda ()
-                     (evil-lispy-mode 1)
+                     (lispy-mode 1)
                      (subword-mode -1)
                      (define-key lispy-mode-map [remap backward-delete-char]
                        'lispy-delete-backward))))
@@ -1830,7 +1833,7 @@ moved this file to ~/.emacs_data/gnus.el.
     (:post-install
      (load (expand-file-name
             "gnus.el"
-            (expand-file-name ".emacs_data" user-emacs-directory)))))
+            (expand-file-name ".emacs_data" (getenv "HOME"))))))
 
 #+END_SRC
 
@@ -2117,6 +2120,10 @@ The feeds can also be entered here.
 #+END_SRC
 
 ** Make elfeed be in emacs state by default
+   :PROPERTIES:
+   :header-args: :tangle no
+   :END:
+
 Elfeed binds its keys not expecting evil to be present.  For this reason, elfeed
 should start in emacs state.
 
@@ -2142,6 +2149,9 @@ Avy can be used to jump to a position which is visible in the current window.
 #+END_SRC
 
 * Install and configure =swiper=
+  :PROPERTIES:
+  :header-args: :tangle no
+  :END:
 #+BEGIN_SRC emacs-lisp
   (pc swiper
     (:bind
