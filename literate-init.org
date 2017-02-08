@@ -1235,6 +1235,9 @@ with ".el".
 #+end_src
 
 * Install and configure evil mode
+  :PROPERTIES:
+  :header-args: :tangle no
+  :END:
 Evil provides a layer on top of Emacs to emulate vi like keybindings and modes
 (called “states” in Evil parlance).
 
@@ -1340,7 +1343,7 @@ lispy, which is an alternative to paredit.
     (:post-install
      (dolist (m schweers/*lisp-mode-hooks*)
        (add-hook m (lambda ()
-                     (evil-lispy-mode 1)
+                     (lispy-mode 1)
                      (subword-mode -1)
                      (define-key lispy-mode-map [remap backward-delete-char]
                        'lispy-delete-backward))))
@@ -1417,76 +1420,6 @@ them it is easier to make them truly global.
   (global-set-key (kbd "C-c a") 'org-agenda)
   (global-set-key (kbd "C-c b") 'org-iswitchb)
 
-#+END_SRC
-
-* Install and configure evil mode
-Evil provides a layer on top of Emacs to emulate vi like keybindings and modes
-(called “states” in Evil parlance).
-
-There is a special evil package which should be loaded before evil itself, as it
-affects initial buffers like the scratch buffer.  For this reason we install
-evil-leader before evil itself.
-
-#+BEGIN_SRC emacs-lisp
-  (pc evil-leader
-    (:post-install
-     (global-evil-leader-mode 1)))
-
-  (pc evil
-    (:post-install
-     (require 'evil)
-     (evil-mode 1)))
-#+END_SRC
-
-Evil itself is all well and good for the novice user, yet some modes use rather
-different keybindings, hence need extra evil bindings.  This is where Evil
-plugins come to play.
-
-** Setup evil-lispy
-Lispy uses vi-like keybindings, yet implements them in its own magical way,
-hence is by default incompatible with evil-mode.
-#+BEGIN_SRC emacs-lisp
-  (pc evil-lispy)
-#+END_SRC
-
-** Setup evil-magit
-Magit also defines its own peculiar bindings, so again another plugin is
-needed.
-
-#+BEGIN_SRC emacs-lisp
-  (pc evil-magit)
-#+END_SRC
-
-** Setup evil-org
-This mode introduces several bindings, apparently mostly for headings.
-
-#+BEGIN_SRC emacs-lisp
-  (pc evil-org)
-#+END_SRC
-
-** Setup Helm integration
-Without helm, life in Emacs is pretty meaningless.  Sadly, there is no readily
-installable package to integrate Evil and Helm.
-
-#+BEGIN_SRC emacs-lisp
-  (define-key evil-ex-map "b " 'helm-mini)
-  (define-key evil-ex-map "e" 'helm-find-files)
-#+END_SRC
-
-** Setup evil for info
-Info also has rather non-standard bindings, as one does not edit text here, it
-is advisable to have evil be in emacs state.
-
-#+BEGIN_SRC emacs-lisp
-  (evil-set-initial-state 'Info-mode 'emacs)
-#+END_SRC
-
-As an added bonus, add bindings for j and k in Emacs state, as these are not
-bound in info.
-
-#+BEGIN_SRC emacs-lisp
-  (define-key Info-mode-map (kbd "j") (kbd "C-n"))
-  (define-key Info-mode-map (kbd "k") (kbd "C-p"))
 #+END_SRC
 
 * Configure python for =elpy=
@@ -1889,7 +1822,7 @@ moved this file to ~/.emacs_data/gnus.el.
     (:post-install
      (load (expand-file-name
             "gnus.el"
-            (expand-file-name ".emacs_data" user-emacs-directory)))))
+            (expand-file-name ".emacs_data" (getenv "HOME"))))))
 
 #+END_SRC
 
@@ -2176,6 +2109,10 @@ The feeds can also be entered here.
 #+END_SRC
 
 ** Make elfeed be in emacs state by default
+   :PROPERTIES:
+   :header-args: :tangle no
+   :END:
+
 Elfeed binds its keys not expecting evil to be present.  For this reason, elfeed
 should start in emacs state.
 
@@ -2201,6 +2138,9 @@ Avy can be used to jump to a position which is visible in the current window.
 #+END_SRC
 
 * Install and configure =swiper=
+  :PROPERTIES:
+  :header-args: :tangle no
+  :END:
 #+BEGIN_SRC emacs-lisp
   (pc swiper
     (:bind
