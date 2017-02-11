@@ -9,9 +9,9 @@
  (position . 26804))
 ("org-capture-last-stored"
  (filename . "~/.emacs_data/notes.org.gpg")
- (front-context-string . "** TODO Liste an")
- (rear-context-string . "[info:org#Top]]\n")
- (position . 8412))
+ (front-context-string . "** TODO Funktion")
+ (rear-context-string . "mailbox.org\")]]\n")
+ (position . 249))
 (front-context-string . "** TODO Take a l")
 (rear-context-string . "[2015-01-31 Sa]\n")
 (position . 4778)
