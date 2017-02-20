@@ -33,6 +33,57 @@ The directory site-lisp is not by default part of the load-path.
 #+BEGIN_SRC emacs-lisp
   (add-to-list 'load-path (expand-file-name "site-lisp" user-emacs-directory))
 #+END_SRC
+
+** Add debian specific stuff
+If I’m on debian, I want debian-el.  The problem is that its not included in
+melpa, so I have to install it via package manager.  
+
+I first want to check if I’m on Unix, then if I’m on debian.
+
+#+BEGIN_SRC emacs-lisp
+  (defun on-unix? ()
+    (not (memq system-type '(ms-dos windows-nt))))
+
+  (defun on-debian? ()
+    (when (and (on-unix?)
+               (file-exists-p "/etc/os-release"))
+      (with-temp-buffer
+        (insert-file-contents "/etc/os-release")
+        (goto-char 1)
+        (search-forward-regexp "^ID=")
+        (looking-at-p "debian$"))))
+
+#+END_SRC
+
+Now that I can check whether or not I’m on debian, I want to check whether or
+not =debian-el= is installed.
+
+#+BEGIN_SRC emacs-lisp
+  (defun debian-el-installed? ()
+    (with-temp-buffer
+      (call-process "/usr/bin/aptitude" nil t nil
+                    "search" "?installed(^debian-el$)")
+      (beginning-of-buffer)
+      (looking-at-p "^i")))
+
+#+END_SRC
+
+Now that we can check that, we check whether it is installed and then add the
+appropriate directory to the load path.
+
+#+BEGIN_SRC emacs-lisp
+  (when (and (on-debian?)
+             (debian-el-installed?))
+    (add-to-list 'load-path "/usr/share/emacs/site-lisp/debian-el" t))
+#+END_SRC
+
+Now we can finally =require= =debian-el=!
+
+#+BEGIN_SRC emacs-lisp
+  (when (and (on-debian?)
+             (debian-el-installed?))
+    (require 'debian-el))
+#+END_SRC
 * Set up the appearance of Emacs
 We set up the appearance very early on so the display doesn’t behave too badly.
 Unfortunately it still flickers and bugs around a little.
@@ -1328,7 +1379,7 @@ keystrokes at the bottom of the screen.
   (pc guide-key
     (:post-install
      (setf guide-key/guide-key-sequence '("C-x r" "C-x 4" "C-x 5" "C-x v" "C-x 8"
-                                          "C-x n" "C-c C-x" "C-x c"))
+                                          "C-x n" "C-c C-x" "C-x c" "C-c p"))
      (guide-key-mode 1)
      (setf guide-key/recursive-key-sequence-flag t
            guide-key/popup-window-position 'bottom
@@ -1344,8 +1395,9 @@ lispy, which is an alternative to paredit.
   (defvar schweers/*lisp-mode-hooks*
     '(clojure-mode-hook cider-repl-mode-hook emacs-lisp-mode-hook
                         lisp-mode-hook slime-repl-mode-hook
-                        scheme-mode geiser-mode-hook
-                        geiser-repl-mode-hook))
+                        scheme-mode-hook ;; geiser-mode-hook
+                        ;; geiser-repl-mode-hook
+                        ))
 
   (pc lispy
     (:bind (("C-M-1" . lispy-describe-inline)
@@ -1394,7 +1446,7 @@ place all my code under ~/code, I tell magit this is the case.
   (pc magit
     (:pre-install
      (require 's))
-    (:bind (("C-c g" . magit-status)))
+    (:bind (("C-c m" . magit-status)))
     (:post-install
      (setf magit-repo-dirs (list (s-join "/" (list (getenv "HOME") "code"))
                                  user-emacs-directory)
@@ -1685,6 +1737,29 @@ recurring events of arbitrary complexity).  Only one variable needs to be set.
 #+BEGIN_SRC emacs-lisp
   (setq org-agenda-include-diary t)
 #+END_SRC
+** Set the format for org-clock
+Org mode supports clocking, which is really cool, but by default it folds
+durations which are longer than 24h into days.  The following setting changes
+that.
+
+#+BEGIN_SRC emacs-lisp
+  (setf org-time-clocksum-format
+        '(:hours "%d" :require-hours t :minutes ":%02d" :require-minutes t))
+#+END_SRC
+* Install markdown-mode
+Some people insist on using markdown instead of org mode.  While I cannot help
+such misguided souls, I can install a mode to make reading their stuff a little
+easier.
+
+#+BEGIN_SRC emacs-lisp
+  (pc markdown-mode)
+#+END_SRC
+* Install tracwiki-mode
+As with markdown, this is not Org Mode :(
+
+#+BEGIN_SRC emacs-lisp
+  (pc tracwiki-mode)
+#+END_SRC
 * Configure spell checking
 I don’t remember why I put this in here the way it is, but it seems to work
 somehow.  The command =ispell-change-dictionary= can be used to switch the
@@ -1916,6 +1991,10 @@ interacting with the elisp VM underlying Emacs!
 #+END_SRC
 
 * Install and configure =geiser=
+  :PROPERTIES:
+  :header-args: :tangle no
+  :END:
+
 Geiser is to scheme what SLIME is to Common Lisp.  Sadly it needs some more
 love.  Also it behaves a little strangely due to the fact that it supports more
 than one backend.
@@ -1980,6 +2059,38 @@ awesome, even though it is a bit intrusive.
 
 #+END_SRC
 
+* Install and configure =helm-gtags= for C(++) development
+Helm can apparently be really cool for C++ (well, as cool as C++ can get) if
+used with GNU global.  Here we set it up to do so.
+
+#+BEGIN_SRC emacs-lisp
+  (pc helm-gtags
+    (:require nil)
+    (:post-install
+     (setq
+      helm-gtags-ignore-case t
+      helm-gtags-auto-update t
+      helm-gtags-use-input-at-cursor t
+      helm-gtags-pulse-at-cursor t
+      helm-gtags-prefix-key "\C-cg"
+      helm-gtags-suggested-key-mapping t)
+
+     (require 'helm-gtags)
+     ;; Enable helm-gtags-mode
+     (add-hook 'dired-mode-hook 'helm-gtags-mode)
+     (add-hook 'eshell-mode-hook 'helm-gtags-mode)
+     (add-hook 'c-mode-hook 'helm-gtags-mode)
+     (add-hook 'c++-mode-hook 'helm-gtags-mode)
+     (add-hook 'asm-mode-hook 'helm-gtags-mode)
+
+     (define-key helm-gtags-mode-map (kbd "C-c g a") 'helm-gtags-tags-in-this-function)
+     (define-key helm-gtags-mode-map (kbd "C-j") 'helm-gtags-select)
+     (define-key helm-gtags-mode-map (kbd "M-.") 'helm-gtags-dwim)
+     (define-key helm-gtags-mode-map (kbd "M-,") 'helm-gtags-pop-stack)
+     (define-key helm-gtags-mode-map (kbd "C-c <") 'helm-gtags-previous-history)
+     (define-key helm-gtags-mode-map (kbd "C-c >")
+       'helm-gtags-next-history)))
+#+END_SRC
 * Make it easy to look something up in the CL Hyperspec
 The hyperspec it /the/ definitive resource on Common Lisp, so I want quick
 access to it.
