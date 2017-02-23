@@ -63,7 +63,7 @@ not =debian-el= is installed.
     (with-temp-buffer
       (call-process "/usr/bin/aptitude" nil t nil
                     "search" "?installed(^debian-el$)")
-      (beginning-of-buffer)
+      (goto-char (point-min))
       (looking-at-p "^i")))
 
 #+END_SRC
@@ -2022,8 +2022,14 @@ lispy command.  Normally this is all well and good, but not for comint derived
 modes.  This is why the following binding is needed.
 
 #+BEGIN_SRC emacs-lisp
+  (define-advice lispy-newline-and-indent-plain (:after () fix-inferior-scheme)
+    (when (eq major-mode 'inferior-scheme-mode)
+      (call-interactively #'comint-send-input)))
+#+END_SRC
+
+#+BEGIN_SRC emacs-lisp
   (add-hook 'inferior-scheme-mode-hook
-            (lambda () (define-key lispy-mode-map (kbd "RET") #'comint-send-input)))
+            (lambda () (define-key lispy-mode-map (kbd "RET") nil)))
 #+END_SRC
 * Install and configure =expand-region=
 This is a package I hardly use, although it seems to be really cool.  Maybe I
