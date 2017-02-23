@@ -1395,9 +1395,16 @@ lispy, which is an alternative to paredit.
   (defvar schweers/*lisp-mode-hooks*
     '(clojure-mode-hook cider-repl-mode-hook emacs-lisp-mode-hook
                         lisp-mode-hook slime-repl-mode-hook
-                        scheme-mode-hook ;; geiser-mode-hook
+                        scheme-mode-hook inferior-scheme-mode-hook
+                        ;; geiser-mode-hook
                         ;; geiser-repl-mode-hook
                         ))
+
+  (defun schweers/make-lisp-great-again ()
+    (lispy-mode 1)
+    (subword-mode -1)
+    (define-key lispy-mode-map [remap backward-delete-char]
+      'lispy-delete-backward))
 
   (pc lispy
     (:bind (("C-M-1" . lispy-describe-inline)
@@ -1405,11 +1412,7 @@ lispy, which is an alternative to paredit.
             ("C-M-3" . lispy-right)))
     (:post-install
      (dolist (m schweers/*lisp-mode-hooks*)
-       (add-hook m (lambda ()
-                     (lispy-mode 1)
-                     (subword-mode -1)
-                     (define-key lispy-mode-map [remap backward-delete-char]
-                       'lispy-delete-backward))))
+       (add-hook m #'schweers/make-lisp-great-again))
 
      (defun schweers/lispy-M-paren ()
        (interactive)
@@ -1746,6 +1749,13 @@ that.
   (setf org-time-clocksum-format
         '(:hours "%d" :require-hours t :minutes ":%02d" :require-minutes t))
 #+END_SRC
+** Let org-clock include the current task
+By default org-clock ignores the current task in report tables.  This is not
+good.
+
+#+BEGIN_SRC emacs-lisp
+  (setf org-clock-report-include-clocking-task t)
+#+END_SRC
 * Install markdown-mode
 Some people insist on using markdown instead of org mode.  While I cannot help
 such misguided souls, I can install a mode to make reading their stuff a little
@@ -2006,6 +2016,15 @@ than one backend.
      ))
 #+END_SRC
 
+* Configure =inferior-scheme-mode=
+When lispy is active in =inferior-scheme-mode=, RET is by default bound to a
+lispy command.  Normally this is all well and good, but not for comint derived
+modes.  This is why the following binding is needed.
+
+#+BEGIN_SRC emacs-lisp
+  (add-hook 'inferior-scheme-mode-hook
+            (lambda () (define-key lispy-mode-map (kbd "RET") #'comint-send-input)))
+#+END_SRC
 * Install and configure =expand-region=
 This is a package I hardly use, although it seems to be really cool.  Maybe I
 don’t use it because I already have lispy.
