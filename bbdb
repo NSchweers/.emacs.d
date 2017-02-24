@@ -2,6 +2,7 @@
 ;;; file-format: 7
 ["Sabrina" "Bajorat" nil nil nil nil nil ("sabrina.bajorat@gmail.com") ((creation-date . "2015-04-28 12:38:12 +0000") (timestamp . "2015-04-28 12:38:12 +0000")) nil]
 ["Hendrike" "Bode" nil nil nil (["home" "+494088884641"] ["cell" "+491627656461"]) nil ("Hendrike.Bode@gmx.de") ((creation-date . "2015-04-30 08:41:25 +0000") (timestamp . "2015-05-05 19:54:11 +0000")) nil]
+["Stefan" "Busch" nil nil ("Vermieter") (["cell" "+4915127577959"]) nil ("stefan-busch@email.de") ((creation-date . "2017-02-24 15:13:48 +0000") (timestamp . "2017-02-24 17:54:18 +0000")) nil]
 ["Manuel" "Grob" nil nil nil nil nil ("manuel@grobwiefein.de") ((creation-date . "2015-04-28 12:36:21 +0000") (timestamp . "2015-04-28 12:36:21 +0000")) nil]
 ["David" "Klein" nil nil nil nil nil ("dklein@vistec.net") ((creation-date . "2015-04-28 12:38:18 +0000") (timestamp . "2015-04-28 12:38:18 +0000")) nil]
 ["Lutz" "Marx" nil nil nil (["cell" "+491795984476"]) nil ("lmarx@lmarx.de") ((creation-date . "2017-01-26 12:50:25 +0000") (timestamp . "2017-01-26 12:50:25 +0000")) nil]
