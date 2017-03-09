@@ -9,6 +9,7 @@
 ["Robin" "Müller-Bady" nil nil nil nil nil ("mueller-bady@fb2.fra-uas.de") ((creation-date . "2015-04-28 12:37:48 +0000") (timestamp . "2015-04-28 12:37:48 +0000")) nil]
 ["Heiko" "Niebuhr" nil nil nil nil nil ("post@hniebuhr.de") ((creation-date . "2015-04-28 12:34:50 +0000") (timestamp . "2015-04-28 12:34:50 +0000")) nil]
 ["Mayssam" "Poorakhoondi" nil nil ("Outdooractive") nil nil ("Mayssam.Poorakhoondi@outdooractive.com") ((creation-date . "2017-02-23 09:40:44 +0000") (timestamp . "2017-02-23 09:40:44 +0000")) nil]
+["Jens" "Schwarz" nil nil ("Outdooractive") nil nil ("Jens.Schwarz@outdooractive.com") ((creation-date . "2017-02-24 08:02:23 +0000") (timestamp . "2017-02-24 08:02:23 +0000")) nil]
 ["Esther" "Schweers" nil nil nil nil nil ("elschweers@googlemail.com") ((creation-date . "2015-04-28 12:36:35 +0000") (timestamp . "2015-04-28 12:36:54 +0000")) nil]
 ["Gisela" "Schweers" nil nil nil nil nil ("gschweers@gmx.de") ((creation-date . "2015-04-28 12:38:28 +0000") (timestamp . "2015-04-28 12:38:38 +0000")) nil]
 ["Rebekka" "Schweers" nil nil nil (["cell" "+4915229265508"] ["home" "+4961959874700"]) (["home" ("In den Bleichwiesen 8") "Kelkheim" "Hessen" "65779" "Germany"]) ("Rebekka.Schweers@gmx.de") ((creation-date . "2017-01-20 21:24:08 +0000") (timestamp . "2017-01-20 21:24:36 +0000")) nil]

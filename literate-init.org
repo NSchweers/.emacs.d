@@ -1,3 +1,4 @@
+# -*- coding: utf-8; -*-
 #+PROPERTY: header-args :tangle literate-init.el
 #+TITLE: An Emacs Configuration
 #+AUTHOR: Nathanael Schweers
@@ -1756,6 +1757,19 @@ good.
 #+BEGIN_SRC emacs-lisp
   (setf org-clock-report-include-clocking-task t)
 #+END_SRC
+** Allow org-babel to evaluate shell scripts
+For security reasons, org-babel normally doesn’t execute shell scripts.
+
+#+BEGIN_SRC elisp
+  (add-to-list 'org-babel-load-languages
+               '(shell . t))
+  (require 'ob-sh)
+#+END_SRC
+
+#+BEGIN_SRC elisp :tangle no
+  (org-babel-do-load-languages 'org-babel-load-languages
+                               '((shell . t)))
+#+END_SRC
 * Install markdown-mode
 Some people insist on using markdown instead of org mode.  While I cannot help
 such misguided souls, I can install a mode to make reading their stuff a little
@@ -2000,7 +2014,8 @@ interacting with the elisp VM underlying Emacs!
      (slime-setup '(slime-repl))))
 #+END_SRC
 
-* Install and configure =geiser=
+* Configure Scheme
+** Install and configure =geiser=
   :PROPERTIES:
   :header-args: :tangle no
   :END:
@@ -2016,20 +2031,37 @@ than one backend.
      ))
 #+END_SRC
 
-* Configure =inferior-scheme-mode=
+** Configure =inferior-scheme-mode=
 When lispy is active in =inferior-scheme-mode=, RET is by default bound to a
 lispy command.  Normally this is all well and good, but not for comint derived
 modes.  This is why the following binding is needed.
 
 #+BEGIN_SRC emacs-lisp
-  (define-advice lispy-newline-and-indent-plain (:after () fix-inferior-scheme)
-    (when (eq major-mode 'inferior-scheme-mode)
-      (call-interactively #'comint-send-input)))
+  (define-advice lispy-newline-and-indent-plain (:around (orig) fix-inferior-scheme)
+    (if (eq major-mode 'inferior-scheme-mode)
+        (call-interactively #'comint-send-input)
+      (funcall orig)))
 #+END_SRC
 
 #+BEGIN_SRC emacs-lisp
   (add-hook 'inferior-scheme-mode-hook
             (lambda () (define-key lispy-mode-map (kbd "RET") nil)))
+#+END_SRC
+
+** Fix some indentation
+Scheme mode looks into the property lists of symbols to find out how to indent
+them.  It seems that a number simply tells it by how much to indent, while a
+function can do more elaborate stuff.
+
+#+BEGIN_SRC elisp
+  (put 'match-let 'scheme-indent-function 'scheme-let-indent)
+  (put 'match 'scheme-indent-function 0)
+  (put '^ 'scheme-indent-function 1)
+  (put 'when 'scheme-indent-function 1)
+  (put 'unless 'scheme-indent-function 1)
+  (put 'match-lambda* 'scheme-indent-function 0)
+  (put 'receive 'scheme-indent-function 2)
+  (put 'let/cc 'scheme-indent-function 1)
 #+END_SRC
 * Install and configure =expand-region=
 This is a package I hardly use, although it seems to be really cool.  Maybe I
@@ -2307,6 +2339,10 @@ Apparently, tramp-term integrates a remote ssh session with TRAMP.
 #+BEGIN_SRC emacs-lisp
   (pc tramp-term)
 #+END_SRC
+* Use chromium
+#+BEGIN_SRC emacs-lisp
+  (setf browse-url-browser-function #'browse-url-chromium)
+#+END_SRC
 * Define a minor mode for keybindings
 I use a separate minor mode which does nothing but bind keys.  This has the
 advantage that other modes cannot quite as easily overwrite my keybindings.
@@ -2550,6 +2586,15 @@ way I only need to start Emacs once and can use emacsclient from then on.
   (require 'server)
   (unless (server-running-p)
     (server-start))
+#+END_SRC
+** Install and start =edit-server=
+Emacs can also provide an HTTP(?) edit server, so chromium can use it with “Edit
+with Emacs”.
+
+#+BEGIN_SRC emacs-lisp
+  (pc edit-server
+    (:post-install
+     (edit-server-start)))
 #+END_SRC
 * Boot up with our literate config
 Using literate programming with Org Mode to configure Emacs is fine, but it has
