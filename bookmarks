@@ -4,14 +4,14 @@
 ;;; -*- End Of Bookmark File Format Version Stamp -*-
 (("org-capture-last-stored-marker"
  (filename . "~/.emacs_data/notes.org.gpg")
- (front-context-string . "** TODO OpenVPN ")
- (rear-context-string . "017-02-16 Thu>\n\n")
- (position . 6208))
+ (front-context-string . "** Sauerteig\n   ")
+ (rear-context-string . "ese.html\n* Brot\n")
+ (position . 17111))
 ("org-refile-last-stored"
  (filename . "~/.emacs_data/notes.org.gpg")
- (front-context-string . "** TODO OpenVPN ")
- (rear-context-string . "017-02-16 Thu>\n\n")
- (position . 6208))
+ (front-context-string . "** Sauerteig\n   ")
+ (rear-context-string . "ese.html\n* Brot\n")
+ (position . 17111))
 ("org-capture-last-stored"
  (filename . "~/.emacs_data/notes.org.gpg")
  (front-context-string . "** TODO Richtige")
