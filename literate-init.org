@@ -663,12 +663,8 @@ It can be found here: https://github.com/jwiegley/emacs-async
 #+END_SRC
 
 * TODO Configure =dired=
-<<<<<<< HEAD
-Dired is a little weird, but also really cool.
-=======
 Dired is a little weird, but also really cool.  I really ought to get it going
 in async mode though.
->>>>>>> e67b47f... some stuff.  Emacs changed its customization again.
 
 #+BEGIN_SRC emacs-lisp
   (autoload 'dired-async-mode "dired-async.el" nil t)
@@ -2345,7 +2341,19 @@ Apparently, tramp-term integrates a remote ssh session with TRAMP.
 #+BEGIN_SRC emacs-lisp
   (pc tramp-term)
 #+END_SRC
-* Use chromium
+* Install go-mode and assorted packages
+I want to try out golang, I’ll probably not use it, but hey.
+
+#+BEGIN_SRC elisp
+  (pc go-mode)
+  (pc go-eldoc)
+  (pc go-scratch)
+#+END_SRC
+
+#+RESULTS:
+: go-scratch
+
+* Use chromium (or chromium-browser?)
 #+BEGIN_SRC emacs-lisp
   (setf browse-url-browser-function #'browse-url-chromium)
 #+END_SRC
