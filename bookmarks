@@ -14,9 +14,9 @@
  (position . 6208))
 ("org-capture-last-stored"
  (filename . "~/.emacs_data/notes.org.gpg")
- (front-context-string . "** TODO Test per")
- (rear-context-string . " doc to gitla]]\n")
- (position . 24586))
+ (front-context-string . "** Heroes 3 map ")
+ (rear-context-string . ":slib#Feature]]\n")
+ (position . 14099))
 (front-context-string . "** TODO Take a l")
 (rear-context-string . "[2015-01-31 Sa]\n")
 (position . 4778)
