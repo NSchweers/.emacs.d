@@ -716,6 +716,12 @@ and provide a nice UI.
 Emacs provides several different ways to run a shell.  All of them are
 configured here.
 
+** Install =bash-completion=
+Although I use the zsh, =shell= insists on having it.
+
+#+BEGIN_SRC elisp
+  (pc bash-completion)
+#+END_SRC
 ** Completion for =shell-command=
 Emacs comes with a built-in command =shell-command=, by default bound to M-!,
 which runs a shell command.  Thanks to the package =shell-command=,
@@ -2055,7 +2061,7 @@ function can do more elaborate stuff.
 
 #+BEGIN_SRC elisp
   (put 'match-let 'scheme-indent-function 'scheme-let-indent)
-  (put 'match 'scheme-indent-function 0)
+  (put 'match 'scheme-indent-function 1)
   (put '^ 'scheme-indent-function 1)
   (put 'when 'scheme-indent-function 1)
   (put 'unless 'scheme-indent-function 1)
