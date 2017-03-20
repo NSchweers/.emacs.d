@@ -33,6 +33,15 @@
  '(jabber-show-resources (quote always))
  '(jabber-vcard-avatars-retrieve nil)
  '(mew-rc-file "~/.emacs.d/mew")
+ '(notmuch-saved-searches
+   (quote
+    ((:name "inbox" :query "tag:inbox" :key "i")
+     (:name "flagged" :query "tag:flagged" :key "f")
+     (:name "sent" :query "tag:sent" :key "t")
+     (:name "drafts" :query "tag:draft" :key "d")
+     (:name "all mail" :query "*" :key "a")
+     (:name "gitlab" :query "tag:gitlab" :key "g")
+     (:name "unread" :query "tag:unread" :key "u"))))
  '(openwith-associations nil)
  '(org-agenda-files (quote ("~/.emacs_data/notes.org.gpg")))
  '(org-export-backends
@@ -58,7 +67,7 @@
      "\\tolerance=1000")))
  '(package-selected-packages
    (quote
-    (bash-completion edit-server helm-gtags tracwiki-mode async tramp-term bbdb-vcard evil-org evil-lispy evil-magit rust-mode htmlize csharp-mode elfeed evil markdown-mode shell-command undo-tree ace-jump-mode helm jabber expand-region ac-slime browse-kill-ring ace-link multiple-cursors bbdb auctex elpy magit auto-complete lispy guide-key org paren-face crux helm-projectile projectile cider racer cargo clojure-mode w3m json-mode f geiser diminish s dash-functional hydra use-package dash lua-mode)))
+    (notmuch bash-completion edit-server helm-gtags tracwiki-mode async tramp-term bbdb-vcard evil-org evil-lispy evil-magit rust-mode htmlize csharp-mode elfeed evil markdown-mode shell-command undo-tree ace-jump-mode helm jabber expand-region ac-slime browse-kill-ring ace-link multiple-cursors bbdb auctex elpy magit auto-complete lispy guide-key org paren-face crux helm-projectile projectile cider racer cargo clojure-mode w3m json-mode f geiser diminish s dash-functional hydra use-package dash lua-mode)))
  '(rcirc-default-nick "schweers")
  '(rcirc-default-user-name "schweers")
  '(rcirc-fill-column (quote frame-width))
@@ -71,8 +80,8 @@
       ("#neo" "#informatik-ag")
       nil nil))))
  '(send-mail-function (quote smtpmail-send-it))
- '(smtpmail-smtp-server "smtp.1und1.de" t)
- '(smtpmail-smtp-service 25 t))
+ '(smtpmail-smtp-server "smtp.1und1.de")
+ '(smtpmail-smtp-service 25))
 
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
