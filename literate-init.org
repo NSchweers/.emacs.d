@@ -1416,12 +1416,16 @@ lispy, which is an alternative to paredit.
 
      (defun schweers/lispy-M-paren ()
        (interactive)
-       (let ((current-prefix-arg '(2)))
+       (let ((current-prefix-arg '(1)))
          (call-interactively 'lispy-parens)))
 
      (define-key lispy-mode-map (kbd "M-(") 'schweers/lispy-M-paren)
-     (define-key lispy-mode-map (kbd ":") 'self-insert-command)))
+     (define-key lispy-mode-map (kbd ":") 'self-insert-command)
+     (define-key lispy-mode-map (kbd "C-w") 'lispy-backward-kill-word)))
 #+END_SRC
+
+Unfortunately, the binding to C-w doesn’t work here, as I bind it in my own
+minor mode which takes precedence.
 
 * TODO Configure =autocomplete=
 Autocomplete is quite nice, but I’m not sure whether it conflicts with
@@ -1756,6 +1760,10 @@ good.
 #+BEGIN_SRC emacs-lisp
   (setf org-clock-report-include-clocking-task t)
 #+END_SRC
+** clock into a drawer
+#+BEGIN_SRC elisp
+  (setf org-clock-into-drawer t)
+#+END_SRC
 ** Allow org-babel to evaluate shell scripts
 For security reasons, org-babel normally doesn’t execute shell scripts.
 
@@ -1935,6 +1943,13 @@ moved this file to ~/.emacs_data/gnus.el.
 
 #+END_SRC
 
+* Install =notmuch=
+#+BEGIN_SRC elisp
+  (pc notmuch
+    (:post-install
+     (define-key notmuch-show-mode-map "U" 'browse-url-at-point)
+     (require 'org-notmuch)))
+#+END_SRC
 * Install and configure =multiple-cursors=
 Multiple cursors is a nice shorthand for keyboard macros.  They save a lot of
 time when one is not /exactly/ sure what needs to be done.
@@ -2054,6 +2069,7 @@ function can do more elaborate stuff.
 
 #+BEGIN_SRC elisp
   (put 'match-let 'scheme-indent-function 'scheme-let-indent)
+  (put 'match-let* 'scheme-indent-function 'scheme-let-indent)
   (put 'match 'scheme-indent-function 1)
   (put '^ 'scheme-indent-function 1)
   (put 'when 'scheme-indent-function 1)
