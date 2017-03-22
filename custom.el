@@ -33,6 +33,7 @@
  '(jabber-show-resources (quote always))
  '(jabber-vcard-avatars-retrieve nil)
  '(mew-rc-file "~/.emacs.d/mew")
+ '(notmuch-address-internal-completion (quote (received nil)))
  '(notmuch-saved-searches
    (quote
     ((:name "inbox" :query "tag:inbox" :key "i")
@@ -79,9 +80,7 @@
      ("irc.freenode.net" :channels
       ("#neo" "#informatik-ag")
       nil nil))))
- '(send-mail-function (quote smtpmail-send-it))
- '(smtpmail-smtp-server "smtp.1und1.de")
- '(smtpmail-smtp-service 25))
+ '(send-mail-function (quote smtpmail-send-it)))
 
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
