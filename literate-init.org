@@ -1955,6 +1955,8 @@ moved this file to ~/.emacs_data/gnus.el.
   (pc notmuch
     (:post-install
      (define-key notmuch-show-mode-map "U" 'browse-url-at-point)
+     (setf notmuch-crypto-process-mime t)
+     (bbdb-initialize 'message 'pgp 'gnus)
      (require 'org-notmuch)))
 #+END_SRC
 * Install and configure =multiple-cursors=
