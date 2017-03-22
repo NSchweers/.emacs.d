@@ -1,5 +1,6 @@
+;; -*- lexical-binding: t-*-
 
-(setf lexical-binding t)
+;; [[file:~/.emacs.d/literate-init.org::*Boot%20up%20with%20our%20literate%20config][Boot\ up\ with\ our\ literate\ config:1]]
 
 ;; NOTE: THIS FILE WAS TANGLED FROM literate-init.org.  DO NOT CHANGE THIS FILE
 ;; DIRECTLY!
@@ -20,12 +21,12 @@
 ;;     (signal 'postcondition-error)
 ;;   (org-babel-tangle-file lit-name))
 
-(defmacro ensure (postcond error-clause fixup &rest body)
-  "Tries to ensure that POSTCOND holds.
+(defmacro ensure (condition error-clause fixup &rest body)
+  "Tries to ensure that CONDITION holds.
 
-This is accomplished by a series of steps.  First, POSTCOND is
+This is accomplished by a series of steps.  First, CONDITION is
 checked.  If it holds, the form returns.  If not, body is
-executed.  Then POSTCOND is checked again.  If it holds, the form
+executed.  Then CONDITION is checked again.  If it holds, the form
 returns.  If the check returns nil, or the body signalled any
 error, the fixup function is tried (if non-nil and a function).
 The fixup function is given either the error, or nil if none was
@@ -39,24 +40,24 @@ error-clause is executed.
 
 As FIXUP must be a function, the form is evaluated exactly once."
   (declare (indent 3))
-  (when (or (null postcond)
+  (when (or (null condition)
             (null error-clause))
     (error "Postcondition or Error-clause is missing"))
   (let ((f (make-symbol "f"))
         (e (make-symbol "e")))
     `(let ((,f ,fixup))
-       (unless ,postcond
+       (unless ,condition
          (condition-case ,e ,@body
            (error (if ,f (progn
                            (funcall ,f ,e)
                            ,@body)
                     (signal (car ,e) (cdr ,e)))))
-         (unless ,postcond
+         (unless ,condition
            (when ,f
              (funcall ,f nil))
-           (unless ,postcond
+           (unless ,condition
              ,@body
-             (unless ,postcond
+             (unless ,condition
                ,error-clause)))))))
 
 ;; To make the aforementioned macro a little more useful for my case, I need
@@ -75,7 +76,7 @@ older than A."
 (defun load-literate-init ()
   "Tangles, compiles and loads the literate init file."
   (interactive)
-  (require 'org)
+  ;; (require 'org)
   (let ((lit-name
          (expand-file-name "literate-init.org" user-emacs-directory))
         (el-name (expand-file-name "literate-init.el" user-emacs-directory))
@@ -91,3 +92,5 @@ older than A."
           (load el-name))
       (byte-compile-file el-name))
     (load elc-name)))
+
+;; Boot\ up\ with\ our\ literate\ config:1 ends here
