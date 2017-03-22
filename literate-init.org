@@ -1,20 +1,17 @@
 # -*- coding: utf-8; -*-
 #+PROPERTY: header-args :tangle literate-init.el
+#+PROPERTY: header-args+ :comments link
+#+PROPERTY: header-args+ :shebang ;; -*- lexical-binding: t-*-
+
 #+TITLE: An Emacs Configuration
 #+AUTHOR: Nathanael Schweers
 
-* Activate lexical scope
-As Emacs started out without lexical scope, it has to be enabled by the
-programmer on a per-buffer basis.  Normally one can use special syntax in the
-first line, but as I don’t trust Org Modes tangling that much, I’ll just use
-=setf=.
-
-#+begin_src emacs-lisp
-  (setf lexical-binding t)
-#+end_src
-
 * Early setup
 Some things just have to happen really early.
+** Activate lexical scope
+As Emacs started out without lexical scope, it has to be enabled by the
+programmer on a per-buffer basis.  The whole file gets a shebang argument via a
+property line (see the beginning of the Org file).
 
 ** No splash screen
 #+BEGIN_SRC emacs-lisp
@@ -663,12 +660,8 @@ It can be found here: https://github.com/jwiegley/emacs-async
 #+END_SRC
 
 * TODO Configure =dired=
-<<<<<<< HEAD
-Dired is a little weird, but also really cool.
-=======
 Dired is a little weird, but also really cool.  I really ought to get it going
 in async mode though.
->>>>>>> e67b47f... some stuff.  Emacs changed its customization again.
 
 #+BEGIN_SRC emacs-lisp
   (autoload 'dired-async-mode "dired-async.el" nil t)
@@ -2308,7 +2301,8 @@ The feeds can also be entered here.
              ("https://wingolog.org/feed/atom" wingolog blog)
              ("http://howardism.org/index.xml" howardism blog emacs)
              ("http://nullprogram.com/feed/" nullprogram blog emacs)
-             ("http://busy-streets.de/feed/" blog busy-streets bike)))))
+             ("http://busy-streets.de/feed/" blog busy-streets bike)
+             ("http://cestlaz.github.io/rss.xml" blog emacs cestlaz zamansky)))))
 #+END_SRC
 
 ** Make elfeed be in emacs state by default
@@ -2363,7 +2357,28 @@ Apparently, tramp-term integrates a remote ssh session with TRAMP.
 #+BEGIN_SRC emacs-lisp
   (pc tramp-term)
 #+END_SRC
-* Use chromium
+* Install =fuel= in order to experiment with factor
+#+BEGIN_SRC elisp
+  (pc fuel
+    (:require nil)
+    (setf fuel-listener-factor-binary (expand-file-name "opt/factor/factor"
+                                                        (getenv "HOME"))
+          fuel-listener-factor-image (expand-file-name "opt/factor/factor.image"
+                                                       (getenv "HOME"))))
+#+END_SRC
+* Install go-mode and assorted packages
+I want to try out golang, I’ll probably not use it, but hey.
+
+#+BEGIN_SRC elisp
+  (pc go-mode)
+  (pc go-eldoc)
+  (pc go-scratch)
+#+END_SRC
+
+#+RESULTS:
+: go-scratch
+
+* Use chromium (or chromium-browser?)
 #+BEGIN_SRC emacs-lisp
   (setf browse-url-browser-function #'browse-url-chromium)
 #+END_SRC
@@ -2468,66 +2483,66 @@ advantage that other modes cannot quite as easily overwrite my keybindings.
         ("e" org-transpose-element "Org mode elements")
         ("q" nil "quit"))
 
-     (defhydra hydra-transpose
-       (:pre (if (and (not (null hydra-transpose/custom-prefix-arg))
-                      (< hydra-transpose/custom-prefix-arg 0))
-                 (setq hydra-transpose/custom-prefix-arg nil))
-             :color pink)
-       "transpose"
-       ("d" hydra-transpose-backward/body "toggle direction" :exit t)
-       ("f" hydra-transpose/body "forward mode" :exit t)
-       ("b" hydra-transpose-backward/body "backward mode" :exit t)
-       ("u" (lambda (arg)
-              (interactive "nPrefix: ")
-              (setq hydra-transpose/custom-prefix-arg arg))
-        "prefix")
-       ("r" (lambda ()
-             (interactive)
-             (setq hydra-transpose/custom-prefix-arg nil))
-       "reset prefix")
-       ("c" (lambda ()
-              (interactive)
-              (let ((current-prefix-arg
-                     hydra-transpose/custom-prefix-arg))
-                (call-interactively #'transpose-chars))
-              (setq hydra-transpose/custom-prefix-arg nil))
-        "chars")
-       ("l" (lambda ()
-              (interactive)
-              (let ((current-prefix-arg
-                     hydra-transpose/custom-prefix-arg))
-                (call-interactively #'transpose-lines))
-              (setq hydra-transpose/custom-prefix-arg nil))
-        "lines")
-       ("w" (lambda ()
-              (interactive)
-              (let ((current-prefix-arg
-                     hydra-transpose/custom-prefix-arg))
-                (call-interactively #'transpose-words))
-              (setq hydra-transpose/custom-prefix-arg nil))
-        "words")
-       ("s" (lambda ()
-              (interactive)
-              (let ((current-prefix-arg
-                     hydra-transpose/custom-prefix-arg))
-                (call-interactively #'transpose-sexps))
-              (setq hydra-transpose/custom-prefix-arg nil))
-        "sexps")
-       ("p" (lambda ()
-              (interactive)
-              (let ((current-prefix-arg
-                     hydra-transpose/custom-prefix-arg))
-                (call-interactively #'transpose-paragraphs))
-              (setq hydra-transpose/custom-prefix-arg nil))
-        "paragraphs")
-       ("S" (lambda ()
-              (interactive)
-              (let ((current-prefix-arg
-                     hydra-transpose/custom-prefix-arg))
-                (call-interactively #'transpose-sentences)))
-        "sentences")
-       ("e" org-transpose-element "Org mode elements")
-       ("q" nil "quit"))))
+      (defhydra hydra-transpose
+        (:pre (if (and (not (null hydra-transpose/custom-prefix-arg))
+                       (< hydra-transpose/custom-prefix-arg 0))
+                  (setq hydra-transpose/custom-prefix-arg nil))
+              :color pink)
+        "transpose"
+        ("d" hydra-transpose-backward/body "toggle direction" :exit t)
+        ("f" hydra-transpose/body "forward mode" :exit t)
+        ("b" hydra-transpose-backward/body "backward mode" :exit t)
+        ("u" (lambda (arg)
+               (interactive "nPrefix: ")
+               (setq hydra-transpose/custom-prefix-arg arg))
+         "prefix")
+        ("r" (lambda ()
+               (interactive)
+               (setq hydra-transpose/custom-prefix-arg nil))
+         "reset prefix")
+        ("c" (lambda ()
+               (interactive)
+               (let ((current-prefix-arg
+                      hydra-transpose/custom-prefix-arg))
+                 (call-interactively #'transpose-chars))
+               (setq hydra-transpose/custom-prefix-arg nil))
+         "chars")
+        ("l" (lambda ()
+               (interactive)
+               (let ((current-prefix-arg
+                      hydra-transpose/custom-prefix-arg))
+                 (call-interactively #'transpose-lines))
+               (setq hydra-transpose/custom-prefix-arg nil))
+         "lines")
+        ("w" (lambda ()
+               (interactive)
+               (let ((current-prefix-arg
+                      hydra-transpose/custom-prefix-arg))
+                 (call-interactively #'transpose-words))
+               (setq hydra-transpose/custom-prefix-arg nil))
+         "words")
+        ("s" (lambda ()
+               (interactive)
+               (let ((current-prefix-arg
+                      hydra-transpose/custom-prefix-arg))
+                 (call-interactively #'transpose-sexps))
+               (setq hydra-transpose/custom-prefix-arg nil))
+         "sexps")
+        ("p" (lambda ()
+               (interactive)
+               (let ((current-prefix-arg
+                      hydra-transpose/custom-prefix-arg))
+                 (call-interactively #'transpose-paragraphs))
+               (setq hydra-transpose/custom-prefix-arg nil))
+         "paragraphs")
+        ("S" (lambda ()
+               (interactive)
+               (let ((current-prefix-arg
+                      hydra-transpose/custom-prefix-arg))
+                 (call-interactively #'transpose-sentences)))
+         "sentences")
+        ("e" org-transpose-element "Org mode elements")
+        ("q" nil "quit"))))
 
   (define-key *schweers-bindings*
     (kbd "C-x -")
@@ -2634,8 +2649,6 @@ This code block has to be tangled manually.  Should it ever be changed, it must
 be added to git!  Otherwise Emacs may not be able to boot!
 
 #+BEGIN_SRC emacs-lisp :tangle bootstrap.el
-  (setf lexical-binding t)
-
   ;; NOTE: THIS FILE WAS TANGLED FROM literate-init.org.  DO NOT CHANGE THIS FILE
   ;; DIRECTLY!
 
@@ -2655,12 +2668,14 @@ be added to git!  Otherwise Emacs may not be able to boot!
   ;;     (signal 'postcondition-error)
   ;;   (org-babel-tangle-file lit-name))
 
-  (defmacro ensure (postcond error-clause fixup &rest body)
-    "Tries to ensure that POSTCOND holds.
+  (require 'org)
 
-  This is accomplished by a series of steps.  First, POSTCOND is
+  (defmacro ensure (condition error-clause fixup &rest body)
+    "Tries to ensure that CONDITION holds.
+
+  This is accomplished by a series of steps.  First, CONDITION is
   checked.  If it holds, the form returns.  If not, body is
-  executed.  Then POSTCOND is checked again.  If it holds, the form
+  executed.  Then CONDITION is checked again.  If it holds, the form
   returns.  If the check returns nil, or the body signalled any
   error, the fixup function is tried (if non-nil and a function).
   The fixup function is given either the error, or nil if none was
@@ -2674,24 +2689,24 @@ be added to git!  Otherwise Emacs may not be able to boot!
 
   As FIXUP must be a function, the form is evaluated exactly once."
     (declare (indent 3))
-    (when (or (null postcond)
+    (when (or (null condition)
               (null error-clause))
       (error "Postcondition or Error-clause is missing"))
     (let ((f (make-symbol "f"))
           (e (make-symbol "e")))
       `(let ((,f ,fixup))
-         (unless ,postcond
+         (unless ,condition
            (condition-case ,e ,@body
              (error (if ,f (progn
                              (funcall ,f ,e)
                              ,@body)
                       (signal (car ,e) (cdr ,e)))))
-           (unless ,postcond
+           (unless ,condition
              (when ,f
                (funcall ,f nil))
-             (unless ,postcond
+             (unless ,condition
                ,@body
-               (unless ,postcond
+               (unless ,condition
                  ,error-clause)))))))
 
   ;; To make the aforementioned macro a little more useful for my case, I need
@@ -2710,7 +2725,7 @@ be added to git!  Otherwise Emacs may not be able to boot!
   (defun load-literate-init ()
     "Tangles, compiles and loads the literate init file."
     (interactive)
-    (require 'org)
+    ;; (require 'org)
     (let ((lit-name
            (expand-file-name "literate-init.org" user-emacs-directory))
           (el-name (expand-file-name "literate-init.el" user-emacs-directory))
