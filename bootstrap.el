@@ -21,6 +21,8 @@
 ;;     (signal 'postcondition-error)
 ;;   (org-babel-tangle-file lit-name))
 
+(require 'org)
+
 (defmacro ensure (condition error-clause fixup &rest body)
   "Tries to ensure that CONDITION holds.
 
