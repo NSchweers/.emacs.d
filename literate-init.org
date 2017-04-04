@@ -573,6 +573,14 @@ contents the OS supplies into the kill-ring.
 #+BEGIN_SRC emacs-lisp
   (setf save-interprogram-paste-before-kill t)
 #+END_SRC
+** Don’t move point when inserting with the mouse
+By default, Emacs moves point to the location of the mouse when inserting using
+middle click.  This setting causes the insertion to happen at point, regardless
+of where the mouse points.
+
+#+BEGIN_SRC elisp
+  (setf mouse-yank-at-point t)
+#+END_SRC
 * Define a configuration macro
 While this macro is far from perfect, it is good enough to be used.
 
