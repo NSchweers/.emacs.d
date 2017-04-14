@@ -282,7 +282,11 @@ this is saved in a file.  The name for this file can be found in the variable
 
 #+begin_src emacs-lisp
   (setf save-place-file (expand-file-name ".places" user-emacs-directory))
-  (save-place-mode 1)
+  (if (version< emacs-version "25.1")
+      (progn
+        (require 'saveplace)
+        (setq-default save-place t))
+    (save-place-mode 1))
 #+end_src
 
 ** Automatically refresh dired
@@ -572,6 +576,14 @@ contents the OS supplies into the kill-ring.
 
 #+BEGIN_SRC emacs-lisp
   (setf save-interprogram-paste-before-kill t)
+#+END_SRC
+** Don’t move point when inserting with the mouse
+By default, Emacs moves point to the location of the mouse when inserting using
+middle click.  This setting causes the insertion to happen at point, regardless
+of where the mouse points.
+
+#+BEGIN_SRC elisp
+  (setf mouse-yank-at-point t)
 #+END_SRC
 * Define a configuration macro
 While this macro is far from perfect, it is good enough to be used.
@@ -2260,10 +2272,12 @@ I use =global-paren-face-mode= to make parentheses stand out a little less.
 #+END_SRC
 
 * Install =w3m=
-I use this to browse the hyperspec
+I use this to browse the hyperspec.  Don't require it, as it will fail on
+Windows.
 
 #+BEGIN_SRC emacs-lisp
-  (pc w3m)
+  (pc w3m
+    (:require nil))
 #+END_SRC
 
 * Install and configure =elfeed=
@@ -2365,6 +2379,63 @@ Apparently, tramp-term integrates a remote ssh session with TRAMP.
                                                         (getenv "HOME"))
           fuel-listener-factor-image (expand-file-name "opt/factor/factor.image"
                                                        (getenv "HOME"))))
+#+END_SRC
+* Try some C++ stuff out
+  :PROPERTIES:
+  :header-args: :tangle no
+  :END:
+Maybe this will work for C++
+
+#+BEGIN_SRC elisp
+  (pc auto-complete-c-headers)
+
+  (defun my:ac-c-header-init ()
+    (require 'auto-complete-c-headers)
+    (add-to-list 'ac-sources 'ac-source-c-headers)
+    ;; (add-to-list 'achead:include-directories '"/Applications/Xcode.app/Contents/Developer/usr/llvm-gcc-4.2/lib/gcc/i686-apple-darwin11/4.2.1/include")
+    )
+  ; now let's call this function from c/c++ hooks
+  (add-hook 'c++-mode-hook 'my:ac-c-header-init)
+  (add-hook 'c-mode-hook 'my:ac-c-header-init)
+
+  ; turn on Semantic
+  (semantic-mode 1)
+  ; let's define a function which adds semantic as a suggestion backend to auto complete
+  ; and hook this function to c-mode-common-hook
+  (defun my:add-semantic-to-autocomplete() 
+    (add-to-list 'ac-sources 'ac-source-semantic))
+
+  (add-hook 'c-mode-common-hook 'my:add-semantic-to-autocomplete)
+  ; turn on ede mode 
+  (global-ede-mode 1)
+  ; create a project for our program.
+  (ede-cpp-root-project "rtree" :file "~/code/pick/rtree/rtree.cpp"
+                        :include-path '("~/code/third_party/boost_1_63_0/"))
+  ; you can use system-include-path for setting up the system header file locations.
+  ; turn on automatic reparsing of open buffers in semantic
+  (global-semantic-idle-scheduler-mode 1)
+
+#+END_SRC
+* Pimp =occur= a little
+Unlike occur, rgrep binds n and p to switch to the next and previous match by
+default.
+
+#+BEGIN_SRC elisp
+  (defun schweers/occur-next-match ()
+    (interactive)
+    (occur-next)
+    (occur-mode-display-occurrence))
+
+  (defun schweers/occur-prev-match ()
+    (interactive)
+    (occur-prev)
+    (occur-mode-display-occurrence))
+
+  (define-key occur-mode-map (kbd "n") #'schweers/occur-next-match)
+  (define-key occur-mode-map (kbd "p") #'schweers/occur-prev-match)
+
+  (define-advice occur (:after (regexp &optional nlines) schweers/occur-select-occur)
+    (select-window (get-buffer-window "*Occur*")))
 #+END_SRC
 * Install go-mode and assorted packages
 I want to try out golang, I’ll probably not use it, but hey.
