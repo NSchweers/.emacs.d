@@ -276,13 +276,15 @@ other systems, to make them more usable and sane (I’m looking at you SVN)!
 #+end_src
 
 ** Save where point is/was in a visited file
-Emacs can keep track of where point last was in a file.  The data needed for
-this is saved in a file.  The name for this file can be found in the variable
-=save-place-file=.
+Emacs can keep track of where point last was in a file.  The data
+needed for this is saved in a file.  The name for this file can be
+found in the variable =save-place-file=.  Sadly, debian broke emacs in
+stretch, so I have to use this ancient emacs24.5 like some cretin
 
 #+begin_src emacs-lisp
-  (setf save-place-file (expand-file-name ".places" user-emacs-directory))
-  (save-place-mode 1)
+  (unless (version<= emacs-version "25.0")
+    (setf save-place-file (expand-file-name ".places" user-emacs-directory))
+    (save-place-mode 1))
 #+end_src
 
 ** Automatically refresh dired
@@ -588,7 +590,7 @@ This macro checks whether a given package is installed and installs it if
 necessary.  For details, see the docstring.
 
 #+BEGIN_SRC emacs-lisp
-  (require 'seq)
+  ;(require 'seq)
   (require 'subr-x)
 
   (defun pc/get-package-desc (&rest pkgs)
@@ -637,19 +639,21 @@ necessary.  For details, see the docstring.
            (when (not (,get-package-desc ',pkg))
              (error "Package does not exist: %s" ',pkg))
            (let ((,pkg-desc (,get-package-desc ',pkg)))
-             ,@(if-let ((pre-inst (assoc :pre-install clauses)))
-                   (cdr pre-inst))
+             ,@(let ((pre-inst (assoc :pre-install clauses)))
+                   (if pre-inst (cdr pre-inst)))
              (unless (package-installed-p ',pkg)
-               (package-install ',pkg ,(cdr (assoc :dont-select clauses))))
+               (if (version<= emacs-version "25.0")
+                   (package-install ',pkg)
+                 (package-install ',pkg ,(cdr (assoc :dont-select clauses)))))
              ,@(let ((req-form (assoc :require clauses)))
                  (if (not (null (cdr req-form)))
                      (if (not (null (cddr req-form)))
                          (error "too many forms in :require clause.")
                        `(,(cadr req-form)))
                    `((require ',pkg))))
-             ,@(if-let ((post-inst (assoc :post-install clauses)))
-                   (cdr post-inst))
-             ,@(if-let ((bind (assoc :bind clauses)))
+             ,@(let ((post-inst (assoc :post-install clauses)))
+                 (if post-inst (cdr post-inst)))
+             ,@(let ((bind (assoc :bind clauses)))
                    (cl-loop for c in (cadr bind) collect
                             `(global-set-key (kbd ,(car c)) ',(cdr c)))))))))
 #+END_SRC
@@ -1279,7 +1283,7 @@ with ".el".
                       (string-match-p "\\.el$" fname)))))
 
   (defun schweers/list-setup-names ()
-    (seq-map
+    (map
      (lambda (setup)
        (substring (f-base setup) 6))
      (schweers/list-setup-files)))
@@ -1428,6 +1432,7 @@ lispy, which is an alternative to paredit.
          (call-interactively 'lispy-parens)))
 
      (define-key lispy-mode-map (kbd "M-(") 'schweers/lispy-M-paren)
+     (define-key lispy-mode-map (kbd "#") 'self-insert-command)
      (define-key lispy-mode-map (kbd ":") 'self-insert-command)
      (define-key lispy-mode-map (kbd "C-w") 'lispy-backward-kill-word)))
 #+END_SRC
@@ -1943,11 +1948,9 @@ used to have this file in ~/.emacs.d, but as its more data than config, I’ve
 moved this file to ~/.emacs_data/gnus.el.
 
 #+BEGIN_SRC emacs-lisp
-  (pc gnus
-    (:post-install
-     (load (expand-file-name
-            "gnus.el"
-            (expand-file-name ".emacs_data" (getenv "HOME"))))))
+  (load (expand-file-name
+         "gnus.el"
+         (expand-file-name ".emacs_data" (getenv "HOME"))))
 
 #+END_SRC
 
@@ -1957,7 +1960,7 @@ moved this file to ~/.emacs_data/gnus.el.
     (:post-install
      (define-key notmuch-show-mode-map "U" 'browse-url-at-point)
      (setf notmuch-crypto-process-mime t)
-     (bbdb-initialize 'message 'pgp 'gnus)
+     ;; (bbdb-initialize 'message 'pgp 'gnus)
      (require 'org-notmuch)))
 #+END_SRC
 * Install and configure =multiple-cursors=
@@ -1978,15 +1981,13 @@ As IRC is also just text, I naturally pull it into Emacs.  This should go
 without saying.
 
 #+BEGIN_SRC emacs-lisp
-  (pc erc
-    (:post-install
-     (and (load-library "erc-highlight-nicknames")
-          (add-to-list 'erc-modules 'highlight-nicknames)
-          (erc-update-modules))
-     (add-hook 'erc-mode-hook
-               (lambda ()
-                 (-partial 'auto-fill-mode 0)
-                 (show-paren-mode nil)))))
+  (and (load-library "erc-highlight-nicknames")
+       (add-to-list 'erc-modules 'highlight-nicknames)
+       (erc-update-modules))
+  (add-hook 'erc-mode-hook
+            (lambda ()
+              (-partial 'auto-fill-mode 0)
+              (show-paren-mode nil)))
 #+END_SRC
 
 * Install and configure =ace-link=
@@ -2061,10 +2062,16 @@ lispy command.  Normally this is all well and good, but not for comint derived
 modes.  This is why the following binding is needed.
 
 #+BEGIN_SRC emacs-lisp
-  (define-advice lispy-newline-and-indent-plain (:around (orig) fix-inferior-scheme)
-    (if (eq major-mode 'inferior-scheme-mode)
-        (call-interactively #'comint-send-input)
-      (funcall orig)))
+  ;; (defadvice lispy-newline-and-indent-plain (around fix-inferior-scheme (orig))
+  ;;   (if (eq major-mode 'inferior-scheme-mode)
+  ;;       (call-interactively #'comint-send-input)
+  ;;     (funcall orig)))
+
+  (defun schweers/fix-scheme-lispy-RET ()
+    (define-key inferior-scheme-mode-map (kbd "<S-return>") 'comint-send-input))
+
+  (add-hook 'inferior-scheme-mode-hook
+            #'schweers/fix-scheme-lispy-RET)
 #+END_SRC
 
 #+BEGIN_SRC emacs-lisp
@@ -2087,6 +2094,7 @@ function can do more elaborate stuff.
   (put 'match-lambda* 'scheme-indent-function 0)
   (put 'receive 'scheme-indent-function 2)
   (put 'let/cc 'scheme-indent-function 1)
+  (put 'guard 'scheme-indent-function 1)
 #+END_SRC
 * Install and configure =expand-region=
 This is a package I hardly use, although it seems to be really cool.  Maybe I
@@ -2428,7 +2436,7 @@ default.
   (define-key occur-mode-map (kbd "n") #'schweers/occur-next-match)
   (define-key occur-mode-map (kbd "p") #'schweers/occur-prev-match)
 
-  (define-advice occur (:after (regexp &optional nlines) schweers/occur-select-occur)
+  (defadvice occur (after schweers/occur-select-occur (regexp &optional nlines))
     (select-window (get-buffer-window "*Occur*")))
 #+END_SRC
 * Install go-mode and assorted packages
