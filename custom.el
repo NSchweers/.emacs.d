@@ -34,7 +34,8 @@
      (:name "drafts" :query "tag:draft" :key "d")
      (:name "all mail" :query "*" :key "a")
      (:name "gitlab" :query "tag:gitlab" :key "g")
-     (:name "unread" :query "tag:unread" :key "u"))))
+     (:name "unread" :query "tag:unread" :key "u")
+     (:name "unread-inbox" :query "tag:unread and tag:inbox" :key "n"))))
  '(openwith-associations nil)
  '(org-agenda-files (quote ("~/.emacs_data/notes.org.gpg")))
  '(org-export-backends
