@@ -2033,7 +2033,7 @@ interacting with the elisp VM underlying Emacs!
 * Configure Scheme
 ** Install and configure =geiser=
   :PROPERTIES:
-  :header-args: :tangle no
+  :header-args: :tangle yes
   :END:
 
 Geiser is to scheme what SLIME is to Common Lisp.  Sadly it needs some more
@@ -2263,7 +2263,10 @@ I use =global-paren-face-mode= to make parentheses stand out a little less.
 I use this to browse the hyperspec
 
 #+BEGIN_SRC emacs-lisp
-  (pc w3m)
+  (condition-case e
+      (pc w3m)
+    (error
+     (warn "installing w3m failed: %s" (error-message-string e))))
 #+END_SRC
 
 * Install and configure =elfeed=
@@ -2302,7 +2305,9 @@ The feeds can also be entered here.
              ("http://howardism.org/index.xml" howardism blog emacs)
              ("http://nullprogram.com/feed/" nullprogram blog emacs)
              ("http://busy-streets.de/feed/" blog busy-streets bike)
-             ("http://cestlaz.github.io/rss.xml" blog emacs cestlaz zamansky)))))
+             ("http://cestlaz.github.io/rss.xml" blog emacs cestlaz zamansky)
+             ("https://www.archlinux.org/feeds/news/" blog archlinux)
+             ("http://pragmaticemacs.com/feed/" blog emacs pragmaticemacs)))))
 #+END_SRC
 
 ** Make elfeed be in emacs state by default
