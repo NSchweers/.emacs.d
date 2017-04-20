@@ -26,10 +26,12 @@ For some reason the default in Emacs is or was to load outdated bytecode files.
 #+END_SRC
 
 ** Add site-lisp to load path
-The directory site-lisp is not by default part of the load-path.
+The directory site-lisp is not by default part of the load-path.  Also add mu4e
+to the load path explicitly.
 
 #+BEGIN_SRC emacs-lisp
   (add-to-list 'load-path (expand-file-name "site-lisp" user-emacs-directory))
+  (add-to-list 'load-path "/usr/share/emacs/site-lisp/mu4e")
 #+END_SRC
 
 ** Add debian specific stuff
@@ -1311,11 +1313,37 @@ with ".el".
           (find-file-other-window (cdr fname?))
         (find-file (cdr fname?)))))
 #+end_src
+* Load =mu4e=
+  I’ll try this again
 
+  #+BEGIN_SRC elisp
+    (condition-case nil
+        (progn
+          (require 'mu4e)
+          (require 'org-mu4e)
+          (add-to-list 'mu4e-bookmarks
+                       (make-mu4e-bookmark
+                        :name "debian user"
+                        :query "list:debian-user.lists.debian.org"
+                        :key ?d))
+          (add-to-list 'mu4e-bookmarks
+                       (make-mu4e-bookmark
+                        :name "gitlab"
+                        :query "from:gitlab@code.outdooractive.com"
+                        :key ?g))
+          (add-to-list 'mu4e-bookmarks
+                       (make-mu4e-bookmark
+                        :name "non-list unread"
+                        :query (concat
+                                "flag:unread and not flag:list "
+                                "and not from:gitlab@code.outdooractive.com")
+                        :key ?n)))
+      (file-error (warn "no mu4e found."))
+      (error (warn "mu4e could not be loaded.")))
+  #+END_SRC
+
+* TODO replace evil-leader with hydra?
 * Install and configure evil mode
-  :PROPERTIES:
-  :header-args: :tangle no
-  :END:
 Evil provides a layer on top of Emacs to emulate vi like keybindings and modes
 (called “states” in Evil parlance).
 
@@ -1324,14 +1352,26 @@ affects initial buffers like the scratch buffer.  For this reason we install
 evil-leader before evil itself.
 
 #+BEGIN_SRC emacs-lisp
-  (pc evil-leader
-    (:post-install
-     (global-evil-leader-mode 1)))
-
   (pc evil
     (:post-install
      (require 'evil)
      (evil-mode 1)))
+
+  (pc evil-leader
+    (:post-install
+     (evil-leader/set-leader "<SPC>")
+     (evil-leader/set-key
+       "<SPC>" 'helm-M-x
+       "f" 'helm-find-files
+       "b" 'helm-mini
+       "B" 'ibuffer-other-window
+       "w2" 'split-window-below
+       "w3" 'split-window-right
+       "wb" 'switch-to-buffer-other-window
+       "wq" 'kill-this-buffer
+       "wo" 'ace-window)
+     (define-key evil-motion-state-map (kbd ",") nil)
+     (global-evil-leader-mode 1)))
 #+END_SRC
 
 Evil itself is all well and good for the novice user, yet some modes use rather
@@ -1339,6 +1379,9 @@ different keybindings, hence need extra evil bindings.  This is where Evil
 plugins come to play.
 
 ** Setup evil-lispy
+   :PROPERTIES:
+   :header-args: :tangle no
+   :END:
 Lispy uses vi-like keybindings, yet implements them in its own magical way,
 hence is by default incompatible with evil-mode.
 #+BEGIN_SRC emacs-lisp
@@ -1350,14 +1393,23 @@ Magit also defines its own peculiar bindings, so again another plugin is
 needed.
 
 #+BEGIN_SRC emacs-lisp
-  (pc evil-magit)
+  (pc evil-magit
+    :post-install
+    (evil-leader/set-key
+      "g" 'magit-status))
 #+END_SRC
 
 ** Setup evil-org
 This mode introduces several bindings, apparently mostly for headings.
 
+** TODO Check whether this code is still buggy when km is a global variable instead of let-bound. 
 #+BEGIN_SRC emacs-lisp
   (pc evil-org)
+
+  ;;(let ((km (make-sparse-keymap)))
+  ;;  (define-key km (kbd ",") 'org-edit-src-exit)
+  ;;  (define-key km (kbd ".") 'org-edit-src-abort)
+  ;;  (evil-define-key 'normal org-src-mode-map "," km))
 #+END_SRC
 
 ** Setup Helm integration
@@ -1370,11 +1422,12 @@ installable package to integrate Evil and Helm.
 #+END_SRC
 
 ** Setup evil for info
-Info also has rather non-standard bindings, as one does not edit text here, it
-is advisable to have evil be in emacs state.
++Info also has rather non-standard bindings, as one does not edit text here, it
+is advisable to have evil be in emacs state.+  I’m not sure yet what to do
+here.  Time might tell.
 
 #+BEGIN_SRC emacs-lisp
-  (evil-set-initial-state 'Info-mode 'emacs)
+  ;; (evil-set-initial-state 'Info-mode 'emacs)
 #+END_SRC
 
 As an added bonus, add bindings for j and k in Emacs state, as these are not
@@ -1385,6 +1438,16 @@ bound in info.
   (define-key Info-mode-map (kbd "k") (kbd "C-p"))
 #+END_SRC
 
+** Setup evil-mu4e
+   #+BEGIN_SRC elisp
+     (condition-case nil
+         (pc evil-mu4e)
+       (file-error (warn "Could not load evil-mu4e.  Have you loaded mu4e?")))
+   #+END_SRC
+
+** TODO Add evil bindings for undo-tree
+
+** TODO Add evil bindings for mark commands
 * Install and configure =guide key=
 The package =guide-key= makes it a little easier to explore prefixed
 keybindings.  The variable =guide-key/guide-key-sequence= holds a list of
@@ -2686,6 +2749,9 @@ advantage that other modes cannot quite as easily overwrite my keybindings.
   (define-key *schweers-bindings* (kbd "<f7>") 'schweers/decrease-font)
 
   (define-key *schweers-bindings* (kbd "C-x k") 'schweers/kill-buffer)
+
+  (define-key *schweers-bindings* (kbd "C-<down>") 'scroll-up-line)
+  (define-key *schweers-bindings* (kbd "C-<up>") 'scroll-down-line)
 
   (global-set-key (kbd "C-S-s") 'misc/switch-to-scratch)
 
