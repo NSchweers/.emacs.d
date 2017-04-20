@@ -26,10 +26,12 @@ For some reason the default in Emacs is or was to load outdated bytecode files.
 #+END_SRC
 
 ** Add site-lisp to load path
-The directory site-lisp is not by default part of the load-path.
+The directory site-lisp is not by default part of the load-path.  Also add mu4e
+to the load path explicitly.
 
 #+BEGIN_SRC emacs-lisp
   (add-to-list 'load-path (expand-file-name "site-lisp" user-emacs-directory))
+  (add-to-list 'load-path "/usr/share/emacs/site-lisp/mu4e")
 #+END_SRC
 
 ** Add debian specific stuff
@@ -1312,6 +1314,7 @@ with ".el".
         (find-file (cdr fname?)))))
 #+end_src
 
+* TODO replace evil-leader with hydra?
 * Install and configure evil mode
 Evil provides a layer on top of Emacs to emulate vi like keybindings and modes
 (called “states” in Evil parlance).
@@ -1325,7 +1328,11 @@ evil-leader before evil itself.
     (:post-install
      (evil-leader/set-leader "<SPC>")
      (evil-leader/set-key
-       "<SPC>" 'helm-M-x)
+       "<SPC>" 'helm-M-x
+       "f" 'helm-find-files
+       "b" 'helm-mini
+       "B" 'ibuffer-other-window
+       "o" 'ace-window)
      (global-evil-leader-mode 1)))
 
   (pc evil
@@ -1376,11 +1383,12 @@ installable package to integrate Evil and Helm.
 #+END_SRC
 
 ** Setup evil for info
-Info also has rather non-standard bindings, as one does not edit text here, it
-is advisable to have evil be in emacs state.
++Info also has rather non-standard bindings, as one does not edit text here, it
+is advisable to have evil be in emacs state.+  I’m not sure yet what to do
+here.  Time might tell.
 
 #+BEGIN_SRC emacs-lisp
-  (evil-set-initial-state 'Info-mode 'emacs)
+  ;; (evil-set-initial-state 'Info-mode 'emacs)
 #+END_SRC
 
 As an added bonus, add bindings for j and k in Emacs state, as these are not
@@ -1396,6 +1404,9 @@ bound in info.
      (pc evil-mu4e)
    #+END_SRC
 
+** TODO Add evil bindings for undo-tree
+
+** TODO Add evil bindings for mark commands
 * Install and configure =guide key=
 The package =guide-key= makes it a little easier to explore prefixed
 keybindings.  The variable =guide-key/guide-key-sequence= holds a list of
@@ -1982,8 +1993,6 @@ moved this file to ~/.emacs_data/gnus.el.
   I’ll try this again
 
   #+BEGIN_SRC elisp
-    (add-to-list 'load-path "/usr/share/emacs/site-lisp/mu4e")
-
     (condition-case nil
         (progn
           (require 'mu4e)
