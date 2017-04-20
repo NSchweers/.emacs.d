@@ -1313,9 +1313,6 @@ with ".el".
 #+end_src
 
 * Install and configure evil mode
-  :PROPERTIES:
-  :header-args: :tangle no
-  :END:
 Evil provides a layer on top of Emacs to emulate vi like keybindings and modes
 (called “states” in Evil parlance).
 
@@ -1326,6 +1323,9 @@ evil-leader before evil itself.
 #+BEGIN_SRC emacs-lisp
   (pc evil-leader
     (:post-install
+     (evil-leader/set-leader "<SPC>")
+     (evil-leader/set-key
+       "<SPC>" 'helm-M-x)
      (global-evil-leader-mode 1)))
 
   (pc evil
@@ -1339,6 +1339,9 @@ different keybindings, hence need extra evil bindings.  This is where Evil
 plugins come to play.
 
 ** Setup evil-lispy
+   :PROPERTIES:
+   :header-args: :tangle no
+   :END:
 Lispy uses vi-like keybindings, yet implements them in its own magical way,
 hence is by default incompatible with evil-mode.
 #+BEGIN_SRC emacs-lisp
@@ -1350,7 +1353,10 @@ Magit also defines its own peculiar bindings, so again another plugin is
 needed.
 
 #+BEGIN_SRC emacs-lisp
-  (pc evil-magit)
+  (pc evil-magit
+    :post-install
+    (evil-leader/set-key
+      "g" 'magit-status))
 #+END_SRC
 
 ** Setup evil-org
@@ -1384,6 +1390,11 @@ bound in info.
   (define-key Info-mode-map (kbd "j") (kbd "C-n"))
   (define-key Info-mode-map (kbd "k") (kbd "C-p"))
 #+END_SRC
+
+** Setup evil-mu4e
+   #+BEGIN_SRC elisp
+     (pc evil-mu4e)
+   #+END_SRC
 
 * Install and configure =guide key=
 The package =guide-key= makes it a little easier to explore prefixed
@@ -1967,6 +1978,35 @@ moved this file to ~/.emacs_data/gnus.el.
      ;; (bbdb-initialize 'message 'pgp 'gnus)
      (require 'org-notmuch)))
 #+END_SRC
+* Install =mu4e=
+  I’ll try this again
+
+  #+BEGIN_SRC elisp
+    (add-to-list 'load-path "/usr/share/emacs/site-lisp/mu4e")
+
+    (condition-case nil
+        (progn
+          (require 'mu4e)
+          (require 'org-mu4e)
+          (add-to-list 'mu4e-bookmarks
+                       (make-mu4e-bookmark
+                        :name "debian user"
+                        :query "list:debian-user.lists.debian.org"
+                        :key ?d))
+          (add-to-list 'mu4e-bookmarks
+                       (make-mu4e-bookmark
+                        :name "gitlab"
+                        :query "from:gitlab@code.outdooractive.com"
+                        :key ?g))
+          (add-to-list 'mu4e-bookmarks
+                       (make-mu4e-bookmark
+                        :name "non-list unread"
+                        :query (concat
+                                "flag:unread and not flag:list "
+                                "and not from:gitlab@code.outdooractive.com")
+                        :key ?n)))
+      (file-error (warn "no mu4e found.")))
+  #+END_SRC
 * Install and configure =multiple-cursors=
 Multiple cursors is a nice shorthand for keyboard macros.  They save a lot of
 time when one is not /exactly/ sure what needs to be done.
@@ -2662,6 +2702,9 @@ advantage that other modes cannot quite as easily overwrite my keybindings.
   (define-key *schweers-bindings* (kbd "<f7>") 'schweers/decrease-font)
 
   (define-key *schweers-bindings* (kbd "C-x k") 'schweers/kill-buffer)
+
+  (define-key *schweers-bindings* (kbd "C-<down>") 'scroll-up-line)
+  (define-key *schweers-bindings* (kbd "C-<up>") 'scroll-down-line)
 
   (global-set-key (kbd "C-S-s") 'misc/switch-to-scratch)
 
