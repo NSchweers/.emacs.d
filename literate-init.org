@@ -1878,7 +1878,9 @@ easier.
 As with markdown, this is not Org Mode :(
 
 #+BEGIN_SRC emacs-lisp
-  (pc tracwiki-mode)
+  (condition-case nil
+      (pc tracwiki-mode)
+    (error (warn "Could not load tracwiki-mode.")))
 #+END_SRC
 * Configure spell checking
 I don’t remember why I put this in here the way it is, but it seems to work
