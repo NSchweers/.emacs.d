@@ -425,7 +425,8 @@ Emacs is capable of nesting minibuffers, but as this feature can be very
 confusing to newcomers, it is disabled by default.  I want it though.
 
 #+begin_src emacs-lisp
-(setf enable-recursive-minibuffers t)
+  (setf enable-recursive-minibuffers t)
+  (minibuffer-depth-indicate-mode 1)
 #+end_src
 
 ** Allow for more memory consumption
@@ -2119,11 +2120,11 @@ installed before slime can add it to its contribs.
 #+END_SRC
 * Install nodejs-repl
 #+BEGIN_SRC elisp
-  (pc nodejs-repl
-    (:bind (("C-x C-e" . nodejs-repl-send-last-sexp)
-            ("C-c C-r" . nodejs-repl-send-region)
-            ("C-c C-l" . nodejs-repl-load-file)
-            ("C-c C-z" . nodejs-repl-switch-to-repl))))
+  ;; (pc nodejs-repl
+  ;;   (:bind (("C-x C-e" . nodejs-repl-send-last-sexp)
+  ;;           ("C-c C-r" . nodejs-repl-send-region)
+  ;;           ("C-c C-l" . nodejs-repl-load-file)
+  ;;           ("C-c C-z" . nodejs-repl-switch-to-repl))))
 #+END_SRC
 * Install and configure =SLIME=
 SLIME makes interaction with a Common Lisp process almost as seamless as
