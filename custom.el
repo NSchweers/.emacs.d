@@ -37,8 +37,8 @@
      (:name "unread" :query "tag:unread" :key "u")
      (:name "unread-inbox" :query "tag:inbox and tag:unread" :key "n")
      (:name "debian-user" :query "tag:debian-user" :key "d")
-     (:name "karme" :query "tag:karme" :key "k")))))))
-'(openwith-associations nil)
+     (:name "karme" :query "tag:karme" :key "k"))))
+ '(openwith-associations nil)
  '(org-agenda-files (quote ("~/.emacs_data/notes.org.gpg")))
  '(org-export-backends
    (quote
