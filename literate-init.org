@@ -2128,10 +2128,6 @@ interacting with the elisp VM underlying Emacs!
 
 * Configure Scheme
 ** Install and configure =geiser=
-  :PROPERTIES:
-  :header-args: :tangle yes
-  :END:
-
 Geiser is to scheme what SLIME is to Common Lisp.  Sadly it needs some more
 love.  Also it behaves a little strangely due to the fact that it supports more
 than one backend.
