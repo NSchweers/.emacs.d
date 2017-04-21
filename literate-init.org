@@ -1313,6 +1313,34 @@ with ".el".
           (find-file-other-window (cdr fname?))
         (find-file (cdr fname?)))))
 #+end_src
+* Load =mu4e=
+  I’ll try this again
+
+  #+BEGIN_SRC elisp
+    (condition-case nil
+        (progn
+          (require 'mu4e)
+          (require 'org-mu4e)
+          (add-to-list 'mu4e-bookmarks
+                       (make-mu4e-bookmark
+                        :name "debian user"
+                        :query "list:debian-user.lists.debian.org"
+                        :key ?d))
+          (add-to-list 'mu4e-bookmarks
+                       (make-mu4e-bookmark
+                        :name "gitlab"
+                        :query "from:gitlab@code.outdooractive.com"
+                        :key ?g))
+          (add-to-list 'mu4e-bookmarks
+                       (make-mu4e-bookmark
+                        :name "non-list unread"
+                        :query (concat
+                                "flag:unread and not flag:list "
+                                "and not from:gitlab@code.outdooractive.com")
+                        :key ?n)))
+      (file-error (warn "no mu4e found."))
+      (error (warn "mu4e could not be loaded.")))
+  #+END_SRC
 
 * TODO replace evil-leader with hydra?
 * Install and configure evil mode
@@ -1324,6 +1352,11 @@ affects initial buffers like the scratch buffer.  For this reason we install
 evil-leader before evil itself.
 
 #+BEGIN_SRC emacs-lisp
+  (pc evil
+    (:post-install
+     (require 'evil)
+     (evil-mode 1)))
+
   (pc evil-leader
     (:post-install
      (evil-leader/set-leader "<SPC>")
@@ -1336,13 +1369,11 @@ evil-leader before evil itself.
        "w3" 'split-window-right
        "wf" 'helm-find-files-other-window
        "wb" 'switch-to-buffer-other-window
+       "wq" 'kill-this-buffer
+       "g" 'magit-status
        "wo" 'ace-window)
+     (define-key evil-motion-state-map (kbd ",") nil)
      (global-evil-leader-mode 1)))
-
-  (pc evil
-    (:post-install
-     (require 'evil)
-     (evil-mode 1)))
 #+END_SRC
 
 Evil itself is all well and good for the novice user, yet some modes use rather
@@ -1365,16 +1396,28 @@ needed.
 
 #+BEGIN_SRC emacs-lisp
   (pc evil-magit
-    :post-install
-    (evil-leader/set-key
-      "g" 'magit-status))
+    :post-install)
 #+END_SRC
 
 ** Setup evil-org
 This mode introduces several bindings, apparently mostly for headings.
 
+For some reason this code behaves in a really weird way.  When used in other
+source blocks, it seems to work just fine, but in this block, I first have to
+change to emacs state and back to normal again before the binding works as
+intended.
+
 #+BEGIN_SRC emacs-lisp
   (pc evil-org)
+
+  (evil-leader/set-key
+    "n" 'org-capture)
+
+  (defvar *schweers/transient-km* (make-sparse-keymap))
+
+  (define-key *schweers/transient-km* (kbd ",") 'org-edit-src-exit)
+  (define-key *schweers/transient-km* (kbd ".") 'org-edit-src-abort)
+  (evil-define-key 'normal org-src-mode-map (kbd ",") *schweers/transient-km*)
 #+END_SRC
 
 ** Setup Helm integration
@@ -1405,7 +1448,9 @@ bound in info.
 
 ** Setup evil-mu4e
    #+BEGIN_SRC elisp
-     (pc evil-mu4e)
+     (condition-case nil
+         (pc evil-mu4e)
+       (file-error (warn "Could not load evil-mu4e.  Have you loaded mu4e?")))
    #+END_SRC
 
 ** TODO Add evil bindings for undo-tree
@@ -1993,33 +2038,6 @@ moved this file to ~/.emacs_data/gnus.el.
      ;; (bbdb-initialize 'message 'pgp 'gnus)
      (require 'org-notmuch)))
 #+END_SRC
-* Install =mu4e=
-  I’ll try this again
-
-  #+BEGIN_SRC elisp
-    (condition-case nil
-        (progn
-          (require 'mu4e)
-          (require 'org-mu4e)
-          (add-to-list 'mu4e-bookmarks
-                       (make-mu4e-bookmark
-                        :name "debian user"
-                        :query "list:debian-user.lists.debian.org"
-                        :key ?d))
-          (add-to-list 'mu4e-bookmarks
-                       (make-mu4e-bookmark
-                        :name "gitlab"
-                        :query "from:gitlab@code.outdooractive.com"
-                        :key ?g))
-          (add-to-list 'mu4e-bookmarks
-                       (make-mu4e-bookmark
-                        :name "non-list unread"
-                        :query (concat
-                                "flag:unread and not flag:list "
-                                "and not from:gitlab@code.outdooractive.com")
-                        :key ?n)))
-      (file-error (warn "no mu4e found.")))
-  #+END_SRC
 * Install and configure =multiple-cursors=
 Multiple cursors is a nice shorthand for keyboard macros.  They save a lot of
 time when one is not /exactly/ sure what needs to be done.
@@ -2071,7 +2089,22 @@ display the contents of the kill ring.
     (:post-install
      (browse-kill-ring-default-keybindings)))
 #+END_SRC
+* Install =js2-mode=
+Install =js2-mode=, as it is allegedly better than the js mode which comes with
+emacs, and because swank-js needs it.  Note that this probably has to be
+installed before slime can add it to its contribs.
 
+#+BEGIN_SRC elisp
+  (pc js2-mode)
+#+END_SRC
+* Install nodejs-repl
+#+BEGIN_SRC elisp
+  (pc nodejs-repl
+    (:bind (("C-x C-e" . nodejs-repl-send-last-sexp)
+            ("C-c C-r" . nodejs-repl-send-region)
+            ("C-c C-l" . nodejs-repl-load-file)
+            ("C-c C-z" . nodejs-repl-switch-to-repl))))
+#+END_SRC
 * Install and configure =SLIME=
 SLIME makes interaction with a Common Lisp process almost as seamless as
 interacting with the elisp VM underlying Emacs!
