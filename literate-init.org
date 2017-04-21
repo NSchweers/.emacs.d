@@ -1367,8 +1367,10 @@ evil-leader before evil itself.
        "B" 'ibuffer-other-window
        "w2" 'split-window-below
        "w3" 'split-window-right
+       "wf" 'helm-find-files-other-window
        "wb" 'switch-to-buffer-other-window
        "wq" 'kill-this-buffer
+       "g" 'magit-status
        "wo" 'ace-window)
      (define-key evil-motion-state-map (kbd ",") nil)
      (global-evil-leader-mode 1)))
@@ -1394,22 +1396,28 @@ needed.
 
 #+BEGIN_SRC emacs-lisp
   (pc evil-magit
-    :post-install
-    (evil-leader/set-key
-      "g" 'magit-status))
+    :post-install)
 #+END_SRC
 
 ** Setup evil-org
 This mode introduces several bindings, apparently mostly for headings.
 
-** TODO Check whether this code is still buggy when km is a global variable instead of let-bound. 
+For some reason this code behaves in a really weird way.  When used in other
+source blocks, it seems to work just fine, but in this block, I first have to
+change to emacs state and back to normal again before the binding works as
+intended.
+
 #+BEGIN_SRC emacs-lisp
   (pc evil-org)
 
-  ;;(let ((km (make-sparse-keymap)))
-  ;;  (define-key km (kbd ",") 'org-edit-src-exit)
-  ;;  (define-key km (kbd ".") 'org-edit-src-abort)
-  ;;  (evil-define-key 'normal org-src-mode-map "," km))
+  (evil-leader/set-key
+    "n" 'org-capture)
+
+  (defvar *schweers/transient-km* (make-sparse-keymap))
+
+  (define-key *schweers/transient-km* (kbd ",") 'org-edit-src-exit)
+  (define-key *schweers/transient-km* (kbd ".") 'org-edit-src-abort)
+  (evil-define-key 'normal org-src-mode-map (kbd ",") *schweers/transient-km*)
 #+END_SRC
 
 ** Setup Helm integration
@@ -2101,7 +2109,22 @@ display the contents of the kill ring.
     (:post-install
      (browse-kill-ring-default-keybindings)))
 #+END_SRC
+* Install =js2-mode=
+Install =js2-mode=, as it is allegedly better than the js mode which comes with
+emacs, and because swank-js needs it.  Note that this probably has to be
+installed before slime can add it to its contribs.
 
+#+BEGIN_SRC elisp
+  (pc js2-mode)
+#+END_SRC
+* Install nodejs-repl
+#+BEGIN_SRC elisp
+  (pc nodejs-repl
+    (:bind (("C-x C-e" . nodejs-repl-send-last-sexp)
+            ("C-c C-r" . nodejs-repl-send-region)
+            ("C-c C-l" . nodejs-repl-load-file)
+            ("C-c C-z" . nodejs-repl-switch-to-repl))))
+#+END_SRC
 * Install and configure =SLIME=
 SLIME makes interaction with a Common Lisp process almost as seamless as
 interacting with the elisp VM underlying Emacs!
@@ -2411,12 +2434,9 @@ The feeds can also be entered here.
 #+END_SRC
 
 ** Make elfeed be in emacs state by default
-   :PROPERTIES:
-   :header-args: :tangle no
-   :END:
-
 Elfeed binds its keys not expecting evil to be present.  For this reason, elfeed
-should start in emacs state.
+should start in emacs state.  In the future it might be nice to devise a good
+set of evil bindings, but for now, emacs mode should suffice.
 
 #+BEGIN_SRC emacs-lisp
   (evil-set-initial-state 'elfeed-search-mode 'emacs)
