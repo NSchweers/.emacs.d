@@ -1332,7 +1332,11 @@ evil-leader before evil itself.
        "f" 'helm-find-files
        "b" 'helm-mini
        "B" 'ibuffer-other-window
-       "o" 'ace-window)
+       "w2" 'split-window-below
+       "w3" 'split-window-right
+       "wf" 'helm-find-files-other-window
+       "wb" 'switch-to-buffer-other-window
+       "wo" 'ace-window)
      (global-evil-leader-mode 1)))
 
   (pc evil
@@ -2377,12 +2381,9 @@ The feeds can also be entered here.
 #+END_SRC
 
 ** Make elfeed be in emacs state by default
-   :PROPERTIES:
-   :header-args: :tangle no
-   :END:
-
 Elfeed binds its keys not expecting evil to be present.  For this reason, elfeed
-should start in emacs state.
+should start in emacs state.  In the future it might be nice to devise a good
+set of evil bindings, but for now, emacs mode should suffice.
 
 #+BEGIN_SRC emacs-lisp
   (evil-set-initial-state 'elfeed-search-mode 'emacs)
