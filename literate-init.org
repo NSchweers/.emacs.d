@@ -1372,6 +1372,13 @@ evil-leader before evil itself.
        "wb" 'switch-to-buffer-other-window
        "wq" 'kill-this-buffer
        "g" 'magit-status
+       "ha" 'apropos-command
+       "hb" 'describe-bindings
+       "hf" 'describe-function
+       "hv" 'describe-variable
+       "hk" 'describe-key
+       "ho" 'describe-symbol
+       "hi" 'info
        "wo" 'ace-window)
      (define-key evil-motion-state-map (kbd ",") nil)
      (global-evil-leader-mode 1)))
@@ -2256,6 +2263,15 @@ awesome, even though it is a bit intrusive.
 
 #+END_SRC
 
+* Install =helm-swoop=
+I came across this today (<2017-04-21 Fri>) and just had to try it out.  Some
+docs can be found here: https://github.com/ShingoFukuyama/helm-swoop
+#+BEGIN_SRC elisp
+  (pc helm-swoop
+    (:post-install
+     (evil-leader/set-key
+       "s" 'helm-swoop)))
+#+END_SRC
 * Install and configure =helm-gtags= for C(++) development
 Helm can apparently be really cool for C++ (well, as cool as C++ can get) if
 used with GNU global.  Here we set it up to do so.
