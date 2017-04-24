@@ -244,7 +244,13 @@ This is the reason for the proliferation of so many Emacs starter kits.
 While my visual settings may also fall into this category, I wanted to separate
 them for technical reasons: I want the visual settings to be activated before
 doing the heavy lifting, as much of the loading I do is quite time-consuming.
-
+** Make script files executable on save
+If a file starts with #! the file should gain the executable bit.
+#+BEGIN_SRC elisp
+  (add-hook
+   'after-save-hook
+   'executable-make-buffer-file-executable-if-script-p)
+#+END_SRC
 ** Set a proper place for =custom.el=
 By default Emacs still uses the home directory of the user directly.  This is a
 quite sad relic of the old days on UNIX.  Nowadays one should put all Emacs
