@@ -1386,6 +1386,7 @@ evil-leader before evil itself.
        "hk" 'describe-key
        "ho" 'describe-symbol
        "hi" 'info
+       "k" 'schweers/kill-buffer
        "wo" 'ace-window)
      (define-key evil-motion-state-map (kbd ",") nil)
      (global-evil-leader-mode 1)))
@@ -2398,7 +2399,7 @@ directories (like .git).
      (define-key projectile-mode-map (kbd "s-h") 'helm-projectile)))
 #+END_SRC
 
-* Make parenthesis less prominent
+* Make parentheses less prominent
 I use =global-paren-face-mode= to make parentheses stand out a little less.
 
 #+BEGIN_SRC emacs-lisp
