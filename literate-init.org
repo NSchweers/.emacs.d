@@ -2392,6 +2392,13 @@ directories (like .git).
      (define-key projectile-mode-map (kbd "s-h") 'helm-projectile)))
 #+END_SRC
 
+* Install and configure =helm-ag=
+#+BEGIN_SRC elisp
+  (pc helm-ag
+    (:post-install
+     (evil-leader/set-key
+       "i" 'helm-do-ag-project-root)))
+#+END_SRC
 * Make parenthesis less prominent
 I use =global-paren-face-mode= to make parentheses stand out a little less.
 
