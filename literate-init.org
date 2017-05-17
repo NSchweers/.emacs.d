@@ -14,14 +14,14 @@ programmer on a per-buffer basis.  The whole file gets a shebang argument via a
 property line (see the beginning of the Org file).
 
 ** No splash screen
-#+BEGIN_SRC emacs-lisp
+#+BEGIN_SRC elisp
   (setf inhibit-startup-message t)
 #+END_SRC
 
 ** Don’t load old .elc files
 For some reason the default in Emacs is or was to load outdated bytecode files.
 
-#+BEGIN_SRC emacs-lisp
+#+BEGIN_SRC elisp
   (setf load-prefer-newer t)
 #+END_SRC
 
@@ -29,7 +29,7 @@ For some reason the default in Emacs is or was to load outdated bytecode files.
 The directory site-lisp is not by default part of the load-path.  Also add mu4e
 to the load path explicitly.
 
-#+BEGIN_SRC emacs-lisp
+#+BEGIN_SRC elisp
   (add-to-list 'load-path (expand-file-name "site-lisp" user-emacs-directory))
   (add-to-list 'load-path "/usr/share/emacs/site-lisp/mu4e")
 #+END_SRC
@@ -40,7 +40,7 @@ melpa, so I have to install it via package manager.
 
 I first want to check if I’m on Unix, then if I’m on debian.
 
-#+BEGIN_SRC emacs-lisp
+#+BEGIN_SRC elisp
   (defun on-unix? ()
     (not (memq system-type '(ms-dos windows-nt))))
 
@@ -58,7 +58,7 @@ I first want to check if I’m on Unix, then if I’m on debian.
 Now that I can check whether or not I’m on debian, I want to check whether or
 not =debian-el= is installed.
 
-#+BEGIN_SRC emacs-lisp
+#+BEGIN_SRC elisp
   (defun debian-el-installed? ()
     (with-temp-buffer
       (call-process "/usr/bin/aptitude" nil t nil
@@ -71,7 +71,7 @@ not =debian-el= is installed.
 Now that we can check that, we check whether it is installed and then add the
 appropriate directory to the load path.
 
-#+BEGIN_SRC emacs-lisp
+#+BEGIN_SRC elisp
   (when (and (on-debian?)
              (debian-el-installed?))
     (add-to-list 'load-path "/usr/share/emacs/site-lisp/debian-el" t))
@@ -79,7 +79,7 @@ appropriate directory to the load path.
 
 Now we can finally =require= =debian-el=!
 
-#+BEGIN_SRC emacs-lisp
+#+BEGIN_SRC elisp
   (when (and (on-debian?)
              (debian-el-installed?))
     (require 'debian-el))
@@ -91,30 +91,30 @@ Unfortunately it still flickers and bugs around a little.
 First, we remove the toolbar, as no sane person should be using it in Emacs.
 Well, no sane person using Emacs a /lot/ should use it.
 
-#+begin_src emacs-lisp
+#+BEGIN_SRC elisp
   (if (fboundp 'tool-bar-mode) (tool-bar-mode -1))
-#+end_src
+#+END_SRC
 
-#+begin_src emacs-lisp
+#+BEGIN_SRC elisp
   (if (fboundp 'menu-bar-mode) (menu-bar-mode -1))
-#+end_src
+#+END_SRC
 
 ** Highlight parentheses
 When point is on a parenthesis, we want to highlight the matching paren.
 
-#+begin_src emacs-lisp
+#+BEGIN_SRC elisp
   (show-paren-mode 1)
-#+end_src
+#+END_SRC
 
 ** Font size
 I don’t want a huge font.  As I want to be able to change the font size while
 running Emacs, and I want to be able to return to /my/ default size, I record
 that in a variable.  Then the variable is used to set the fontsize.
 
-#+begin_src emacs-lisp
+#+BEGIN_SRC elisp
 (defvar schweers/default-font-height 80)
 (set-face-attribute 'default nil :height schweers/default-font-height)
-#+end_src
+#+END_SRC
 ** Global font locking
    :PROPERTIES:
    :header-args: :tangle no
@@ -122,86 +122,86 @@ that in a variable.  Then the variable is used to set the fontsize.
 Normally, Emacs enables font locking by default.  The code is still here, but it
 won’t be tangled.
 
-#+begin_src emacs-lisp
+#+BEGIN_SRC elisp
   (global-font-lock-mode t)
-#+end_src
+#+END_SRC
 
 ** Scrollbar on the right
 For some reason the default in Emacs is not to put the scrollbar on the right.
 As this only works in window systems, we have to check for that too.
 
-#+begin_src emacs-lisp
+#+BEGIN_SRC elisp
   (when window-system
     (set-scroll-bar-mode 'right))
-#+end_src
+#+END_SRC
 
 ** Line and column numbers
 Always show both line /and/ column numbers in the modeline.
 
-#+begin_src emacs-lisp
+#+BEGIN_SRC elisp
   (column-number-mode 1)
   (line-number-mode 1)
-#+end_src
+#+END_SRC
 
 ** Show empty lines after buffer end.
 I want to see empty lines at the end of the buffer.
 
-#+begin_src emacs-lisp
+#+BEGIN_SRC elisp
   (set-default 'indicate-empty-lines t)
-#+end_src
+#+END_SRC
 
 ** Mouse support in xterm
 When we have a terminal session, but it’s in an xterm, we can still use the
 mouse.  But, we have to activate it.
 
-#+begin_src emacs-lisp
+#+BEGIN_SRC elisp
   (xterm-mouse-mode 1)
-#+end_src
+#+END_SRC
 
 ** Maximize the current frame
 Unfortunately this doesn’t work terribly well.  I’m not sure if there is a
 better way to do this.  I especially would like to not touch the windows system,
 as there are too many, and some of them are just plain weird.
 
-#+begin_src emacs-lisp
+#+BEGIN_SRC elisp
   (when window-system
     (set-frame-parameter nil 'fullscreen 'maximized))
-#+end_src
+#+END_SRC
 
 ** Disable cursor blinking
 This too also only works when using a window system.  On the other hand, it’s
 not needed on a terminal.
 
-#+begin_src emacs-lisp
+#+BEGIN_SRC elisp
   (when window-system
     (blink-cursor-mode -1))
-#+end_src
+#+END_SRC
 
 ** Disable beeping
 Don’t ever beep.  I’d rather have a flashing screen.
 
-#+begin_src emacs-lisp
+#+BEGIN_SRC elisp
   (setf visible-bell t)
-#+end_src
+#+END_SRC
 
 ** Set the region color
 As my second screen isn’t in a terribly good shape, the default region color is
 barely readable.  Normally I’d use customize, but the customize facility thinks
 (or used to think) that Emacs is running with -q, even when it isn’t.
 
-#+begin_src emacs-lisp
+#+BEGIN_SRC elisp
   (face-spec-set 'region
                  '((t (:distant-foreground "royal blue"
                                            :background "cornflower blue"))))
-#+end_src
+#+END_SRC
 
 ** Change the threshold for vertical or horizontal split
 As I generally prefer putting windows next to each other rather than stacking
 them, I changed the threshold.
 
-#+begin_src emacs-lisp
+#+BEGIN_SRC elisp
   (setf split-height-threshold 180)
-#+end_src
+#+END_SRC
 
 * Initialize the package system
 We have to initialize the package system before using it, so we do that here.
@@ -211,7 +211,7 @@ I use an alist of repositories (currently only two) which are added to the
 package archives unless they are already present.  I’m not sure I even need to
 check, as =add-to-list= may do that anyway.
 
-#+begin_src emacs-lisp
+#+BEGIN_SRC elisp
   (require 'package)
 
   ;; Add melpa to package repos
@@ -219,20 +219,20 @@ check, as =add-to-list= may do that anyway.
                ("melpa" . "http://melpa.org/packages/")))
     (unless (member m package-archives)
       (add-to-list 'package-archives m t)))
-#+end_src
+#+END_SRC
 
 As soon as the archives have been added, the package system can be initialized.
 As a poor man’s check, I look for a file named after one of the archives.  If it
 doesn’t (yet) exist, the archives have to be fetched.
 
-#+begin_src emacs-lisp
+#+BEGIN_SRC elisp
   (package-initialize)
 
   (unless (file-exists-p (expand-file-name
                           "elpa/archives/melpa"
                           user-emacs-directory))
     (package-refresh-contents))
-#+end_src
+#+END_SRC
 
 I used to have a whole lot more code, which can be found in the [[file:code/setup-package.el][original file]].
 I hope this is no longer needed.  I never really liked having it, but is was
@@ -259,10 +259,10 @@ whatever) repository.  A consequence of this policy is that Emacs places its
 customize settings directly into =user-init-file=.  The variable =custom-file=
 holds the place to use.  After setting the place, the file is loaded.
 
-#+begin_src emacs-lisp
+#+BEGIN_SRC elisp
   (setf custom-file (expand-file-name "custom.el" user-emacs-directory))
   (load custom-file)
-#+end_src
+#+END_SRC
 
 Possibly I should stop using customize altogether.
 
@@ -277,11 +277,11 @@ we’re using version control.  Note that I don’t ever use =vc-mode=, as =magi
 is the best interface to git there ever was, and git can interface with most
 other systems, to make them more usable and sane (I’m looking at you SVN)!
 
-#+begin_src emacs-lisp
+#+BEGIN_SRC elisp
   (setf backup-directory-alist
         `(("." . ,(expand-file-name "backups" user-emacs-directory)))
         vc-make-backup-files t)
-#+end_src
+#+END_SRC
 
 ** Save where point is/was in a visited file
 Emacs can keep track of where point last was in a file.  The data
@@ -289,7 +289,7 @@ needed for this is saved in a file.  The name for this file can be
 found in the variable =save-place-file=.  Sadly, debian broke emacs in
 stretch, so I have to use this ancient emacs24.5 like some cretin
 
-#+begin_src emacs-lisp
+#+BEGIN_SRC elisp
   (unless (version<= emacs-version "25.0")
     (setf save-place-file (expand-file-name ".places" user-emacs-directory))
     (if (version< emacs-version "25.1")
@@ -297,15 +297,15 @@ stretch, so I have to use this ancient emacs24.5 like some cretin
           (require 'saveplace)
           (setq-default save-place t))
       (save-place-mode 1)))
-#+end_src
+#+END_SRC
 
 ** Automatically refresh dired
 I want dired to do autorefresh, but be quiet about it.
 
-#+begin_src emacs-lisp
+#+BEGIN_SRC elisp
   (setf global-auto-revert-non-file-buffers t
         auto-revert-verbose nil)
-#+end_src
+#+END_SRC
 
 ** Echo keystrokes
 Normally Emacs waites for a while before showing the keys which were pressed, if
@@ -314,33 +314,33 @@ keymap).
 
 I want this to happen quickly.
 
-#+begin_src emacs-lisp
+#+BEGIN_SRC elisp
   (setf echo-keystrokes 0.1)
-#+end_src
+#+END_SRC
 
 ** Disable shift-selection
 As I use the region the way it’s supposed to be used in Emacs, I don’t need any
 shift selection.  Also, it interferes with switching windows using shift with
 the arrow keys.  Nevermind that both scenarios are a problem in Org Mode.
 
-#+begin_src emacs-lisp
+#+BEGIN_SRC elisp
   (setf shift-select-mode nil)
-#+end_src
+#+END_SRC
 
 ** Use automatic, transparent compression of files.
 Emacs can transparently open compressed files (among other things).  It can also
 transparently open encrypted files and archives!  To activate autocompression,
 we need to activate a mode.
 
-#+begin_src emacs-lisp
+#+BEGIN_SRC elisp
   (auto-compression-mode 1)
-#+end_src
+#+END_SRC
 
 ** Enable UTF-8 for everything
 I’m not entirely sure how this piece of code works, I just scraped it from
 Magnar Sveen’s config.
 
-#+begin_src emacs-lisp
+#+BEGIN_SRC elisp
   ;; UTF-8 please
   (setf locale-coding-system 'utf-8)      ;pretty
   (set-terminal-coding-system 'utf-8)     ;pretty
@@ -348,7 +348,7 @@ Magnar Sveen’s config.
   (set-selection-coding-system 'utf-8)    ;pretty
   (set-language-environment "UTF-8")      ;please
   (prefer-coding-system 'utf-8)           ;with sugar on top
-#+end_src
+#+END_SRC
 
 ** Activate transient mark mode
 As any program which is used in the 21st century, Emacs can select text.  Unlike
@@ -356,85 +356,85 @@ any other program in this century, it doesn’t do so by default.  At least not 
 a way anyone would expect.  To enable this behavior, enable
 =transient-mark-mode=.
 
-#+begin_src emacs-lisp
+#+BEGIN_SRC elisp
   (transient-mark-mode 1)
   (make-variable-buffer-local 'transient-mark-mode)
   (put 'transient-mark-mode 'permanent-local t)
   (setq-default transient-mark-mode t)
-#+end_src
+#+END_SRC
 
 ** Delete selected text on backspace or delete
 For historic reasons, Emacs does not delete the selected text on backspace or
 delete, but deletes one character and disables the region (selection).  To
 rectify this, we need another mode.
 
-#+begin_src emacs-lisp
+#+BEGIN_SRC elisp
   (delete-selection-mode 1)
-#+end_src
+#+END_SRC
 
 ** Set the desired line width
 Emacs breaks lines at 72 characters, not 80, by default.  This can be changed
 with a variable.  Also, there is a global minor mode and a function to do this
 as one types.
 
-#+begin_src emacs-lisp
+#+BEGIN_SRC elisp
   (setq-default fill-column 80)
   (setq-default auto-fill-function 'do-auto-fill)
   (auto-fill-mode 1)
-#+end_src
+#+END_SRC
 
 ** Save a list of recent files
 Save a list of recently opened files.  This can be accessed via C-x f.  I have
 to admit that I have never used this, and helm barfs on buffer history for some
 reason.  I’m not sure whether or not this is related.
 
-#+begin_src emacs-lisp
+#+BEGIN_SRC elisp
   (recentf-mode 1)
   (setq recentf-max-saved-items 100) ;; just 20 is too recent
-#+end_src
+#+END_SRC
 
 ** Save minibuffer history
 Emacs can also save the history of the minibuffer.  Like, duh!  Again we need a
 mode and a variable.
 
-#+begin_src emacs-lisp
+#+BEGIN_SRC elisp
   (savehist-mode 1)
   (setf history-length 1000)
-#+end_src
+#+END_SRC
 
 ** Setup winner mode
 I’ve never really gotten around to doing this, but maybe I will some day.  It
 seems Emacs can save window configurations and switch between them.  I have no
 idea how well this works.  It can be activated by enabling a global minor mode.
 
-#+begin_src emacs-lisp
+#+BEGIN_SRC elisp
   (winner-mode 1)
-#+end_src
+#+END_SRC
 
 ** Never indent tabs
 While this tends to break Makefiles, in general one doesn’t want tabs in source
 code.  Yes, this is subject to flamewars, but I’ve settled it for myself.
 
-#+begin_src emacs-lisp
+#+BEGIN_SRC elisp
   (set-default 'indent-tabs-mode nil)
-#+end_src
+#+END_SRC
 
 ** Navigate sillycased words with subword mode
 Thanks to =global-subword-mode= one can navigate words with weird casing in any
 mode!
 
-#+begin_src emacs-lisp
+#+BEGIN_SRC elisp
   (global-subword-mode 1)
-#+end_src
+#+END_SRC
 
 ** Enable recursive minibuffers
 Emacs is capable of nesting minibuffers, but as this feature can be very
 confusing to newcomers, it is disabled by default.  I want it though.
 
-#+begin_src emacs-lisp
+#+BEGIN_SRC elisp
   (setf enable-recursive-minibuffers t)
   (minibuffer-depth-indicate-mode 1)
-#+end_src
+#+END_SRC
 
 ** Allow for more memory consumption
 This may sound wrong, but I want Emacs to be able to use lots of memory.
@@ -442,10 +442,10 @@ Garbage collection is a very expensive operation (not in general, but in Emacs),
 so I don’t want it to happen too often.  This is why I allow Emacs to allocate
 lots of memory.
 
-#+begin_src emacs-lisp
+#+BEGIN_SRC elisp
   (setf gc-cons-threshold 20000000
         gc-cons-percentage 0.3)
-#+end_src
+#+END_SRC
 
 ** Add directory name to non-unique buffer names
 Emacs buffers typically only have the name of the file itself as the buffer
@@ -454,36 +454,36 @@ name.  When this is not enough, I’d like Emacs to add the directory name to
 a number in angle brackets to the end of the name.  This may work for info
 buffers, but not for files in general.
 
-#+begin_src emacs-lisp
+#+BEGIN_SRC elisp
   (with-demoted-errors (require 'uniquify)
                        (setq uniquify-buffer-name-style 'forward))
-#+end_src
+#+END_SRC
 
 ** Make ediff more sane
 I’m not sure what exactly this does, but I’ve been using it like this since I’ve
 been using it at all, and I like it how it is.  So I’m not changing it.
 
-#+begin_src emacs-lisp
+#+BEGIN_SRC elisp
   (setf ediff-diff-options "-w"
         ediff-split-window-function 'split-window-horizontally
         ediff-window-setup-function 'ediff-setup-windows-plain)
 
-#+end_src
+#+END_SRC
 
 ** Change =eval-expression-print-level=
 Nic says eval-expression-print-level needs to be set to nil (turned off) so that
 you can always see what's happening.
 
-#+begin_src emacs-lisp
+#+BEGIN_SRC elisp
   (setf eval-expression-print-level nil)
-#+end_src
+#+END_SRC
 
 ** Sane mouse scrolling
 For the longest time Emacs’ scrolling has annoyed me.  It’s even worse that
 pointer acceleration on a mouse.  I also scraped this from Magnar Sveen’s
 config.
 
-#+begin_src emacs-lisp
+#+BEGIN_SRC elisp
   (setq mouse-wheel-scroll-amount '(5 ((shift) . 5)))
 
   (setq mouse-wheel-progressive-speed nil) ;; don't accelerate scrolling
@@ -499,82 +499,82 @@ config.
         scroll-down-aggressively 0.01)
   (setq-default scroll-up-aggressively 0.01
                 scroll-down-aggressively 0.01)
-#+end_src
+#+END_SRC
 
 ** Set the diary file to a sane position
 As mentioned elsewhere, Emacs tends to pollute the users home directory.  Here,
 diary files are placed into ~/.emacs.d/.
 
-#+begin_src emacs-lisp
+#+BEGIN_SRC elisp
   (setf diary-file "~/.emacs.d/diary")
-#+end_src
+#+END_SRC
 
 ** Enable narrowing and region operations
 These operations are disabled by default, because they confuse newcomers.  I’m
 not a newcomer anymore ;)
 
-#+begin_src emacs-lisp
+#+BEGIN_SRC elisp
   ;; Run at full power please
   (put 'downcase-region 'disabled nil)
   (put 'upcase-region 'disabled nil)
   (put 'narrow-to-region 'disabled nil)
   (put 'narrow-to-page 'disabled nil)
-#+end_src
+#+END_SRC
 
 ** Replace yes-or-no questions with y-or-n
 Some operations which are considered more dangerous need confirmation by the
 user.  Some even need more explicit confirmation by requiring the user to enter
 yes and even press return.  I don’t like that.
 
-#+begin_src emacs-lisp
+#+BEGIN_SRC elisp
   (fset 'yes-or-no-p 'y-or-n-p)
-#+end_src
+#+END_SRC
 
 ** Shrink the minibuffer after expanding it
 The minibuffer automatically expands when the entered text becomes too long for
 one line or when a linebreak is entered, but by default it doesn’t shrink again.
 
-#+begin_src emacs-lisp
+#+BEGIN_SRC elisp
   (setf resize-mini-windows t)
 
-#+end_src
+#+END_SRC
 
 ** Place the TAGS file
-#+begin_src emacs-lisp
+#+BEGIN_SRC elisp
   ;; (add-to-list 'tags-table-list (expand-file-name "TAGS" user-emacs-directory))
   (add-to-list 'tags-table-list (expand-file-name "code/src/emacs-25.1/src/TAGS" (getenv "HOME")))
 
-#+end_src
+#+END_SRC
 
 ** Scroll the compilation buffer
 By default compilation buffers don’t scroll.  Also, stop scrolling on the first
 error.
 
-#+begin_src emacs-lisp
+#+BEGIN_SRC elisp
   (setf compilation-scroll-output t)
   ;;we want to have the compilation window scroll automatically
   (setq compilation-scroll-output 'first-error)
   (setq-default compile-command "make -k -j4 ")
-#+end_src
+#+END_SRC
 
 ** Enable lexical binding in the scratch buffer
 Normally the scratch buffer does not have lexical binding.  This is a sensible
 default, but I still don’t like it, as I’m very used to having closures and all
 the other goodies that lexical binding gives me.  I’m not sure this works.
 
-#+begin_src emacs-lisp
+#+BEGIN_SRC elisp
   (add-hook 'after-init-hook
             (lambda () (with-current-buffer (get-buffer "*scratch*")
                          (setf lexical-binding t))))
 
-#+end_src
+#+END_SRC
 
 ** Enable desktop mode
 Emacs’ desktop save mode can save some state from one session to the next.  This
 code enables it, and also makes Emacs try to save its state when killed while in
 server mode.
 
-#+BEGIN_SRC emacs-lisp
+#+BEGIN_SRC elisp
   (desktop-save-mode 1)
   ;;with this we try to save the desktop file when the emacs server is killed.
   (add-hook 'kill-emacs-hook (lambda () (desktop-save user-emacs-directory)))
@@ -586,7 +586,7 @@ OS has, a bit differently than its own kill-ring.  This may be for legitimate
 reasons, probably mainly historic.  At any rate, I want Emacs to place the
 contents the OS supplies into the kill-ring.
 
-#+BEGIN_SRC emacs-lisp
+#+BEGIN_SRC elisp
   (setf save-interprogram-paste-before-kill t)
 #+END_SRC
 ** Don’t move point when inserting with the mouse
@@ -603,7 +603,7 @@ While this macro is far from perfect, it is good enough to be used.
 This macro checks whether a given package is installed and installs it if
 necessary.  For details, see the docstring.
 
-#+BEGIN_SRC emacs-lisp
+#+BEGIN_SRC elisp
   ;(require 'seq)
   (require 'subr-x)
 
@@ -674,13 +674,13 @@ necessary.  For details, see the docstring.
 * TODO Configure =dired=
 Make dired guess a destination for file operations.
 
-#+BEGIN_SRC emacs-lisp
+#+BEGIN_SRC elisp
   (setf dired-dwim-target t)
 #+END_SRC
 * TODO Install and configure async (for dired)
 It can be found here: https://github.com/jwiegley/emacs-async
 
-#+BEGIN_SRC emacs-lisp
+#+BEGIN_SRC elisp
   (pc async)
 
 #+END_SRC
@@ -689,7 +689,7 @@ It can be found here: https://github.com/jwiegley/emacs-async
 Dired is a little weird, but also really cool.  I really ought to get it going
 in async mode though.
 
-#+BEGIN_SRC emacs-lisp
+#+BEGIN_SRC elisp
   (autoload 'dired-async-mode "dired-async.el" nil t)
   (autoload 'dired-toggle-read-only "dired" nil t)
   (dired-async-mode 1)
@@ -698,7 +698,7 @@ in async mode though.
 Make dired guess a destination for file operations.  If I recall correctly, the
 directory of the buffer in =other-window= can be such a guess.
 
-#+BEGIN_SRC emacs-lisp
+#+BEGIN_SRC elisp
   (setf dired-dwim-target t)
 #+END_SRC
 * Configure a few libraries
@@ -708,7 +708,7 @@ used.
 
 Now that the =pc= macro has been defined, it can be used:
 
-#+BEGIN_SRC emacs-lisp
+#+BEGIN_SRC elisp
   (pc dash
     (:post-install
      (setf dash-enable-fontlock t)))
@@ -718,7 +718,7 @@ Now that the =pc= macro has been defined, it can be used:
 
 Also, some other libraries can now be installed:
 
-#+BEGIN_SRC emacs-lisp
+#+BEGIN_SRC elisp
   (pc f)
   (pc json-mode)
   (pc s)
@@ -727,7 +727,7 @@ Also, some other libraries can now be installed:
 The package [[https://github.com/abo-abo/hydra][hydra]] makes it easy to define several commands which share a prefix,
 and provide a nice UI.
 
-#+BEGIN_SRC emacs-lisp
+#+BEGIN_SRC elisp
   (pc hydra)
 #+END_SRC
 
@@ -749,7 +749,7 @@ shell-completion can be used.
 The function =comint-kill-output-to-kill-ring= is bound to C-o in order to make
 it easy to paste/yank the output anywhere, by placing it in the kill-ring.
 
-#+BEGIN_SRC emacs-lisp
+#+BEGIN_SRC elisp
   (defun comint-kill-output-to-kill-ring (arg)
     "Kills all output from last command and puts it in kill buffer
   Does not delete the prompt."
@@ -808,7 +808,7 @@ These functions are probably no longer of much use.  For now they stay.  They
 are/were used to ensure that .elc files are kept up to date with their source
 files.
 
-#+BEGIN_SRC emacs-lisp
+#+BEGIN_SRC elisp
   (require 's)
   (require 'dash)
   (require 'dash-functional)
@@ -837,10 +837,10 @@ files.
     (load user-init-file))
 
   ;; Autocompile any elisp files in our emacs directory.
-  (add-hook 'after-save-hook 'recompile-if-emacs-d)
+  ;; (add-hook 'after-save-hook 'recompile-if-emacs-d)
 
   ;; Open the init file on startup.
-  (find-file-noselect (expand-file-name "init.el" user-emacs-directory))
+  ;; (find-file-noselect (expand-file-name "init.el" user-emacs-directory))
 #+END_SRC
 
 ** Buffer switching
@@ -848,7 +848,7 @@ A function to switch to the scratch buffer, because that is something I do very
 often.  Also, a macro which generates a hydra, which then can switch between
 buffers.  Note that these are used/bound elsewhere.
 
-#+BEGIN_SRC emacs-lisp
+#+BEGIN_SRC elisp
   (defun misc/switch-to-scratch ()
     (interactive)
     (switch-to-buffer "*scratch*"))
@@ -878,7 +878,7 @@ also put in some boilerplate (like enabling lexical binding and adding a
 =provide= clause), as well as placed point properly.  It also prompts the user
 to add the new file to git (with magit).
 
-#+BEGIN_SRC emacs-lisp
+#+BEGIN_SRC elisp
   (defun schweers/new-setup (name &optional stage)
     "Create a new setup file, called setup-NAME.el in
   ~/.emacs.d/code/ which enables lexical scoping, contains the
@@ -932,7 +932,7 @@ nicely ;)
 This does not work anymore, for some reason.  Maybe I’ll debug it at some
 point.
 
-#+BEGIN_SRC emacs-lisp
+#+BEGIN_SRC elisp
   (defun misc/hurra ()
     "Calls xdg-open (i.e. a browser) for a youtube search link for the song
   „hurra“.
@@ -957,7 +957,7 @@ and displays it in Emacs (thanks to docview mode).
 
 The http header has to be stripped, then docview-mode is activated.
 
-#+BEGIN_SRC emacs-lisp
+#+BEGIN_SRC elisp
   (defun misc/olbia (arg)
     "Downloads the menu of the Pizzeria Olbia in Frankfurt/Main.
 
@@ -982,7 +982,7 @@ The http header has to be stripped, then docview-mode is activated.
 In message mode, it can be annoying to break up a quoted paragraph.  This
 function fixes that.
 
-#+BEGIN_SRC emacs-lisp
+#+BEGIN_SRC elisp
   (defun schweers/split-quoted-paragraph ()
     "Split the quoted paragraph at point, making space for a reply, and fill the
   rest of the paragraph.  This is useful in message-mode."
@@ -1013,7 +1013,7 @@ function fixes that.
 ** Remake local etags
 This function is probably broken, and not used anyway.
 
-#+BEGIN_SRC emacs-lisp
+#+BEGIN_SRC elisp
   (defun remake-local-etags ()
     (interactive)
     (if (not (zerop
@@ -1027,7 +1027,7 @@ This function is probably broken, and not used anyway.
 As an exercise I defined a macro to somewhat emulate schemes let recursion.
 This is painfully slow, as it uses real (i.e. non-eliminated) recursion.
 
-#+BEGIN_SRC emacs-lisp
+#+BEGIN_SRC elisp
   (defmacro +let (&rest args)
     "Allows scheme like recursion.  
 
@@ -1058,7 +1058,7 @@ This is painfully slow, as it uses real (i.e. non-eliminated) recursion.
 The critical mass in Frankfurt has a weird cycle, which normal calendar programs
 cannot handle.  Luckily, Emacs has a Lisp VM \o/
 
-#+BEGIN_SRC emacs-lisp
+#+BEGIN_SRC elisp
   (defun schweers/critical-mass-friday (date)
     (let ((friday?
            (+ 5 (do ((sunday? 1 (1+ sunday?)))
@@ -1076,7 +1076,7 @@ cannot handle.  Luckily, Emacs has a Lisp VM \o/
 I wanted to know which functions are implemented in C, so I “wrote” this
 function.
 
-#+BEGIN_SRC emacs-lisp
+#+BEGIN_SRC elisp
   (defun misc/list-C-funs ()
     (interactive)
     (cl-labels
@@ -1112,7 +1112,7 @@ function.
 Toggle the way in which the frame is split.  Very fragile, probably not used at
 all.
 
-#+BEGIN_SRC emacs-lisp
+#+BEGIN_SRC elisp
   (defun toggle-frame-split ()
     "If the frame is split vertically, split it horizontally or vice versa.
   Assumes that the frame is only split into two.
@@ -1132,7 +1132,7 @@ all.
 ** Mark the current line
 The title says it all.
 
-#+BEGIN_SRC emacs-lisp
+#+BEGIN_SRC elisp
   (defun misc/mark-line ()
     (interactive)
     (beginning-of-line)
@@ -1146,7 +1146,7 @@ The title says it all.
    :END:
 Maybe I’ll finish this some day.
 
-#+BEGIN_SRC emacs-lisp
+#+BEGIN_SRC elisp
   (defcustom tea-timer/alarm-clock-uri
     "http://www.orangefreesounds.com/wp-content/uploads/Zip/Old-alarm-clock-ringing.zip"
     "The command `tea-timer' will fetch the sound to play from this uri.")
@@ -1212,7 +1212,7 @@ Maybe I’ll finish this some day.
 This code allows me to increase and decrease the font height.  Most importantly,
 it allows me to reset it to /my/ default, not what Emacs thinks is the default.
 
-#+BEGIN_SRC emacs-lisp
+#+BEGIN_SRC elisp
   (defun schweers/adjust-font-height (fn arg)
     "Calls FN with the current font height and ARG.  Sets height to result."
     (set-face-attribute
@@ -1272,7 +1272,7 @@ When I kill a buffer, it is almost always the buffer I have selected.  So I
 defined a command, which kills the current buffer, unless a prefix is given.  If
 so, it behaves like =kill-buffer=.
 
-#+begin_src emacs-lisp
+#+BEGIN_SRC elisp
   (defun schweers/kill-buffer (arg)
     "Kill current buffer, unless called with prefix.
 
@@ -1281,7 +1281,7 @@ so, it behaves like =kill-buffer=.
     (if arg
         (call-interactively 'kill-buffer)
       (kill-buffer (current-buffer))))
-#+end_src
+#+END_SRC
 
 ** Jump to a setup file
 As I previously used separate elisp files which could be compiled and required.
@@ -1289,7 +1289,7 @@ To ease jumping to such a file, I wrote this code.  It works by exploiting the
 fact, that all such files reside in a folder "code", begin by "setup-" and end
 with ".el".
 
-#+begin_src emacs-lisp
+#+BEGIN_SRC elisp
   (defun schweers/list-setup-files ()
     (f-entries (expand-file-name "code" user-emacs-directory)
                (lambda (fname)
@@ -1320,7 +1320,7 @@ with ".el".
       (if other-window-p
           (find-file-other-window (cdr fname?))
         (find-file (cdr fname?)))))
-#+end_src
+#+END_SRC
 * Load =mu4e=
   I’ll try this again
 
@@ -1359,7 +1359,7 @@ There is a special evil package which should be loaded before evil itself, as it
 affects initial buffers like the scratch buffer.  For this reason we install
 evil-leader before evil itself.
 
-#+BEGIN_SRC emacs-lisp
+#+BEGIN_SRC elisp
   (pc evil
     (:post-install
      (require 'evil)
@@ -1402,7 +1402,7 @@ plugins come to play.
    :END:
 Lispy uses vi-like keybindings, yet implements them in its own magical way,
 hence is by default incompatible with evil-mode.
-#+BEGIN_SRC emacs-lisp
+#+BEGIN_SRC elisp
   (pc evil-lispy)
 #+END_SRC
 
@@ -1410,7 +1410,7 @@ hence is by default incompatible with evil-mode.
 Magit also defines its own peculiar bindings, so again another plugin is
 needed.
 
-#+BEGIN_SRC emacs-lisp
+#+BEGIN_SRC elisp
   (pc evil-magit
     :post-install)
 #+END_SRC
@@ -1423,7 +1423,7 @@ source blocks, it seems to work just fine, but in this block, I first have to
 change to emacs state and back to normal again before the binding works as
 intended.
 
-#+BEGIN_SRC emacs-lisp
+#+BEGIN_SRC elisp
   (pc evil-org)
 
   (evil-leader/set-key
@@ -1440,7 +1440,7 @@ intended.
 Without helm, life in Emacs is pretty meaningless.  Sadly, there is no readily
 installable package to integrate Evil and Helm.
 
-#+BEGIN_SRC emacs-lisp
+#+BEGIN_SRC elisp
   (define-key evil-ex-map "b " 'helm-mini)
   (define-key evil-ex-map "e" 'helm-find-files)
 #+END_SRC
@@ -1450,14 +1450,14 @@ installable package to integrate Evil and Helm.
 is advisable to have evil be in emacs state.+  I’m not sure yet what to do
 here.  Time might tell.
 
-#+BEGIN_SRC emacs-lisp
+#+BEGIN_SRC elisp
   ;; (evil-set-initial-state 'Info-mode 'emacs)
 #+END_SRC
 
 As an added bonus, add bindings for j and k in Emacs state, as these are not
 bound in info.
 
-#+BEGIN_SRC emacs-lisp
+#+BEGIN_SRC elisp
   (define-key Info-mode-map (kbd "j") (kbd "C-n"))
   (define-key Info-mode-map (kbd "k") (kbd "C-p"))
 #+END_SRC
@@ -1478,7 +1478,7 @@ keybindings.  The variable =guide-key/guide-key-sequence= holds a list of
 prefixes.  When either of them is pressed, it displays the possible further
 keystrokes at the bottom of the screen.
 
-#+BEGIN_SRC emacs-lisp
+#+BEGIN_SRC elisp
   (pc guide-key
     (:post-install
      (setf guide-key/guide-key-sequence '("C-x r" "C-x 4" "C-x 5" "C-x v" "C-x 8"
@@ -1494,7 +1494,7 @@ As all lisps share some similarities, some settings can be applied to all of
 them.  This is the place to collect them.  A particularly useful package is
 lispy, which is an alternative to paredit.
 
-#+BEGIN_SRC emacs-lisp
+#+BEGIN_SRC elisp
   (defvar schweers/*lisp-mode-hooks*
     '(clojure-mode-hook cider-repl-mode-hook emacs-lisp-mode-hook
                         lisp-mode-hook slime-repl-mode-hook
@@ -1535,7 +1535,7 @@ minor mode which takes precedence.
 Autocomplete is quite nice, but I’m not sure whether it conflicts with
 =company-mode=.
 
-#+BEGIN_SRC emacs-lisp
+#+BEGIN_SRC elisp
   (pc auto-complete
     (:require (require 'auto-complete-config))
     (:post-install
@@ -1553,7 +1553,7 @@ Autocomplete is quite nice, but I’m not sure whether it conflicts with
 As far as I know, magit is simply the best interface to git.  As I normally
 place all my code under ~/code, I tell magit this is the case.
 
-#+BEGIN_SRC emacs-lisp
+#+BEGIN_SRC elisp
   (pc magit
     (:pre-install
      (require 's))
@@ -1569,7 +1569,7 @@ place all my code under ~/code, I tell magit this is the case.
 Most of my global keybindings are part of my own minor mode, but for a few of
 them it is easier to make them truly global.
 
-#+BEGIN_SRC emacs-lisp
+#+BEGIN_SRC elisp
   (global-set-key (kbd "C-c M-x") 'execute-extended-command)
   (global-set-key (kbd "M-S-<f10>") 'menu-bar-mode)
 
@@ -1601,7 +1601,7 @@ Elpy is sort of an IDE for python in Emacs.  I don’t really like it, but it’
 better than nothing.  Also, it shows where one deviates from Guido’s personal
 favorites, so he won’t cry too much when reading my code.
 
-#+BEGIN_SRC emacs-lisp
+#+BEGIN_SRC elisp
   (pc elpy
     (:post-install
      (add-hook 'python-mode-hook
@@ -1614,7 +1614,7 @@ Ace window makes switching windows much more pleasant.  Instead of switching
 from one to the next, one can directly jump to any visible window.  Note that
 this is a little weird when using more than one frame.
 
-#+BEGIN_SRC emacs-lisp
+#+BEGIN_SRC elisp
   (pc ace-window
       (:bind (("C-x o" . ace-window)))
       (:post-install
@@ -1630,22 +1630,22 @@ configuration.
 The first step is that I’d like Org Mode to indent when I enter a newline by
 default.
 
-#+begin_src emacs-lisp
+#+BEGIN_SRC elisp
   (defun setup-org/define-newline-keys ()
     (define-key org-mode-map (kbd "RET") 'org-return-indent)
     (define-key org-mode-map (kbd "C-j") 'org-return))
-#+end_src
+#+END_SRC
 
 ** Setup notes
 Also, I want the notes file which I use with org-capture to reside inside my
 .emacs.d directory.  This might as well change in the future.
-#+begin_src emacs-lisp
+#+BEGIN_SRC elisp
   (setf org-default-notes-file
         (expand-file-name ".emacs_data/notes.org.gpg" (getenv "HOME"))
         org-special-ctrl-a/e t
         org-special-ctrl-k t
         org-special-ctrl-o t)
-#+end_src
+#+END_SRC
 
 ** Org is the new Fundamental
    :PROPERTIES:
@@ -1656,25 +1656,25 @@ should be the right thing for the vast majority of files, as Org Mode is all
 ASCII text anyway.  I’m not really sure this works though, so I’ve left it out
 for now.
 
-#+begin_src emacs-lisp
+#+BEGIN_SRC elisp
   (add-to-list 'magic-fallback-mode-alist '((lambda () t) . org-mode))
-#+end_src
+#+END_SRC
 
 One of the great features of Org Mode is that it can work with source blocks
 (like in this file!).  It can also fontify them properly, using the appropriate
 modes.  Why this is not the default is beyond me.
 
 ** Setup font-locking
-#+begin_src emacs-lisp
+#+BEGIN_SRC elisp
   (setf org-src-fontify-natively t)
-#+end_src
+#+END_SRC
 
 ** Export to LaTeX/PDF
 Org Mode can export to LaTeX, hence to PDF, but it needs some help in doing so.
 This next block of code imports the new exporter and configures it for some
 classes that are not by default configured.
 
-#+begin_src emacs-lisp
+#+BEGIN_SRC elisp
   (require 'ox-latex)
 
   (add-hook 'org-mode-hook
@@ -1706,13 +1706,13 @@ classes that are not by default configured.
               (flyspell-mode 1)
               (define-key org-mode-map [remap backward-delete-char]
                 'org-delete-backward-char)))
-#+end_src
+#+END_SRC
 
 Also, I want source code blocks to be syntax colored.  Sadly, this is not the
 same coloring as in source blocks.  Instead, the LaTeX package =minted= is used.
 
 #+begin_comment
-#+begin_src emacs-lisp
+#+BEGIN_SRC elisp
   (setf org-latex-listings 'minted)
   ;; (add-to-list 'org-latex-packages-alist '("" "listings"))
   ;; (add-to-list 'org-latex-packages-alist '("" "color"))
@@ -1723,14 +1723,14 @@ same coloring as in source blocks.  Instead, the LaTeX package =minted= is used.
    '("pdflatex -shell-escape -interaction nonstopmode -output-directory %o %f"
      "pdflatex -shell-escape -interaction nonstopmode -output-directory %o %f"
      "pdflatex -shell-escape -interaction nonstopmode -output-directory %o %f"))
-#+end_src
+#+END_SRC
 #+end_comment
 
 ** Add font-locking for html output
 Just as LaTeX output may be syntax highlighted, I want something similar for
 html.
 
-#+BEGIN_SRC emacs-lisp
+#+BEGIN_SRC elisp
   (pc htmlize)
 #+END_SRC
 
@@ -1738,16 +1738,16 @@ html.
 Org Mode files can contain comments, just like any other language.  They may
 begin with a # to comment a line, or may be a block like a source block.
 
-#+begin_src emacs-lisp
+#+BEGIN_SRC elisp
   (add-to-list 'org-structure-template-alist '("C" "#+BEGIN_COMMENT\n?\n#+END_COMMENT"))
 
-#+end_src
+#+END_SRC
 
 ** Add a capture template
 The command =org-capture= can capture in many formats and to many files.  I took
 the default and only slightly changed it.
 
-#+begin_src emacs-lisp
+#+BEGIN_SRC elisp
   (setf org-capture-templates
         `(("t" "Task" entry
            (file+headline ,org-default-notes-file
@@ -1758,14 +1758,14 @@ the default and only slightly changed it.
                           "Notes")
            "* %?\n  %i\n  %t\n  %a")))
 
-#+end_src
+#+END_SRC
 
 ** Make Org Mode use TeX string delimiters
 This command either inserts the empty TeX string ``'' at point, or surrounds the
 region with these quote characters.  It does not deactivate the region.  Also,
 the region contains the newly inserted quotes.
 
-#+begin_src emacs-lisp
+#+BEGIN_SRC elisp
   (defun schweers/org-TeX-string (beg end &optional point)
     "Insert a pair of TeX string delimiters (`` and '').
 
@@ -1793,7 +1793,7 @@ the region contains the newly inserted quotes.
 
   (define-key org-mode-map (kbd "M-\"") #'schweers/org-TeX-string)
 
-#+end_src
+#+END_SRC
 
 ** A poor man’s presenter in Org Mode
 Org Mode can be used as a poor man’s presenter.  This can come in handy when one
@@ -1801,7 +1801,7 @@ wants a live Emacs session, for instance because one wants to demonstrate
 features of Emacs.  I did this for the presentation of my master thesis.  I
 shamelessly +stole+ borrowed this code from someplace online.
 
-#+begin_src emacs-lisp
+#+BEGIN_SRC elisp
   (defun ded/org-show-next-heading-tidily ()
     "Show next entry, keeping other entries closed."
     (interactive)
@@ -1833,21 +1833,21 @@ shamelessly +stole+ borrowed this code from someplace online.
 
   (define-key org-mode-map (kbd "<f8>") 'ded/org-show-previous-heading-tidily)
   (define-key org-mode-map (kbd "<f9>") 'ded/org-show-next-heading-tidily)
-#+end_src
+#+END_SRC
 
 ** Set up the archive filename
 Org Mode normally adds the string "_archive" to the file name, yet this doesn’t
 work well with gpg encrypted files.  For this reason I’ll simply put "archive_"
 at the beginning of the new file name.
 
-#+BEGIN_SRC emacs-lisp
+#+BEGIN_SRC elisp
   (setf org-archive-location "archive_%s::")
 #+END_SRC
 ** Set up diary integration
 Org Mode can include items from the excellent diary package (which can represent
 recurring events of arbitrary complexity).  Only one variable needs to be set.
 
-#+BEGIN_SRC emacs-lisp
+#+BEGIN_SRC elisp
   (setq org-agenda-include-diary t)
 #+END_SRC
 ** Set the format for org-clock
@@ -1855,7 +1855,7 @@ Org mode supports clocking, which is really cool, but by default it folds
 durations which are longer than 24h into days.  The following setting changes
 that.
 
-#+BEGIN_SRC emacs-lisp
+#+BEGIN_SRC elisp
   (setf org-time-clocksum-format
         '(:hours "%d" :require-hours t :minutes ":%02d" :require-minutes t))
 #+END_SRC
@@ -1863,7 +1863,7 @@ that.
 By default org-clock ignores the current task in report tables.  This is not
 good.
 
-#+BEGIN_SRC emacs-lisp
+#+BEGIN_SRC elisp
   (setf org-clock-report-include-clocking-task t)
 #+END_SRC
 ** clock into a drawer
@@ -1879,22 +1879,18 @@ For security reasons, org-babel normally doesn’t execute shell scripts.
   (require 'ob-sh)
 #+END_SRC
 
-#+BEGIN_SRC elisp :tangle no
-  (org-babel-do-load-languages 'org-babel-load-languages
-                               '((shell . t)))
-#+END_SRC
 * Install markdown-mode
 Some people insist on using markdown instead of org mode.  While I cannot help
 such misguided souls, I can install a mode to make reading their stuff a little
 easier.
 
-#+BEGIN_SRC emacs-lisp
+#+BEGIN_SRC elisp
   (pc markdown-mode)
 #+END_SRC
 * Install tracwiki-mode
 As with markdown, this is not Org Mode :(
 
-#+BEGIN_SRC emacs-lisp
+#+BEGIN_SRC elisp
   (condition-case nil
       (pc tracwiki-mode)
     (error (warn "Could not load tracwiki-mode.")))
@@ -1904,7 +1900,7 @@ I don’t remember why I put this in here the way it is, but it seems to work
 somehow.  The command =ispell-change-dictionary= can be used to switch the
 active dictionary.
 
-#+BEGIN_SRC emacs-lisp
+#+BEGIN_SRC elisp
   (require 'ispell)
 
   (add-to-list
@@ -1938,7 +1934,7 @@ whenever possible.
 In my master thesis I used lots of code blocks, most of them some lisp or other.
 I needed a few shortcuts to place them.  I may never use them again.
 
-#+begin_src emacs-lisp
+#+BEGIN_SRC elisp
   (defun schweers/LaTeX-put-lisp-block (caption label)
     (interactive "*MCaption: \nMLabel: ")
     (let ((create-par? (not (and (looking-at-p "$")
@@ -1988,7 +1984,7 @@ I needed a few shortcuts to place them.  I may never use them again.
           (goto-char end)
           (forward-line -1)
           (point))))))
-#+end_src
+#+END_SRC
 
 ** Install and configure AUCTeX
 Sadly, AUCTeX does not come with Emacs, so it must be installed.  Also, we want
@@ -1998,7 +1994,7 @@ one can jump from the TeX source to the PDF location and vice versa.
 Another useful thing I do here is to activate outline mode, as it provides some
 more jump locations.
 
-#+begin_src emacs-lisp
+#+BEGIN_SRC elisp
   (pc auctex
     (:require nil)
     (:post-install
@@ -2023,13 +2019,13 @@ more jump locations.
                           LaTeX-section-label))
               "subsubsec:")
         (outline-minor-mode 1)))))
-#+end_src
+#+END_SRC
 
 * Install and configure =bbdb=
 While BBDB is a little weird, it does not need a lot of configuration.  I
 basically only tell it that I’m not an American.
 
-#+BEGIN_SRC emacs-lisp
+#+BEGIN_SRC elisp
   (pc bbdb
     (:post-install
      (setf bbdb-north-american-phone-number nil
@@ -2042,7 +2038,7 @@ own file.  I’ve convinced it to please not use the home directory for this.  I
 used to have this file in ~/.emacs.d, but as its more data than config, I’ve
 moved this file to ~/.emacs_data/gnus.el.
 
-#+BEGIN_SRC emacs-lisp
+#+BEGIN_SRC elisp
   (load (expand-file-name
          "gnus.el"
          (expand-file-name ".emacs_data" (getenv "HOME"))))
@@ -2085,7 +2081,7 @@ moved this file to ~/.emacs_data/gnus.el.
 Multiple cursors is a nice shorthand for keyboard macros.  They save a lot of
 time when one is not /exactly/ sure what needs to be done.
 
-#+BEGIN_SRC emacs-lisp
+#+BEGIN_SRC elisp
   (pc multiple-cursors
     (:bind (("C-S-c C-S-c" . mc/edit-lines)
             ("C->" . mc/mark-next-like-this)
@@ -2098,7 +2094,7 @@ time when one is not /exactly/ sure what needs to be done.
 As IRC is also just text, I naturally pull it into Emacs.  This should go
 without saying.
 
-#+BEGIN_SRC emacs-lisp
+#+BEGIN_SRC elisp
   (and (load-library "erc-highlight-nicknames")
        (add-to-list 'erc-modules 'highlight-nicknames)
        (erc-update-modules))
@@ -2112,7 +2108,7 @@ without saying.
 I installed this quite a while back.  It is really nice, but sadly I’ve
 forgotten how to use it because I hardly need it.
 
-#+BEGIN_SRC emacs-lisp
+#+BEGIN_SRC elisp
   (pc ace-link
     (:post-install (ace-link-setup-default)))
 #+END_SRC
@@ -2127,7 +2123,7 @@ C-y works the same as ever.  If followed by M-y it also behaves as vanilla
 Emacs.  If M-y was not preceded by C-y, a new window is created (if needed) to
 display the contents of the kill ring.
 
-#+BEGIN_SRC emacs-lisp
+#+BEGIN_SRC elisp
   (pc browse-kill-ring
     (:post-install
      (browse-kill-ring-default-keybindings)))
@@ -2152,7 +2148,7 @@ installed before slime can add it to its contribs.
 SLIME makes interaction with a Common Lisp process almost as seamless as
 interacting with the elisp VM underlying Emacs!
 
-#+BEGIN_SRC emacs-lisp
+#+BEGIN_SRC elisp
   (pc ac-slime)
 
   (pc slime
@@ -2181,7 +2177,7 @@ Geiser is to scheme what SLIME is to Common Lisp.  Sadly it needs some more
 love.  Also it behaves a little strangely due to the fact that it supports more
 than one backend.
 
-#+BEGIN_SRC emacs-lisp
+#+BEGIN_SRC elisp
   (pc geiser
     (:post-install
      ;; (setf geiser-racket-binary "/usr/local/bin/racket")
@@ -2193,7 +2189,7 @@ When lispy is active in =inferior-scheme-mode=, RET is by default bound to a
 lispy command.  Normally this is all well and good, but not for comint derived
 modes.  This is why the following binding is needed.
 
-#+BEGIN_SRC emacs-lisp
+#+BEGIN_SRC elisp
   ;; (defadvice lispy-newline-and-indent-plain (around fix-inferior-scheme (orig))
   ;;   (if (eq major-mode 'inferior-scheme-mode)
   ;;       (call-interactively #'comint-send-input)
@@ -2206,7 +2202,7 @@ modes.  This is why the following binding is needed.
             #'schweers/fix-scheme-lispy-RET)
 #+END_SRC
 
-#+BEGIN_SRC emacs-lisp
+#+BEGIN_SRC elisp
   (add-hook 'inferior-scheme-mode-hook
             (lambda () (define-key lispy-mode-map (kbd "RET") nil)))
 #+END_SRC
@@ -2232,7 +2228,7 @@ function can do more elaborate stuff.
 This is a package I hardly use, although it seems to be really cool.  Maybe I
 don’t use it because I already have lispy.
 
-#+BEGIN_SRC emacs-lisp
+#+BEGIN_SRC elisp
   (pc expand-region
     (:bind (("C-=" . er/expand-region))))
 #+END_SRC
@@ -2240,7 +2236,7 @@ don’t use it because I already have lispy.
 * Activate eldoc on lisp buffers
 This only works on elisp, so its not activated for all lisps I use.
 
-#+BEGIN_SRC emacs-lisp
+#+BEGIN_SRC elisp
   (add-hook 'lisp-interaction-mode-hook (-partial 'eldoc-mode))
   (add-hook 'emacs-lisp-mode-hook (-partial 'eldoc-mode))
 #+END_SRC
@@ -2249,7 +2245,7 @@ This only works on elisp, so its not activated for all lisps I use.
 Diminish is used to prevent the mode line from becoming too cluttered.  Sadly I
 have not yet gotten it to work for =emacs-lisp-mode=.
 
-#+BEGIN_SRC emacs-lisp
+#+BEGIN_SRC elisp
   (pc diminish
     (:post-install
      (diminish 'emacs-lisp-mode "EL")
@@ -2263,7 +2259,7 @@ awe at how awesome the completion was.  Then I discovered Ido and was stunned
 again.  Then I discovered helm and was stunned yet once more.  It really is that
 awesome, even though it is a bit intrusive.
 
-#+BEGIN_SRC emacs-lisp
+#+BEGIN_SRC elisp
   (pc helm
       (:post-install
        (require 'helm-config)
@@ -2294,7 +2290,7 @@ docs can be found here: https://github.com/ShingoFukuyama/helm-swoop
 Helm can apparently be really cool for C++ (well, as cool as C++ can get) if
 used with GNU global.  Here we set it up to do so.
 
-#+BEGIN_SRC emacs-lisp
+#+BEGIN_SRC elisp
   (pc helm-gtags
     (:require nil)
     (:post-install
@@ -2326,7 +2322,7 @@ used with GNU global.  Here we set it up to do so.
 The hyperspec it /the/ definitive resource on Common Lisp, so I want quick
 access to it.
 
-#+BEGIN_SRC emacs-lisp
+#+BEGIN_SRC elisp
   (if (file-exists-p (expand-file-name "quicklisp/clhs-use-local.el"
                                        (getenv "HOME")))
       (progn (load (expand-file-name "quicklisp/clhs-use-local.el" (getenv "HOME")))
@@ -2360,7 +2356,7 @@ access to it.
   :END:
 In case I want to use forth again.
 
-#+BEGIN_SRC emacs-lisp
+#+BEGIN_SRC elisp
   (load "/usr/share/emacs/site-lisp/gforth.el")
 #+END_SRC
 
@@ -2368,7 +2364,7 @@ In case I want to use forth again.
 This alone is also a reason to switch to Emacs.  It takes undo to a whole new
 level.
 
-#+BEGIN_SRC emacs-lisp
+#+BEGIN_SRC elisp
   (pc undo-tree
     (:post-install
      (global-undo-tree-mode 1)
@@ -2379,14 +2375,14 @@ level.
 
 ** Install =clojure-mode=
 
-#+BEGIN_SRC emacs-lisp
+#+BEGIN_SRC elisp
   (pc clojure-mode)
 #+END_SRC
 
 ** Install =cider=
 Cider is like SLIME and geiser, but for clojure.
 
-#+BEGIN_SRC emacs-lisp
+#+BEGIN_SRC elisp
   (pc cider)
 #+END_SRC
 
@@ -2395,7 +2391,7 @@ Sadly I don’t use this that much.  It can be used together with helm.
 Projectile can figure out where a project is by looking for typical files and
 directories (like .git).
 
-#+BEGIN_SRC emacs-lisp
+#+BEGIN_SRC elisp
   (pc projectile
     (:post-install
      (projectile-mode)
@@ -2417,7 +2413,7 @@ directories (like .git).
 * Make parentheses less prominent
 I use =global-paren-face-mode= to make parentheses stand out a little less.
 
-#+BEGIN_SRC emacs-lisp
+#+BEGIN_SRC elisp
   (pc paren-face
     (:post-install
      (global-paren-face-mode 1)))
@@ -2427,7 +2423,7 @@ I use =global-paren-face-mode= to make parentheses stand out a little less.
 I use this to browse the hyperspec.  Don't require it, as it will fail on
 Windows.
 
-#+BEGIN_SRC emacs-lisp
+#+BEGIN_SRC elisp
   (condition-case e
       (pc w3m)
     (error
@@ -2440,7 +2436,7 @@ works much better than RSS in gnus.
 
 The feeds can also be entered here.
 
-#+BEGIN_SRC emacs-lisp
+#+BEGIN_SRC elisp
   (pc elfeed
     (:post-install
      (setf elfeed-feeds
@@ -2480,14 +2476,14 @@ Elfeed binds its keys not expecting evil to be present.  For this reason, elfeed
 should start in emacs state.  In the future it might be nice to devise a good
 set of evil bindings, but for now, emacs mode should suffice.
 
-#+BEGIN_SRC emacs-lisp
+#+BEGIN_SRC elisp
   (evil-set-initial-state 'elfeed-search-mode 'emacs)
   (evil-set-initial-state 'elfeed-show-mode 'emacs)
 #+END_SRC
 * Install and configure =avy=
 Avy can be used to jump to a position which is visible in the current window.
 
-#+BEGIN_SRC emacs-lisp
+#+BEGIN_SRC elisp
   (pc avy
     (:post-install
      (global-set-key
@@ -2505,7 +2501,7 @@ Avy can be used to jump to a position which is visible in the current window.
   :PROPERTIES:
   :header-args: :tangle no
   :END:
-#+BEGIN_SRC emacs-lisp
+#+BEGIN_SRC elisp
   (pc swiper
     (:bind
      (("C-s" . swiper))))
@@ -2516,12 +2512,12 @@ Lua mode is needed for computercraft.
 Luckily, files in a computer inside of computercraft also exist in the
 filesystem outside of minecraft/feed the beast.
 
-#+BEGIN_SRC emacs-lisp
+#+BEGIN_SRC elisp
   (pc lua-mode)
 #+END_SRC
 * Install and require =tramp-term=
 Apparently, tramp-term integrates a remote ssh session with TRAMP.
-#+BEGIN_SRC emacs-lisp
+#+BEGIN_SRC elisp
   (pc tramp-term)
 #+END_SRC
 * Install =fuel= in order to experiment with factor
@@ -2617,14 +2613,14 @@ I want to try out golang, I’ll probably not use it, but hey.
 : go-scratch
 
 * Use chromium (or chromium-browser?)
-#+BEGIN_SRC emacs-lisp
+#+BEGIN_SRC elisp
   (setf browse-url-browser-function #'browse-url-chromium)
 #+END_SRC
 * Define a minor mode for keybindings
 I use a separate minor mode which does nothing but bind keys.  This has the
 advantage that other modes cannot quite as easily overwrite my keybindings.
 
-#+begin_src emacs-lisp
+#+BEGIN_SRC elisp
   (defvar *schweers-bindings* (make-sparse-keymap))
 
   (define-key *schweers-bindings* (kbd "C-w") 'backward-kill-word)
@@ -2857,12 +2853,12 @@ advantage that other modes cannot quite as easily overwrite my keybindings.
 
   ;; (setq  wl-draft-mode-hook nil)
 
-#+end_src
+#+END_SRC
 * Start Emacs in server mode
 If Emacs is not already running as a server, start the server component.  This
 way I only need to start Emacs once and can use emacsclient from then on.
 
-#+BEGIN_SRC emacs-lisp
+#+BEGIN_SRC elisp
   (require 'server)
   (unless (server-running-p)
     (server-start))
@@ -2871,7 +2867,7 @@ way I only need to start Emacs once and can use emacsclient from then on.
 Emacs can also provide an HTTP(?) edit server, so chromium can use it with “Edit
 with Emacs”.
 
-#+BEGIN_SRC emacs-lisp
+#+BEGIN_SRC elisp
   (pc edit-server
     (:post-install
      (edit-server-start)))
@@ -2889,7 +2885,7 @@ The following function should do exactly that.
 This code block has to be tangled manually.  Should it ever be changed, it must
 be added to git!  Otherwise Emacs may not be able to boot!
 
-#+BEGIN_SRC emacs-lisp :tangle bootstrap.el
+#+BEGIN_SRC elisp :tangle bootstrap.el
   ;; NOTE: THIS FILE WAS TANGLED FROM literate-init.org.  DO NOT CHANGE THIS FILE
   ;; DIRECTLY!
 
