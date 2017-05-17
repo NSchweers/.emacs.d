@@ -59,11 +59,11 @@
      ("" "marvosym" t)
      ("" "wasysym" t)
      ("" "amssymb" t)
-     ("hidelinks" "hyperref" nil)
+     ("" "hyperref" nil)
      "\\tolerance=1000")))
  '(package-selected-packages
    (quote
-    (helm-ag projectile-ripgrep helm-swoop nodejs-repl js2-mode evil-mu4e evil-leader auto-complete-c-headers helm-gitlab gitlab notmuch fuel tracwiki-mode helm-gtags bash-completion edit-server go-scratch go-eldoc go-mode async tramp-term bbdb-vcard evil-org evil-lispy evil-magit rust-mode htmlize csharp-mode elfeed evil markdown-mode shell-command undo-tree ace-jump-mode helm jabber expand-region ac-slime browse-kill-ring ace-link multiple-cursors bbdb auctex elpy magit auto-complete lispy guide-key org paren-face crux helm-projectile projectile cider racer cargo clojure-mode w3m json-mode f geiser diminish s dash-functional hydra use-package dash lua-mode)))
+    (protobuf-mode cmake-mode helm-ag projectile-ripgrep helm-swoop nodejs-repl js2-mode evil-mu4e evil-leader auto-complete-c-headers helm-gitlab gitlab notmuch fuel tracwiki-mode helm-gtags bash-completion edit-server go-scratch go-eldoc go-mode async tramp-term bbdb-vcard evil-org evil-lispy evil-magit rust-mode htmlize csharp-mode elfeed evil markdown-mode shell-command undo-tree ace-jump-mode helm jabber expand-region ac-slime browse-kill-ring ace-link multiple-cursors bbdb auctex elpy magit auto-complete lispy guide-key org paren-face crux helm-projectile projectile cider racer cargo clojure-mode w3m json-mode f geiser diminish s dash-functional hydra use-package dash lua-mode)))
  '(rcirc-default-nick "schweers")
  '(rcirc-default-user-name "schweers")
  '(rcirc-fill-column (quote frame-width))

@@ -1711,6 +1711,7 @@ classes that are not by default configured.
 Also, I want source code blocks to be syntax colored.  Sadly, this is not the
 same coloring as in source blocks.  Instead, the LaTeX package =minted= is used.
 
+#+begin_comment
 #+begin_src emacs-lisp
   (setf org-latex-listings 'minted)
   ;; (add-to-list 'org-latex-packages-alist '("" "listings"))
@@ -1723,6 +1724,7 @@ same coloring as in source blocks.  Instead, the LaTeX package =minted= is used.
      "pdflatex -shell-escape -interaction nonstopmode -output-directory %o %f"
      "pdflatex -shell-escape -interaction nonstopmode -output-directory %o %f"))
 #+end_src
+#+end_comment
 
 ** Add font-locking for html output
 Just as LaTeX output may be syntax highlighted, I want something similar for
@@ -2048,6 +2050,9 @@ moved this file to ~/.emacs_data/gnus.el.
 #+END_SRC
 
 * Install =notmuch=
+  :PROPERTIES:
+  :header-args: :tangle no 
+  :END:      
 #+BEGIN_SRC elisp
   (pc notmuch
     (:post-install
@@ -2169,6 +2174,9 @@ interacting with the elisp VM underlying Emacs!
 
 * Configure Scheme
 ** Install and configure =geiser=
+  :PROPERTIES:
+  :header-args: :tangle no
+  :END:
 Geiser is to scheme what SLIME is to Common Lisp.  Sadly it needs some more
 love.  Also it behaves a little strangely due to the fact that it supports more
 than one backend.
@@ -2525,6 +2533,12 @@ Apparently, tramp-term integrates a remote ssh session with TRAMP.
           fuel-listener-factor-image (expand-file-name "opt/factor/factor.image"
                                                        (getenv "HOME"))))
 #+END_SRC
+* Install and configure yasnippet for C++ mode
+#+BEGIN_SRC elisp
+  (pc yasnippet
+    (:postinstall
+     (add-hook 'c++-mode-hook #'yas-minor-mode)))
+#+END_SRC
 * Try some C++ stuff out
   :PROPERTIES:
   :header-args: :tangle no
@@ -2582,6 +2596,14 @@ default.
   (defadvice occur (after schweers/occur-select-occur (regexp &optional nlines))
     (select-window (get-buffer-window "*Occur*")))
 #+END_SRC
+* Install =cmake-mode=
+  #+BEGIN_SRC elisp
+    (pc cmake-mode)
+  #+END_SRC
+* Install =protobuf-mode=
+  #+BEGIN_SRC elisp
+    (pc protobuf-mode)
+  #+END_SRC
 * Install go-mode and assorted packages
 I want to try out golang, I’ll probably not use it, but hey.
 
