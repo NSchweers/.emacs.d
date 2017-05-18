@@ -1352,6 +1352,9 @@ with ".el".
 
 * TODO replace evil-leader with hydra?
 * Install and configure evil mode
+  :PROPERTIES:
+  :header-args: :tangle no
+  :END:
 Evil provides a layer on top of Emacs to emulate vi like keybindings and modes
 (called “states” in Evil parlance).
 
@@ -1641,7 +1644,10 @@ Also, I want the notes file which I use with org-capture to reside inside my
 .emacs.d directory.  This might as well change in the future.
 #+BEGIN_SRC elisp
   (setf org-default-notes-file
-        (expand-file-name ".emacs_data/notes.org.gpg" (getenv "HOME"))
+        (expand-file-name (if (string= system-name "spinetail")
+                              ".emacs_data/notes.org"
+                            ".emacs_data/notes.org.gpg")
+                          (getenv "HOME"))
         org-special-ctrl-a/e t
         org-special-ctrl-k t
         org-special-ctrl-o t)
@@ -1752,11 +1758,11 @@ the default and only slightly changed it.
         `(("t" "Task" entry
            (file+headline ,org-default-notes-file
                           "Tasks")
-           "* TODO %?\n  %i\n  %t\n  %a")
+           "* TODO %?\n  %t\n  %a  %i\n")
           ("n" "Notes" entry
            (file+headline ,org-default-notes-file
                           "Notes")
-           "* %?\n  %i\n  %t\n  %a")))
+           "* %?\n  %t\n  %a  %i\n")))
 
 #+END_SRC
 
@@ -2282,9 +2288,11 @@ I came across this today (<2017-04-21 Fri>) and just had to try it out.  Some
 docs can be found here: https://github.com/ShingoFukuyama/helm-swoop
 #+BEGIN_SRC elisp
   (pc helm-swoop
+    (:bind (( "M-s M-s" . helm-swoop)))
     (:post-install
-     (evil-leader/set-key
-       "s" 'helm-swoop)))
+     ;; (evil-leader/set-key
+     ;;   "s" 'helm-swoop)
+     ))
 #+END_SRC
 * Install and configure =helm-gtags= for C(++) development
 Helm can apparently be really cool for C++ (well, as cool as C++ can get) if
@@ -2407,8 +2415,9 @@ directories (like .git).
 #+BEGIN_SRC elisp
   (pc helm-ag
     (:post-install
-     (evil-leader/set-key
-       "i" 'helm-do-ag-project-root)))
+     ;; (evil-leader/set-key
+     ;;   "i" 'helm-do-ag-project-root)
+     ))
 #+END_SRC
 * Make parentheses less prominent
 I use =global-paren-face-mode= to make parentheses stand out a little less.
@@ -2472,6 +2481,9 @@ The feeds can also be entered here.
 #+END_SRC
 
 ** Make elfeed be in emacs state by default
+   :PROPERTIES:
+   :header-args: :tangle no
+   :END:
 Elfeed binds its keys not expecting evil to be present.  For this reason, elfeed
 should start in emacs state.  In the future it might be nice to devise a good
 set of evil bindings, but for now, emacs mode should suffice.
