@@ -59,11 +59,11 @@
      ("" "marvosym" t)
      ("" "wasysym" t)
      ("" "amssymb" t)
-     ("hidelinks" "hyperref" nil)
+     ("" "hyperref" nil)
      "\\tolerance=1000")))
  '(package-selected-packages
    (quote
-    (helm-swoop nodejs-repl js2-mode evil-mu4e evil-leader auto-complete-c-headers helm-gitlab gitlab notmuch fuel tracwiki-mode helm-gtags bash-completion edit-server go-scratch go-eldoc go-mode async tramp-term bbdb-vcard evil-org evil-lispy evil-magit rust-mode htmlize csharp-mode elfeed evil markdown-mode shell-command undo-tree ace-jump-mode helm jabber expand-region ac-slime browse-kill-ring ace-link multiple-cursors bbdb auctex elpy magit auto-complete lispy guide-key org paren-face crux helm-projectile projectile cider racer cargo clojure-mode w3m json-mode f geiser diminish s dash-functional hydra use-package dash lua-mode)))
+    (w3m undo-tree tramp-term tracwiki-mode shell-command protobuf-mode paren-face multiple-cursors markdown-mode magit lua-mode lispy json-mode js2-mode htmlize helm-swoop helm-projectile helm-gtags helm-ag guide-key go-scratch go-eldoc fuel f expand-region elpy elfeed edit-server diminish dash-functional cmake-mode cider browse-kill-ring bbdb bash-completion auctex ace-link ac-slime)))
  '(rcirc-default-nick "schweers")
  '(rcirc-default-user-name "schweers")
  '(rcirc-fill-column (quote frame-width))

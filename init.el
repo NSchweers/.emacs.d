@@ -9,8 +9,24 @@
 
 (require 'org)
 
-(condition-case nil
-    (load (expand-file-name "bootstrap.el" user-emacs-directory))
-  (file-error (org-babel-load-file
-               (expand-file-name "literate-init.org" user-emacs-directory))))
-(load-literate-init)
+(defun missing-or-newer? (a b)
+  "Checks whether the file A exists.  If so, checks whether file B exists and is
+  older than A."
+  (or (not (file-exists-p a))
+      (and (file-exists-p b)
+           (time-less-p
+            (nth 5 (file-attributes a))
+            (nth 5 (file-attributes b))))))
+
+(let* ((literate (expand-file-name "literate-init.org" user-emacs-directory))
+       (el (expand-file-name "literate-init.el" user-emacs-directory)))
+
+  (when (missing-or-newer? el literate)
+    (org-babel-tangle-file literate))
+  (load el))
+
+;; (condition-case nil
+;;     (load (expand-file-name "bootstrap.el" user-emacs-directory))
+;;   (file-error (org-babel-load-file
+;;                (expand-file-name "literate-init.org" user-emacs-directory))))
+;; (load-literate-init)
