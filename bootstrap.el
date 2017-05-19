@@ -1,7 +1,5 @@
 ;; -*- lexical-binding: t-*-
-
-;; [[file:~/.emacs.d/literate-init.org::*Boot%20up%20with%20our%20literate%20config][Boot\ up\ with\ our\ literate\ config:1]]
-
+;; [[file:~/.emacs.d/literate-init.org::*Boot%20up%20with%20our%20literate%20config][Boot up with our literate config:1]]
 ;; NOTE: THIS FILE WAS TANGLED FROM literate-init.org.  DO NOT CHANGE THIS FILE
 ;; DIRECTLY!
 
@@ -94,5 +92,4 @@ older than A."
           (load el-name))
       (byte-compile-file el-name))
     (load elc-name)))
-
-;; Boot\ up\ with\ our\ literate\ config:1 ends here
+;; Boot up with our literate config:1 ends here
