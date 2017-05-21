@@ -501,12 +501,42 @@ config.
                 scroll-down-aggressively 0.01)
 #+END_SRC
 
-** Set the diary file to a sane position
+** Setup diary
+*** Set diary file to a sane postion
 As mentioned elsewhere, Emacs tends to pollute the users home directory.  Here,
 diary files are placed into ~/.emacs.d/.
 
 #+BEGIN_SRC elisp
   (setf diary-file "~/.emacs.d/diary")
+#+END_SRC
+*** Add German holidays
+#+BEGIN_SRC elisp
+  (setf solar-n-hemi-seasons '("Frühlingsanfang"
+                               "Sommeranfang"
+                               "Herbstanfang"
+                               "Winteranfang")
+        holiday-general-holidays '((holiday-fixed 1 1 "Neujahr")
+                                   (holiday-fixed 5 1 "Tag der Arbeit")
+                                   (holiday-fixed 10 3
+                                                  "Tag der Deutschen Einheit"))
+        holiday-christian-holidays '((holiday-fixed 1 6 "Heilige Drei Könige")
+                                     (holiday-easter-etc -48 "Rosenmontag")
+                                     (holiday-easter-etc -3 "Gründonnerstag")
+                                     (holiday-easter-etc -2 "Karfreitag")
+                                     (holiday-easter-etc 0 "Ostersonntag")
+                                     (holiday-easter-etc 1 "Ostermontag")
+                                     (holiday-easter-etc 39 "Christi Himmelfahrt")
+                                     (holiday-easter-etc 39 "Vatertag")
+                                     (holiday-easter-etc 49 "Pfingstsonntag")
+                                     (holiday-easter-etc 50 "Pfingstmontag")
+                                     (holiday-easter-etc 60 "Fronleichnam")
+                                     (holiday-fixed 11 1 "Allerheiligen")
+                                     (holiday-float 12 0 -4 "1. Advent" 24)
+                                     (holiday-float 12 0 -3 "2. Advent" 24)
+                                     (holiday-float 12 0 -2 "3. Advent" 24)
+                                     (holiday-float 12 0 -1 "4. Advent" 24)
+                                     (holiday-fixed 12 25 "1. Weihnachtstag")
+                                     (holiday-fixed 12 26 "2. Weihnachtstag")))
 #+END_SRC
 
 ** Enable narrowing and region operations
@@ -1321,7 +1351,7 @@ with ".el".
           (find-file-other-window (cdr fname?))
         (find-file (cdr fname?)))))
 #+END_SRC
-* Load =mu4e=
+* Load and Configure =mu4e=
   I’ll try this again
 
   #+BEGIN_SRC elisp
@@ -1345,7 +1375,39 @@ with ".el".
                         :query (concat
                                 "flag:unread and not flag:list "
                                 "and not from:gitlab@code.outdooractive.com")
-                        :key ?n)))
+                        :key ?n))
+          (setf mu4e-contexts
+                (list
+                 (make-mu4e-context
+                  :name "Outdooractive"
+                  :vars
+                  '((mu4e-maildir . "~/Maildir/OA/")
+                    (mu4e-sent-folder . "/Sent")
+                    (mu4e-drafts-folder . "/Drafts")
+                    (mu4e-trash-folder . "/Trash")
+                    (mu4e-refile-folder . "/Archive")
+                    (mu4e-get-mail-command . "mbsync OA")
+                    (mu4e-update-interval . 120)))
+                 (make-mu4e-context
+                  :name "online.de"
+                  :vars
+                  '(((mu4e-maildir . "~/Maildir/1&1")
+                     (mu4e-sent-folder . "/Sent")
+                     (mu4e-drafts-folder . "/Drafts")
+                     (mu4e-trash-folder . "/Trash")
+                     (mu4e-refile-folder . "/Archive")
+                     (mu4e-get-mail-command . "mbsync 1u1")
+                     (mu4e-update-interval . 120))))
+                 (make-mu4e-context
+                  :name "mailbox.org"
+                  :vars
+                  '(((mu4e-maildir . "~/Maildir/mailbox")
+                     (mu4e-sent-folder . "/Sent")
+                     (mu4e-drafts-folder . "/Drafts")
+                     (mu4e-trash-folder . "/Trash")
+                     (mu4e-refile-folder . "/Archive")
+                     (mu4e-get-mail-command . "mbsync mailbox")
+                     (mu4e-update-interval . 120)))))))
       (file-error (warn "no mu4e found."))
       (error (warn "mu4e could not be loaded.")))
   #+END_SRC
