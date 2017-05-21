@@ -2616,13 +2616,16 @@ default.
 I want to try out golang, I’ll probably not use it, but hey.
 
 #+BEGIN_SRC elisp
-  (pc go-mode)
+  (pc go-mode
+    (:post-install
+     (add-hook 'go-mode-hook
+               (lambda ()
+                 (add-hook 'before-save-hook 'gofmt-before-save)
+                 (setf tab-width 2)
+                 (setf indent-tabs-mode 1)))))
   (pc go-eldoc)
   (pc go-scratch)
 #+END_SRC
-
-#+RESULTS:
-: go-scratch
 
 * Use chromium (or chromium-browser?)
 #+BEGIN_SRC elisp
