@@ -1,12 +1,12 @@
-11/11/2013 ATM Klausur rücktritts-datum (spätestens).  
-%%(diary-anniversary 1 5 1959) Giselas %d. Geburtstag.  
-%%(diary-anniversary 2 7 1987) Mein %d. Geburtstag.  
-%%(diary-anniversary 2 9 1989) Rebekkas %d. Geburtstag.  
-%%(diary-anniversary 2 28 1953) Wilhelms %d. Geburtstag.  
-%%(diary-anniversary 4 29 1989) Melanies %d. Geburtstag.  
-%%(diary-anniversary 10 30 1991) Esthers %d. Geburtstag.  
-%%(diary-anniversary 12 24 1985) Björn Dietrichs %d. Geburtstag.  
-%%(diary-float t 2 2) PUG Stammtisch treffen.  
+11/11/2013 ATM Klausur rücktritts-datum (spätestens).
+%%(diary-anniversary 1 5 1959) Giselas %d. Geburtstag.
+%%(diary-anniversary 2 7 1987) Mein %d. Geburtstag.
+%%(diary-anniversary 2 9 1989) Rebekkas %d. Geburtstag.
+%%(diary-anniversary 2 28 1953) Wilhelms %d. Geburtstag.
+%%(diary-anniversary 4 29 1989) Melanies %d. Geburtstag.
+%%(diary-anniversary 10 30 1991) Esthers %d. Geburtstag.
+%%(diary-anniversary 12 24 1985) Björn Dietrichs %d. Geburtstag.
+%%(diary-float t 2 2) PUG Stammtisch treffen.
 Jul 18, 2015 Grillen bei Sophia
 %%(diary-block 8 16 2015 8 23 2015) Urlaub bei Marianne.
 %%(diary-float t 4 1) Critical Mass Wiesbaden (18:00)
