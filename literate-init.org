@@ -268,7 +268,7 @@ Emacs can show trailing whitespace, but I don’t want it to go overboard with i
 Org Mode often shows long text in a shorter fashion (e.g. links) and sometimes
 even requires long lines because of its syntax.
 #+BEGIN_SRC elisp
-  (add-hook 'org-mode-hook (lambda () (whitespace-mode -1)))
+  (add-hook 'org-mode-hook (lambda () (whitespace-mode -1)) t)
 #+END_SRC
 ** Set a proper place for =custom.el=
 By default Emacs still uses the home directory of the user directly.  This is a
@@ -1735,6 +1735,11 @@ Also, I want the notes file which I use with org-capture to reside inside my
                               ".emacs_data/notes.org"
                             ".emacs_data/notes.org.gpg")
                           (getenv "HOME"))
+        org-agenda-files
+        (list (expand-file-name (if (string= system-name "spinetail")
+                                    ".emacs_data/notes.org"
+                                  ".emacs_data/notes.org.gpg")
+                                (getenv "HOME")))
         org-special-ctrl-a/e t
         org-special-ctrl-k t
         org-special-ctrl-o t)
@@ -1854,6 +1859,9 @@ the default and only slightly changed it.
 #+END_SRC
 
 ** Make Org Mode use TeX string delimiters
+   :PROPERTIES:
+   :header-args: :tangle no
+   :END:
 This command either inserts the empty TeX string ``'' at point, or surrounds the
 region with these quote characters.  It does not deactivate the region.  Also,
 the region contains the newly inserted quotes.
@@ -2586,7 +2594,7 @@ Avy can be used to jump to a position which is visible in the current window.
   (pc avy
     (:post-install
      (global-set-key
-      (kbd "C-\"")
+      (kbd "M-\"")
       (defhydra hydra-avy (:color teal)
         "avy-goto"
         ("c" avy-goto-char "char")
