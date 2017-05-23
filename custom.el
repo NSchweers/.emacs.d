@@ -39,7 +39,7 @@
      (:name "debian-user" :query "tag:debian-user" :key "d")
      (:name "karme" :query "tag:karme" :key "k"))))
  '(openwith-associations nil)
- '(org-agenda-files (quote ("~/.emacs_data/notes.org.gpg")))
+ '(org-agenda-files nil)
  '(org-export-backends
    (quote
     (ascii html icalendar latex beamer texinfo odt md man)))
