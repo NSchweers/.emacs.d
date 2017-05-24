@@ -258,6 +258,9 @@ buffer should be stripped before saving.
   (add-hook 'before-save-hook #'whitespace-cleanup)
 #+END_SRC
 ** Show trailing whitespace
+   :PROPERTIES:
+   :header-args: :tangle no
+   :END:
 Emacs can show trailing whitespace, but I don’t want it to go overboard with it.
 
 #+BEGIN_SRC elisp
@@ -267,6 +270,8 @@ Emacs can show trailing whitespace, but I don’t want it to go overboard with i
 *** Disable whitespace mode for Org Mode buffers
 Org Mode often shows long text in a shorter fashion (e.g. links) and sometimes
 even requires long lines because of its syntax.
+
+Sadly, this does not work.
 #+BEGIN_SRC elisp
   (add-hook 'org-mode-hook (lambda () (whitespace-mode -1)) t)
 #+END_SRC
@@ -609,7 +614,7 @@ error.
   (setf compilation-scroll-output t)
   ;;we want to have the compilation window scroll automatically
   (setq compilation-scroll-output 'first-error)
-  (setq-default compile-command "make -k -j4 ")
+  (setq-default compile-command "make -k -j ")
 #+END_SRC
 
 ** Enable lexical binding in the scratch buffer
@@ -1432,7 +1437,7 @@ with ".el".
                      (mu4e-trash-folder . "/Trash")
                      (mu4e-refile-folder . "/Archive")
                      (mu4e-get-mail-command . "mbsync mailbox")
-                     (mu4e-update-interval . 120)))))))
+                     (mu4e-update-interval . 600)))))))
       (file-error (warn "no mu4e found."))
       (error (warn "mu4e could not be loaded.")))
   #+END_SRC
@@ -2147,9 +2152,6 @@ moved this file to ~/.emacs_data/gnus.el.
 #+END_SRC
 
 * Install =notmuch=
-  :PROPERTIES:
-  :header-args: :tangle no
-  :END:
 #+BEGIN_SRC elisp
   (pc notmuch
     (:post-install
@@ -2158,6 +2160,7 @@ moved this file to ~/.emacs_data/gnus.el.
      ;; (bbdb-initialize 'message 'pgp 'gnus)
      (require 'org-notmuch)))
 #+END_SRC
+
 * Configure =mu4e=
   This is one of the few packages which I do not install via elpa.  Sane
   distributions have versions of Emacs which are not from the previous century,
@@ -2929,6 +2932,9 @@ advantage that other modes cannot quite as easily overwrite my keybindings.
   (define-key *schweers-bindings* (kbd "C-<up>") 'scroll-down-line)
 
   (global-set-key (kbd "C-S-s") 'misc/switch-to-scratch)
+
+  (global-set-key (kbd "C-c L") 'org-insert-link-global)
+  (global-set-key (kbd "C-c o") 'org-open-at-point-global)
 
   (define-minor-mode schweers-bindings-mode
     "This minor mode binds my own keybindings."
