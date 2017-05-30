@@ -36,7 +36,7 @@ to the load path explicitly.
 
 ** Add debian specific stuff
 If I’m on debian, I want debian-el.  The problem is that its not included in
-melpa, so I have to install it via package manager.  
+melpa, so I have to install it via package manager.
 
 I first want to check if I’m on Unix, then if I’m on debian.
 
@@ -250,6 +250,30 @@ If a file starts with #! the file should gain the executable bit.
   (add-hook
    'after-save-hook
    'executable-make-buffer-file-executable-if-script-p)
+#+END_SRC
+** Cleanup whitespace on save
+Any trailing whitespace on a line, or empty lines at the beginning or end of a
+buffer should be stripped before saving.
+#+BEGIN_SRC elisp
+  (add-hook 'before-save-hook #'whitespace-cleanup)
+#+END_SRC
+** Show trailing whitespace
+   :PROPERTIES:
+   :header-args: :tangle no
+   :END:
+Emacs can show trailing whitespace, but I don’t want it to go overboard with it.
+
+#+BEGIN_SRC elisp
+  (setf whitespace-style '(face trailing lines indentation indentation::space))
+  (global-whitespace-mode 1)
+#+END_SRC
+*** Disable whitespace mode for Org Mode buffers
+Org Mode often shows long text in a shorter fashion (e.g. links) and sometimes
+even requires long lines because of its syntax.
+
+Sadly, this does not work.
+#+BEGIN_SRC elisp
+  (add-hook 'org-mode-hook (lambda () (whitespace-mode -1)) t)
 #+END_SRC
 ** Set a proper place for =custom.el=
 By default Emacs still uses the home directory of the user directly.  This is a
@@ -492,7 +516,7 @@ config.
 
   (setq scroll-step 1) ;; keyboard scroll one line at a time
 
-  ;; Have proper scrolling.  
+  ;; Have proper scrolling.
   (setf scroll-margin 0
         scroll-conservatively 0
         scroll-up-aggressively 0.01
@@ -501,12 +525,48 @@ config.
                 scroll-down-aggressively 0.01)
 #+END_SRC
 
-** Set the diary file to a sane position
+** Setup diary
+*** Set diary file to a sane postion
 As mentioned elsewhere, Emacs tends to pollute the users home directory.  Here,
 diary files are placed into ~/.emacs.d/.
 
 #+BEGIN_SRC elisp
   (setf diary-file "~/.emacs.d/diary")
+#+END_SRC
+*** Add German holidays
+#+BEGIN_SRC elisp
+  (add-hook 'calendar-load-hook (lambda () (calendar-set-date-style 'european)))
+  (setf solar-n-hemi-seasons '("Frühlingsanfang"
+                               "Sommeranfang"
+                               "Herbstanfang"
+                               "Winteranfang")
+        holiday-general-holidays '((holiday-fixed 1 1 "Neujahr")
+                                   (holiday-fixed 5 1 "Tag der Arbeit")
+                                   (holiday-fixed 10 3
+                                                  "Tag der Deutschen Einheit"))
+        holiday-christian-holidays '((holiday-fixed 1 6 "Heilige Drei Könige")
+                                     (holiday-easter-etc -48 "Rosenmontag")
+                                     (holiday-easter-etc -3 "Gründonnerstag")
+                                     (holiday-easter-etc -2 "Karfreitag")
+                                     (holiday-easter-etc 0 "Ostersonntag")
+                                     (holiday-easter-etc 1 "Ostermontag")
+                                     (holiday-easter-etc 39
+                                                         "Christi Himmelfahrt")
+                                     (holiday-easter-etc 39 "Vatertag")
+                                     (holiday-easter-etc 49 "Pfingstsonntag")
+                                     (holiday-easter-etc 50 "Pfingstmontag")
+                                     (holiday-easter-etc 60 "Fronleichnam")
+                                     (holiday-fixed 11 1 "Allerheiligen")
+                                     (holiday-float 12 0 -4 "1. Advent" 24)
+                                     (holiday-float 12 0 -3 "2. Advent" 24)
+                                     (holiday-float 12 0 -2 "3. Advent" 24)
+                                     (holiday-float 12 0 -1 "4. Advent" 24)
+                                     (holiday-fixed 12 25 "1. Weihnachtstag")
+                                     (holiday-fixed 12 26 "2. Weihnachtstag"))
+        holiday-hebrew-holidays nil
+        holiday-islamic-holidays nil
+        holiday-bahai-holidays nil
+        holiday-oriental-holidays nil)
 #+END_SRC
 
 ** Enable narrowing and region operations
@@ -554,7 +614,7 @@ error.
   (setf compilation-scroll-output t)
   ;;we want to have the compilation window scroll automatically
   (setq compilation-scroll-output 'first-error)
-  (setq-default compile-command "make -k -j4 ")
+  (setq-default compile-command "make -k -j ")
 #+END_SRC
 
 ** Enable lexical binding in the scratch buffer
@@ -783,7 +843,7 @@ it easy to paste/yank the output anywhere, by placing it in the kill-ring.
                'bash-completion-dynamic-complete))
     (:post-install
      (shell-command-completion-mode)
-     
+
      (defun comint-delchar-or-eof-or-kill-buffer (arg)
        (interactive "p")
        (if (null (get-buffer-process (current-buffer)))
@@ -882,7 +942,7 @@ to add the new file to git (with magit).
   (defun schweers/new-setup (name &optional stage)
     "Create a new setup file, called setup-NAME.el in
   ~/.emacs.d/code/ which enables lexical scoping, contains the
-  appropriate provide and places point at the right position. 
+  appropriate provide and places point at the right position.
 
   If STAGE is non-nil, also stage the file with magit."
     ;; (interactive "MWhich package do you want to set up? \n")
@@ -1029,7 +1089,7 @@ This is painfully slow, as it uses real (i.e. non-eliminated) recursion.
 
 #+BEGIN_SRC elisp
   (defmacro +let (&rest args)
-    "Allows scheme like recursion.  
+    "Allows scheme like recursion.
 
   A symbol may be given as an additional first argument, the rest is like `let'.
   If this extra argument is given, it is the name of a local function, which is
@@ -1371,13 +1431,13 @@ with ".el".
                  (make-mu4e-context
                   :name "mailbox.org"
                   :vars
-                  '((mu4e-maildir . "~/Maildir/mailbox/")
-                    (mu4e-sent-folder . "/Sent")
-                    (mu4e-drafts-folder . "/Drafts")
-                    (mu4e-trash-folder . "/Trash")
-                    (mu4e-refile-folder . "/Archive")
-                    (mu4e-get-mail-command . "mbsync mailbox")
-                    (mu4e-update-interval . 120))))))
+                  '(((mu4e-maildir . "~/Maildir/mailbox")
+                     (mu4e-sent-folder . "/Sent")
+                     (mu4e-drafts-folder . "/Drafts")
+                     (mu4e-trash-folder . "/Trash")
+                     (mu4e-refile-folder . "/Archive")
+                     (mu4e-get-mail-command . "mbsync mailbox")
+                     (mu4e-update-interval . 600)))))))
       (file-error (warn "no mu4e found."))
       (error (warn "mu4e could not be loaded.")))
   #+END_SRC
@@ -1680,6 +1740,11 @@ Also, I want the notes file which I use with org-capture to reside inside my
                               ".emacs_data/notes.org"
                             ".emacs_data/notes.org.gpg")
                           (getenv "HOME"))
+        org-agenda-files
+        (list (expand-file-name (if (string= system-name "spinetail")
+                                    ".emacs_data/notes.org"
+                                  ".emacs_data/notes.org.gpg")
+                                (getenv "HOME")))
         org-special-ctrl-a/e t
         org-special-ctrl-k t
         org-special-ctrl-o t)
@@ -1714,7 +1779,7 @@ classes that are not by default configured.
 
 #+BEGIN_SRC elisp
   (require 'ox-latex)
-
+  (setf org-latex-inputenc-alist '(("utf8" . "utf8x")))
   (add-hook 'org-mode-hook
             (lambda ()
               (add-to-list 'org-latex-classes
@@ -1799,6 +1864,9 @@ the default and only slightly changed it.
 #+END_SRC
 
 ** Make Org Mode use TeX string delimiters
+   :PROPERTIES:
+   :header-args: :tangle no
+   :END:
 This command either inserts the empty TeX string ``'' at point, or surrounds the
 region with these quote characters.  It does not deactivate the region.  Also,
 the region contains the newly inserted quotes.
@@ -1917,6 +1985,30 @@ For security reasons, org-babel normally doesn’t execute shell scripts.
   (require 'ob-sh)
 #+END_SRC
 
+** Install =orgit=
+Thanks to =orgit= it is possible to create links to magit buffers in Org Mode.
+
+#+BEGIN_SRC elisp
+  (pc orgit)
+#+END_SRC
+
+** Activate dot source blocks
+GraphViz uses files in a language called dot
+
+#+BEGIN_SRC elisp
+  ;; (org-babel-do-load-languages
+  ;;  'org-babel-load-languages
+  ;;  '((dot . t)))
+
+  (add-to-list 'org-babel-load-languages
+                 '(dot . t))
+#+END_SRC
+* Install =graphviz-dot-mode=
+#+BEGIN_SRC elisp
+  (pc graphviz-dot-mode)
+  (add-to-list 'org-src-lang-modes
+               '("dot" . graphviz-dot))
+#+END_SRC
 * Install markdown-mode
 Some people insist on using markdown instead of org mode.  While I cannot help
 such misguided souls, I can install a mode to make reading their stuff a little
@@ -2084,9 +2176,6 @@ moved this file to ~/.emacs_data/gnus.el.
 #+END_SRC
 
 * Install =notmuch=
-  :PROPERTIES:
-  :header-args: :tangle no 
-  :END:      
 #+BEGIN_SRC elisp
   (pc notmuch
     (:post-install
@@ -2095,6 +2184,7 @@ moved this file to ~/.emacs_data/gnus.el.
      ;; (bbdb-initialize 'message 'pgp 'gnus)
      (require 'org-notmuch)))
 #+END_SRC
+
 * Configure =mu4e=
   This is one of the few packages which I do not install via elpa.  Sane
   distributions have versions of Emacs which are not from the previous century,
@@ -2531,7 +2621,7 @@ Avy can be used to jump to a position which is visible in the current window.
   (pc avy
     (:post-install
      (global-set-key
-      (kbd "C-\"")
+      (kbd "M-\"")
       (defhydra hydra-avy (:color teal)
         "avy-goto"
         ("c" avy-goto-char "char")
@@ -2601,11 +2691,11 @@ Maybe this will work for C++
   (semantic-mode 1)
   ; let's define a function which adds semantic as a suggestion backend to auto complete
   ; and hook this function to c-mode-common-hook
-  (defun my:add-semantic-to-autocomplete() 
+  (defun my:add-semantic-to-autocomplete()
     (add-to-list 'ac-sources 'ac-source-semantic))
 
   (add-hook 'c-mode-common-hook 'my:add-semantic-to-autocomplete)
-  ; turn on ede mode 
+  ; turn on ede mode
   (global-ede-mode 1)
   ; create a project for our program.
   (ede-cpp-root-project "rtree" :file "~/code/pick/rtree/rtree.cpp"
@@ -2866,6 +2956,9 @@ advantage that other modes cannot quite as easily overwrite my keybindings.
   (define-key *schweers-bindings* (kbd "C-<up>") 'scroll-down-line)
 
   (global-set-key (kbd "C-S-s") 'misc/switch-to-scratch)
+
+  (global-set-key (kbd "C-c L") 'org-insert-link-global)
+  (global-set-key (kbd "C-c o") 'org-open-at-point-global)
 
   (define-minor-mode schweers-bindings-mode
     "This minor mode binds my own keybindings."
