@@ -2007,7 +2007,7 @@ GraphViz uses files in a language called dot
 #+BEGIN_SRC elisp
   (pc graphviz-dot-mode)
   (add-to-list 'org-src-lang-modes
-               '("dot" . graphviz-dot-mode))
+               '("dot" . graphviz-dot))
 #+END_SRC
 * Install markdown-mode
 Some people insist on using markdown instead of org mode.  While I cannot help
