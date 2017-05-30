@@ -1779,7 +1779,7 @@ classes that are not by default configured.
 
 #+BEGIN_SRC elisp
   (require 'ox-latex)
-
+  (setf org-latex-inputenc-alist '(("utf8" . "utf8x")))
   (add-hook 'org-mode-hook
             (lambda ()
               (add-to-list 'org-latex-classes
@@ -1985,6 +1985,30 @@ For security reasons, org-babel normally doesn’t execute shell scripts.
   (require 'ob-sh)
 #+END_SRC
 
+** Install =orgit=
+Thanks to =orgit= it is possible to create links to magit buffers in Org Mode.
+
+#+BEGIN_SRC elisp
+  (pc orgit)
+#+END_SRC
+
+** Activate dot source blocks
+GraphViz uses files in a language called dot
+
+#+BEGIN_SRC elisp
+  ;; (org-babel-do-load-languages
+  ;;  'org-babel-load-languages
+  ;;  '((dot . t)))
+
+  (add-to-list 'org-babel-load-languages
+                 '(dot . t))
+#+END_SRC
+* Install =graphviz-dot-mode=
+#+BEGIN_SRC elisp
+  (pc graphviz-dot-mode)
+  (add-to-list 'org-src-lang-modes
+               '("dot" . graphviz-dot-mode))
+#+END_SRC
 * Install markdown-mode
 Some people insist on using markdown instead of org mode.  While I cannot help
 such misguided souls, I can install a mode to make reading their stuff a little

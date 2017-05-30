@@ -37,7 +37,8 @@
      (:name "unread" :query "tag:unread" :key "u")
      (:name "unread-inbox" :query "tag:inbox and tag:unread" :key "n")
      (:name "debian-user" :query "tag:debian-user" :key "d")
-     (:name "karme" :query "tag:karme" :key "k"))))
+     (:name "karme" :query "tag:karme" :key "k")
+     (:name "notmuch" :query "tag:notmuch" :key "m"))))
  '(openwith-associations nil)
  '(org-agenda-files nil)
  '(org-export-backends
@@ -63,7 +64,7 @@
      "\\tolerance=1000")))
  '(package-selected-packages
    (quote
-    (notmuch w3m undo-tree tramp-term tracwiki-mode shell-command protobuf-mode paren-face multiple-cursors markdown-mode magit lua-mode lispy json-mode js2-mode htmlize helm-swoop helm-projectile helm-gtags helm-ag guide-key go-scratch go-eldoc fuel f expand-region elpy elfeed edit-server diminish dash-functional cmake-mode cider browse-kill-ring bbdb bash-completion auctex ace-link ac-slime)))
+    (graphviz-dot-mode orgit notmuch w3m undo-tree tramp-term tracwiki-mode shell-command protobuf-mode paren-face multiple-cursors markdown-mode magit lua-mode lispy json-mode js2-mode htmlize helm-swoop helm-projectile helm-gtags helm-ag guide-key go-scratch go-eldoc fuel f expand-region elpy elfeed edit-server diminish dash-functional cmake-mode cider browse-kill-ring bbdb bash-completion auctex ace-link ac-slime)))
  '(rcirc-default-nick "schweers")
  '(rcirc-default-user-name "schweers")
  '(rcirc-fill-column (quote frame-width))
