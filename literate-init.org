@@ -1361,23 +1361,23 @@ with ".el".
                  (make-mu4e-context
                   :name "online.de"
                   :vars
-                  '(((mu4e-maildir . "~/Maildir/1&1")
-                     (mu4e-sent-folder . "/Sent")
-                     (mu4e-drafts-folder . "/Drafts")
-                     (mu4e-trash-folder . "/Trash")
-                     (mu4e-refile-folder . "/Archive")
-                     (mu4e-get-mail-command . "mbsync 1u1")
-                     (mu4e-update-interval . 120))))
+                  '((mu4e-maildir . "~/Maildir/1&1/")
+                    (mu4e-sent-folder . "/Sent")
+                    (mu4e-drafts-folder . "/Drafts")
+                    (mu4e-trash-folder . "/Trash")
+                    (mu4e-refile-folder . "/Archive")
+                    (mu4e-get-mail-command . "mbsync 1u1")
+                    (mu4e-update-interval . 120)))
                  (make-mu4e-context
                   :name "mailbox.org"
                   :vars
-                  '(((mu4e-maildir . "~/Maildir/mailbox")
-                     (mu4e-sent-folder . "/Sent")
-                     (mu4e-drafts-folder . "/Drafts")
-                     (mu4e-trash-folder . "/Trash")
-                     (mu4e-refile-folder . "/Archive")
-                     (mu4e-get-mail-command . "mbsync mailbox")
-                     (mu4e-update-interval . 120)))))))
+                  '((mu4e-maildir . "~/Maildir/mailbox/")
+                    (mu4e-sent-folder . "/Sent")
+                    (mu4e-drafts-folder . "/Drafts")
+                    (mu4e-trash-folder . "/Trash")
+                    (mu4e-refile-folder . "/Archive")
+                    (mu4e-get-mail-command . "mbsync mailbox")
+                    (mu4e-update-interval . 120))))))
       (file-error (warn "no mu4e found."))
       (error (warn "mu4e could not be loaded.")))
   #+END_SRC
