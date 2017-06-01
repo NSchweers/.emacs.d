@@ -51,12 +51,12 @@
   "Store a link to a notmuch search or message."
   (when (eq major-mode 'notmuch-show-mode)
     (let* ((message-id (notmuch-show-get-prop :id))
-	   (subject (notmuch-show-get-subject))
-	   (to (notmuch-show-get-to))
-	   (from (notmuch-show-get-from))
-	   desc link)
+           (subject (notmuch-show-get-subject))
+           (to (notmuch-show-get-to))
+           (from (notmuch-show-get-from))
+           desc link)
       (org-store-link-props :type "notmuch" :from from :to to
-       			    :subject subject :message-id message-id)
+                            :subject subject :message-id message-id)
       (setq desc (org-email-link-description))
       (setq link (concat "notmuch:"  "id:" message-id))
       (org-add-link-props :link link :description desc)
@@ -83,11 +83,11 @@ Can link to more than one message, if so all matching messages are shown."
   "Store a link to a notmuch search or message."
   (when (eq major-mode 'notmuch-search-mode)
     (let ((link (concat "notmuch-search:"
-			(org-link-escape notmuch-search-query-string)))
-	  (desc (concat "Notmuch search: " notmuch-search-query-string)))
+                        (org-link-escape notmuch-search-query-string)))
+          (desc (concat "Notmuch search: " notmuch-search-query-string)))
       (org-store-link-props :type "notmuch-search"
-			    :link link
-			    :description desc)
+                            :link link
+                            :description desc)
       link)))
 
 (defun org-notmuch-search-open (path)
