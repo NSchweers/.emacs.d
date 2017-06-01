@@ -1431,13 +1431,13 @@ with ".el".
                  (make-mu4e-context
                   :name "mailbox.org"
                   :vars
-                  '(((mu4e-maildir . "~/Maildir/mailbox")
-                     (mu4e-sent-folder . "/Sent")
-                     (mu4e-drafts-folder . "/Drafts")
-                     (mu4e-trash-folder . "/Trash")
-                     (mu4e-refile-folder . "/Archive")
-                     (mu4e-get-mail-command . "mbsync mailbox")
-                     (mu4e-update-interval . 600)))))))
+                  '((mu4e-maildir . "~/Maildir/mailbox")
+                    (mu4e-sent-folder . "/Sent")
+                    (mu4e-drafts-folder . "/Drafts")
+                    (mu4e-trash-folder . "/Trash")
+                    (mu4e-refile-folder . "/Archive")
+                    (mu4e-get-mail-command . "mbsync mailbox")
+                    (mu4e-update-interval . 600))))))
       (file-error (warn "no mu4e found."))
       (error (warn "mu4e could not be loaded.")))
   #+END_SRC
@@ -1744,6 +1744,8 @@ Also, I want the notes file which I use with org-capture to reside inside my
         (list (expand-file-name (if (string= system-name "spinetail")
                                     ".emacs_data/notes.org"
                                   ".emacs_data/notes.org.gpg")
+                                (getenv "HOME"))
+              (expand-file-name ".emacs_data_oa/notes.org"
                                 (getenv "HOME")))
         org-special-ctrl-a/e t
         org-special-ctrl-k t
