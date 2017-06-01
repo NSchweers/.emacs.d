@@ -2689,6 +2689,21 @@ I want to try out golang, I’ll probably not use it, but hey.
   (pc go-scratch)
 #+END_SRC
 
+* Install rust tools
+** Install =rust-mode=
+This one is obvious, isn’t it?
+#+BEGIN_SRC elisp
+  (pc rust-mode)
+#+END_SRC
+** Install =cargo=
+This one is for editing cargo files
+#+BEGIN_SRC elisp
+  (pc cargo)
+#+END_SRC
+** Install =flycheck-rust=
+#+BEGIN_SRC elisp
+  (pc flycheck-rust)
+#+END_SRC
 * Use chromium (or chromium-browser?)
 #+BEGIN_SRC elisp
   (setf browse-url-browser-function #'browse-url-chromium)
