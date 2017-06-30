@@ -2236,7 +2236,7 @@ without saying.
        (erc-update-modules))
   (add-hook 'erc-mode-hook
             (lambda ()
-              (-partial 'auto-fill-mode 0)
+              (-partial 'auto-fill-mode -1)
               (show-paren-mode nil)))
 #+END_SRC
 
@@ -2967,6 +2967,8 @@ advantage that other modes cannot quite as easily overwrite my keybindings.
 
   (global-set-key (kbd "C-c L") 'org-insert-link-global)
   (global-set-key (kbd "C-c o") 'org-open-at-point-global)
+
+  (define-key *schweers-bindings* (kbd "C-c M-b") 'bury-buffer)
 
   (define-minor-mode schweers-bindings-mode
     "This minor mode binds my own keybindings."
