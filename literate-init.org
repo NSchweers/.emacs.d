@@ -2236,7 +2236,7 @@ without saying.
        (erc-update-modules))
   (add-hook 'erc-mode-hook
             (lambda ()
-              (-partial 'auto-fill-mode -1)
+              (auto-fill-mode -1)
               (show-paren-mode nil)))
 #+END_SRC
 
