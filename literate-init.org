@@ -2640,6 +2640,19 @@ Avy can be used to jump to a position which is visible in the current window.
     (:bind
      (("C-s" . swiper))))
 #+END_SRC
+* Install and configure haskell packages
+At the very least, we need =haskell-mode=, otherwise we can’t properly edit
+files.
+
+#+BEGIN_SRC elisp
+  (pc haskell-mode)
+#+END_SRC
+
+I also want to try flycheck for haskell:
+
+#+BEGIN_SRC elisp
+  (pc flycheck-haskell)
+#+END_SRC
 * Install =lua-mode=
 Lua mode is needed for computercraft.
 
