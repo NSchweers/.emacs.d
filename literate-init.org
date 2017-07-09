@@ -1431,13 +1431,13 @@ with ".el".
                  (make-mu4e-context
                   :name "mailbox.org"
                   :vars
-                  '(((mu4e-maildir . "~/Maildir/mailbox")
-                     (mu4e-sent-folder . "/Sent")
-                     (mu4e-drafts-folder . "/Drafts")
-                     (mu4e-trash-folder . "/Trash")
-                     (mu4e-refile-folder . "/Archive")
-                     (mu4e-get-mail-command . "mbsync mailbox")
-                     (mu4e-update-interval . 600)))))))
+                  '((mu4e-maildir . "~/Maildir/mailbox")
+                    (mu4e-sent-folder . "/Sent")
+                    (mu4e-drafts-folder . "/Drafts")
+                    (mu4e-trash-folder . "/Trash")
+                    (mu4e-refile-folder . "/Archive")
+                    (mu4e-get-mail-command . "mbsync mailbox")
+                    (mu4e-update-interval . 600))))))
       (file-error (warn "no mu4e found."))
       (error (warn "mu4e could not be loaded.")))
   #+END_SRC
@@ -1602,7 +1602,8 @@ lispy, which is an alternative to paredit.
     (lispy-mode 1)
     (subword-mode -1)
     (define-key lispy-mode-map [remap backward-delete-char]
-      'lispy-delete-backward))
+      'lispy-delete-backward)
+    (setf lispy-delete-backward-recenter nil))
 
   (pc lispy
     (:bind (("C-M-1" . lispy-describe-inline)
@@ -1744,6 +1745,8 @@ Also, I want the notes file which I use with org-capture to reside inside my
         (list (expand-file-name (if (string= system-name "spinetail")
                                     ".emacs_data/notes.org"
                                   ".emacs_data/notes.org.gpg")
+                                (getenv "HOME"))
+              (expand-file-name ".emacs_data_oa/notes.org"
                                 (getenv "HOME")))
         org-special-ctrl-a/e t
         org-special-ctrl-k t
@@ -1986,7 +1989,12 @@ For security reasons, org-babel normally doesn’t execute shell scripts.
 #+END_SRC
 
 ** Install =orgit=
+   :PROPERTIES:
+   :header-args: :tangle no
+   :END:
 Thanks to =orgit= it is possible to create links to magit buffers in Org Mode.
+Sadly this pulls in a new version of Org Mode, which breaks things for my setup
+which is why I have excluded it from my setup, at least for now.
 
 #+BEGIN_SRC elisp
   (pc orgit)
@@ -2228,7 +2236,7 @@ without saying.
        (erc-update-modules))
   (add-hook 'erc-mode-hook
             (lambda ()
-              (-partial 'auto-fill-mode 0)
+              (auto-fill-mode -1)
               (show-paren-mode nil)))
 #+END_SRC
 
@@ -2284,16 +2292,16 @@ interacting with the elisp VM underlying Emacs!
     (:post-install
      (require 'slime-autoloads)
      (cond ((eq system-type 'windows-nt)
-            (setq inferior-lisp-program "sbcl"))
+            (setf inferior-lisp-program "sbcl --dynamic-space-size 20480"))
            ((eq system-type 'gnu/linux)
-            (setq inferior-lisp-program "sbcl")))
-     (add-to-list 'slime-contribs 'slime-fancy)
+            (setf inferior-lisp-program "sbcl --dynamic-space-size 12000")))
+     ;; (add-to-list 'slime-contribs 'slime-fancy)
 
      (require 'ac-slime)
      (add-hook 'slime-mode-hook 'set-up-slime-ac)
      (add-hook 'slime-repl-mode-hook 'set-up-slime-ac)
      (add-to-list 'ac-modes 'slime-repl-mode)
-     (slime-setup '(slime-repl))))
+     (slime-setup '(slime-repl slime-fancy))))
 #+END_SRC
 
 * Configure Scheme
@@ -2990,6 +2998,8 @@ advantage that other modes cannot quite as easily overwrite my keybindings.
 
   (global-set-key (kbd "C-c L") 'org-insert-link-global)
   (global-set-key (kbd "C-c o") 'org-open-at-point-global)
+
+  (define-key *schweers-bindings* (kbd "C-c M-b") 'bury-buffer)
 
   (define-minor-mode schweers-bindings-mode
     "This minor mode binds my own keybindings."
