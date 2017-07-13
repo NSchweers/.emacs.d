@@ -1628,6 +1628,9 @@ Unfortunately, the binding to C-w doesn’t work here, as I bind it in my own
 minor mode which takes precedence.
 
 * TODO Configure =autocomplete=
+  :PROPERTIES:
+  :header-args: :tangle no
+  :END:
 Autocomplete is quite nice, but I’m not sure whether it conflicts with
 =company-mode=.
 
@@ -1645,6 +1648,17 @@ Autocomplete is quite nice, but I’m not sure whether it conflicts with
      ))
 #+END_SRC
 
+* Install and configure =company-mode=
+Company mode promises to be like autocomplete, yet with less setup, so I’ll try
+it out.
+
+#+BEGIN_SRC elisp
+  (pc company)
+  (pc slime-company)
+  (pc helm-company)
+
+  (add-hook 'after-init-hook 'global-company-mode)
+#+END_SRC
 * Configure =magit=
 As far as I know, magit is simply the best interface to git.  As I normally
 place all my code under ~/code, I tell magit this is the case.
@@ -2285,23 +2299,24 @@ SLIME makes interaction with a Common Lisp process almost as seamless as
 interacting with the elisp VM underlying Emacs!
 
 #+BEGIN_SRC elisp
-  (pc ac-slime)
+  ;; (pc ac-slime)
 
   (pc slime
     (:require nil)
     (:post-install
      (require 'slime-autoloads)
      (cond ((eq system-type 'windows-nt)
-            (setf inferior-lisp-program "sbcl --dynamic-space-size 20480"))
+            (setf inferior-lisp-program "sbcl --dynamic-space-size 2048"))
            ((eq system-type 'gnu/linux)
             (setf inferior-lisp-program "sbcl --dynamic-space-size 12000")))
      ;; (add-to-list 'slime-contribs 'slime-fancy)
 
-     (require 'ac-slime)
-     (add-hook 'slime-mode-hook 'set-up-slime-ac)
-     (add-hook 'slime-repl-mode-hook 'set-up-slime-ac)
-     (add-to-list 'ac-modes 'slime-repl-mode)
-     (slime-setup '(slime-repl slime-fancy))))
+     ;; (require 'ac-slime)
+     ;; (add-hook 'slime-mode-hook 'set-up-slime-ac)
+     ;; (add-hook 'slime-repl-mode-hook 'set-up-slime-ac)
+     ;; (add-to-list 'ac-modes 'slime-repl-mode)
+
+     (slime-setup '(slime-repl slime-scratch slime-fancy))))
 #+END_SRC
 
 * Configure Scheme
@@ -2767,6 +2782,7 @@ advantage that other modes cannot quite as easily overwrite my keybindings.
 
   (define-key *schweers-bindings* (kbd "C-w") 'backward-kill-word)
   (define-key *schweers-bindings* (kbd "C-M-w") 'kill-region)
+  (define-key *schweers-bindings* (kbd "C-M-S-w") 'append-next-kill)
 
   (define-key *schweers-bindings* (kbd "C-S-e") 'eshell)
 
