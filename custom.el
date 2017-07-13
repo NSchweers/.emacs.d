@@ -37,7 +37,7 @@
  '(erc-track-mode t)
  '(gc-cons-percentage 0.3)
  '(gnus-home-directory "~/.emacs.d/")
- '(haskell-mode-hook (quote (turn-on-haskell-indentation)) t)
+ '(haskell-mode-hook (quote (turn-on-haskell-indentation)))
  '(jabber-account-list
    (quote
     (("schweers@3suns.de/emacs"
@@ -89,7 +89,7 @@
  '(package-selected-packages
    (quote
     (helm-company slime-company notmuch go-mode projectile clojure-mode helm auto-complete hydra dash async graphviz-dot-mode orgit w3m undo-tree tramp-term tracwiki-mode shell-command protobuf-mode paren-face multiple-cursors markdown-mode magit lua-mode lispy json-mode js2-mode htmlize helm-swoop helm-projectile helm-gtags helm-ag guide-key go-scratch go-eldoc fuel f expand-region elpy elfeed edit-server diminish dash-functional cmake-mode cider browse-kill-ring bbdb bash-completion auctex ace-link ac-slime)))
- '(rcirc-default-nick "schweers")
+'(rcirc-default-nick "schweers")
  '(rcirc-default-user-name "schweers")
  '(rcirc-fill-column (quote frame-width))
  '(rcirc-server-alist
