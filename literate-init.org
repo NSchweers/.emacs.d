@@ -2663,6 +2663,19 @@ Avy can be used to jump to a position which is visible in the current window.
     (:bind
      (("C-s" . swiper))))
 #+END_SRC
+* Install and configure haskell packages
+At the very least, we need =haskell-mode=, otherwise we can’t properly edit
+files.
+
+#+BEGIN_SRC elisp
+  (pc haskell-mode)
+#+END_SRC
+
+I also want to try flycheck for haskell:
+
+#+BEGIN_SRC elisp
+  (pc flycheck-haskell)
+#+END_SRC
 * Install =lua-mode=
 Lua mode is needed for computercraft.
 
@@ -2761,14 +2774,32 @@ default.
 I want to try out golang, I’ll probably not use it, but hey.
 
 #+BEGIN_SRC elisp
-  (pc go-mode)
+  (pc go-mode
+    (:post-install
+     (add-hook 'go-mode-hook
+               (lambda ()
+                 (add-hook 'before-save-hook 'gofmt-before-save)
+                 (setf tab-width 2)
+                 (setf indent-tabs-mode 1)))))
   (pc go-eldoc)
   (pc go-scratch)
 #+END_SRC
 
-#+RESULTS:
-: go-scratch
-
+* Install rust tools
+** Install =rust-mode=
+This one is obvious, isn’t it?
+#+BEGIN_SRC elisp
+  (pc rust-mode)
+#+END_SRC
+** Install =cargo=
+This one is for editing cargo files
+#+BEGIN_SRC elisp
+  (pc cargo)
+#+END_SRC
+** Install =flycheck-rust=
+#+BEGIN_SRC elisp
+  (pc flycheck-rust)
+#+END_SRC
 * Use chromium (or chromium-browser?)
 #+BEGIN_SRC elisp
   (setf browse-url-browser-function #'browse-url-chromium)
