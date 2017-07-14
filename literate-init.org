@@ -1603,7 +1603,9 @@ lispy, which is an alternative to paredit.
     (subword-mode -1)
     (define-key lispy-mode-map [remap backward-delete-char]
       'lispy-delete-backward)
-    (setf lispy-delete-backward-recenter nil))
+    (setf lispy-delete-backward-recenter nil)
+    ;; (define-key lispy-mode-map (kbd "C-<tab>") 'completion-at-point)
+    )
 
   (pc lispy
     (:bind (("C-M-1" . lispy-describe-inline)
@@ -2275,8 +2277,9 @@ display the contents of the kill ring.
 
 #+BEGIN_SRC elisp
   (pc browse-kill-ring
-    (:post-install
-     (browse-kill-ring-default-keybindings)))
+    ;; (:post-install
+    ;;  (browse-kill-ring-default-keybindings))
+    (:bind (("C-M-y" . browse-kill-ring))))
 #+END_SRC
 * Install =js2-mode=
 Install =js2-mode=, as it is allegedly better than the js mode which comes with
@@ -2421,11 +2424,9 @@ awesome, even though it is a bit intrusive.
        (diminish 'helm-mode))
       (:bind
        (("M-x" . helm-M-x)
-        ("C-M-y" . helm-show-kill-ring)
+        ("M-y" . helm-show-kill-ring)
         ("C-x C-f" . helm-find-files)
         ("C-x b" . helm-mini))))
-
-
 #+END_SRC
 
 * Install =helm-swoop=
