@@ -25,6 +25,58 @@ For some reason the default in Emacs is or was to load outdated bytecode files.
   (setf load-prefer-newer t)
 #+END_SRC
 
+** Install =use-package= if necessary
+At this point we have not yet loaded anything into emacs, hence =use-package= is
+not yet loaded, possibly not even installed.  To rectify this situation, as
+first we need to set up the packages system.
+*** Initialize the package system
+    We have to initialize the package system before using it, so we do that here.
+
+    We have to =require= the package system, as it is not loaded by default.  I
+    use an alist of repositories (currently only two) which are added to the
+    package archives unless they are already present.
+
+    #+BEGIN_SRC elisp
+      (require 'package)
+
+      ;; Add melpa to package repos
+      (dolist (m '(("melpa-stable" . "http://stable.melpa.org/packages/")
+                   ("melpa" . "http://melpa.org/packages/")))
+        (add-to-list 'package-archives m t))
+    #+END_SRC
+
+    As soon as the archives have been added, the package system can be initialized.
+    As a poor man’s check, I look for a file named after one of the archives.  If it
+    doesn’t (yet) exist, the archives have to be fetched.
+
+    #+BEGIN_SRC elisp
+      (package-initialize)
+
+      (unless (file-exists-p (expand-file-name
+                              "elpa/archives/melpa"
+                              user-emacs-directory))
+        (package-refresh-contents))
+    #+END_SRC
+
+    I used to have a whole lot more code, which can be found in the [[file:code/setup-package.el][original file]].
+    I hope this is no longer needed.  I never really liked having it, but is was
+    once necessary.
+*** Setup =use-package=
+    Now that the package system is set up, I can install =use-package=.
+
+    #+BEGIN_SRC elisp
+      (unless (package-installed-p 'use-package)
+        (package-install 'use-package))
+    #+END_SRC
+
+    Last but not least I want =use-package= to automatically install missing
+    packages and be verbose about what it’s doing.  As I don’t want to pass an
+    extra option to every single invocation, I’ll add it as a default here.
+
+    #+BEGIN_SRC elisp
+      (setf use-package-always-ensure t
+            use-package-verbose t)
+    #+END_SRC
 ** Add site-lisp to load path
 The directory site-lisp is not by default part of the load-path.  Also add mu4e
 to the load path explicitly.
@@ -202,41 +254,6 @@ them, I changed the threshold.
 #+BEGIN_SRC elisp
   (setf split-height-threshold 180)
 #+END_SRC
-
-* Initialize the package system
-We have to initialize the package system before using it, so we do that here.
-
-We have to =require= the package system, as it is not loaded by default.
-I use an alist of repositories (currently only two) which are added to the
-package archives unless they are already present.  I’m not sure I even need to
-check, as =add-to-list= may do that anyway.
-
-#+BEGIN_SRC elisp
-  (require 'package)
-
-  ;; Add melpa to package repos
-  (dolist (m '(("melpa-stable" . "http://stable.melpa.org/packages/")
-               ("melpa" . "http://melpa.org/packages/")))
-    (unless (member m package-archives)
-      (add-to-list 'package-archives m t)))
-#+END_SRC
-
-As soon as the archives have been added, the package system can be initialized.
-As a poor man’s check, I look for a file named after one of the archives.  If it
-doesn’t (yet) exist, the archives have to be fetched.
-
-#+BEGIN_SRC elisp
-  (package-initialize)
-
-  (unless (file-exists-p (expand-file-name
-                          "elpa/archives/melpa"
-                          user-emacs-directory))
-    (package-refresh-contents))
-#+END_SRC
-
-I used to have a whole lot more code, which can be found in the [[file:code/setup-package.el][original file]].
-I hope this is no longer needed.  I never really liked having it, but is was
-once necessary.
 * Set up some more sane defaults
 Emacs is full of variables etc. which have defaults which are highly outdated.
 This is the reason for the proliferation of so many Emacs starter kits.
@@ -658,6 +675,9 @@ of where the mouse points.
   (setf mouse-yank-at-point t)
 #+END_SRC
 * Define a configuration macro
+  :PROPERTIES:
+  :header-args: :tangle no
+  :END:
 While this macro is far from perfect, it is good enough to be used.
 
 This macro checks whether a given package is installed and installs it if
@@ -731,21 +751,15 @@ necessary.  For details, see the docstring.
                    (cl-loop for c in (cadr bind) collect
                             `(global-set-key (kbd ,(car c)) ',(cdr c)))))))))
 #+END_SRC
-* TODO Configure =dired=
-Make dired guess a destination for file operations.
-
-#+BEGIN_SRC elisp
-  (setf dired-dwim-target t)
-#+END_SRC
-* TODO Install and configure async (for dired)
+* Install and configure async (for dired)
 It can be found here: https://github.com/jwiegley/emacs-async
 
 #+BEGIN_SRC elisp
-  (pc async)
+  (use-package async)
 
 #+END_SRC
 
-* TODO Configure =dired=
+* Configure =dired=
 Dired is a little weird, but also really cool.  I really ought to get it going
 in async mode though.
 
@@ -769,26 +783,27 @@ used.
 Now that the =pc= macro has been defined, it can be used:
 
 #+BEGIN_SRC elisp
-  (pc dash
-    (:post-install
-     (setf dash-enable-fontlock t)))
+  (use-package dash
+    :config
+    (setf dash-enable-fontlock t))
 
-  (pc dash-functional)
+  (use-package dash-functional)
 #+END_SRC
 
 Also, some other libraries can now be installed:
 
 #+BEGIN_SRC elisp
-  (pc f)
-  (pc json-mode)
-  (pc s)
+  (use-package f)
+  (use-package json-mode
+    :mode "\\.json")
+  (use-package s)
 #+END_SRC
 
 The package [[https://github.com/abo-abo/hydra][hydra]] makes it easy to define several commands which share a prefix,
 and provide a nice UI.
 
 #+BEGIN_SRC elisp
-  (pc hydra)
+  (use-package hydra)
 #+END_SRC
 
 * Setup the shells
@@ -799,7 +814,7 @@ configured here.
 Although I use the zsh, =shell= insists on having it.
 
 #+BEGIN_SRC elisp
-  (pc bash-completion)
+  (use-package bash-completion)
 #+END_SRC
 ** Completion for =shell-command=
 Emacs comes with a built-in command =shell-command=, by default bound to M-!,
@@ -832,19 +847,40 @@ it easy to paste/yank the output anywhere, by placing it in the kill-ring.
       ;; Output message and put back prompt
       (comint-output-filter proc replacement)))
 
-  (pc shell-command
-    (:pre-install
-     (autoload 'bash-completion-dynamic-complete
-       "bash-completion"
-       "BASH completion hook")
-     (add-hook 'shell-dynamic-complete-functions
-               'bash-completion-dynamic-complete)
-     (add-hook 'shell-command-complete-functions
-               'bash-completion-dynamic-complete))
-    (:post-install
-     (shell-command-completion-mode)
+  ;; (pc shell-command
+  ;;   (:pre-install
+  ;;    (autoload 'bash-completion-dynamic-complete
+  ;;      "bash-completion"
+  ;;      "BASH completion hook")
+  ;;    (add-hook 'shell-dynamic-complete-functions
+  ;;              'bash-completion-dynamic-complete)
+  ;;    (add-hook 'shell-command-complete-functions
+  ;;              'bash-completion-dynamic-complete))
+  ;;   (:post-install
+  ;;    (shell-command-completion-mode)
 
-     (defun comint-delchar-or-eof-or-kill-buffer (arg)
+  ;;    (defun comint-delchar-or-eof-or-kill-buffer (arg)
+  ;;      (interactive "p")
+  ;;      (if (null (get-buffer-process (current-buffer)))
+  ;;          (kill-buffer)
+  ;;        (comint-delchar-or-maybe-eof arg)))
+
+  ;;    (add-hook 'shell-mode-hook
+  ;;              (lambda ()
+  ;;                (define-key shell-mode-map (kbd "C-d")
+  ;;                  'comint-delchar-or-eof-or-kill-buffer)
+  ;;                (define-key shell-mode-map (kbd "C-c C-o")
+  ;;                  'comint-kill-output-to-kill-ring)))))
+  (use-package shell-command
+    :init
+    (autoload 'bash-completion-dynamic-complete
+      "bash-completion"
+      "BASH completion hook")
+    (add-hook 'shell-dynamic-complete-functions
+              'bash-completion-dynamic-complete)
+    :config
+    (shell-command-completion-mode 1)
+    (defun comint-delchar-or-eof-or-kill-buffer (arg)
        (interactive "p")
        (if (null (get-buffer-process (current-buffer)))
            (kill-buffer)
@@ -855,7 +891,7 @@ it easy to paste/yank the output anywhere, by placing it in the kill-ring.
                  (define-key shell-mode-map (kbd "C-d")
                    'comint-delchar-or-eof-or-kill-buffer)
                  (define-key shell-mode-map (kbd "C-c C-o")
-                   'comint-kill-output-to-kill-ring)))))
+                   'comint-kill-output-to-kill-ring))))
 #+END_SRC
 
 * TODO Miscellaneous stuff
@@ -1574,14 +1610,16 @@ prefixes.  When either of them is pressed, it displays the possible further
 keystrokes at the bottom of the screen.
 
 #+BEGIN_SRC elisp
-  (pc guide-key
-    (:post-install
-     (setf guide-key/guide-key-sequence '("C-x r" "C-x 4" "C-x 5" "C-x v" "C-x 8"
-                                          "C-x n" "C-c C-x" "C-x c" "C-c p"))
-     (guide-key-mode 1)
-     (setf guide-key/recursive-key-sequence-flag t
-           guide-key/popup-window-position 'bottom
-           guide-key/idle-delay 0.1)))
+  ;; (pc guide-key
+  ;;   (:post-install
+  ;;    (setf guide-key/guide-key-sequence '("C-x r" "C-x 4" "C-x 5" "C-x v" "C-x 8"
+  ;;                                         "C-x n" "C-c C-x" "C-x c" "C-c p"))
+  ;;    (guide-key-mode 1)
+  ;;    (setf guide-key/recursive-key-sequence-flag t
+  ;;          guide-key/popup-window-position 'bottom
+  ;;          guide-key/idle-delay 0.1)))
+
+  (use-package which-key)
 #+END_SRC
 
 * Common configuration for all lisps
@@ -1603,27 +1641,25 @@ lispy, which is an alternative to paredit.
     (subword-mode -1)
     (define-key lispy-mode-map [remap backward-delete-char]
       'lispy-delete-backward)
-    (setf lispy-delete-backward-recenter nil)
-    ;; (define-key lispy-mode-map (kbd "C-<tab>") 'completion-at-point)
-    )
+    (setf lispy-delete-backward-recenter nil))
 
-  (pc lispy
-    (:bind (("C-M-1" . lispy-describe-inline)
-            ("C-M-2" . lispy-arglist-inline)
-            ("C-M-3" . lispy-right)))
-    (:post-install
-     (dolist (m schweers/*lisp-mode-hooks*)
-       (add-hook m #'schweers/make-lisp-great-again))
+  (use-package lispy
+    :bind (("C-M-1" . lispy-describe-inline)
+           ("C-M-2" . lispy-arglist-inline)
+           ("C-M-3" . lispy-right))
+    :config
+    (dolist (m schweers/*lisp-mode-hooks*)
+      (add-hook m #'schweers/make-lisp-great-again))
 
-     (defun schweers/lispy-M-paren ()
-       (interactive)
-       (let ((current-prefix-arg '(1)))
-         (call-interactively 'lispy-parens)))
+    (defun schweers/lispy-M-paren ()
+      (interactive)
+      (let ((current-prefix-arg '(1)))
+        (call-interactively 'lispy-parens)))
 
-     (define-key lispy-mode-map (kbd "M-(") 'schweers/lispy-M-paren)
-     (define-key lispy-mode-map (kbd "#") 'self-insert-command)
-     (define-key lispy-mode-map (kbd ":") 'self-insert-command)
-     (define-key lispy-mode-map (kbd "C-w") 'lispy-backward-kill-word)))
+    (define-key lispy-mode-map (kbd "M-(") 'schweers/lispy-M-paren)
+    (define-key lispy-mode-map (kbd "#") 'self-insert-command)
+    (define-key lispy-mode-map (kbd ":") 'self-insert-command)
+    (define-key lispy-mode-map (kbd "C-w") 'lispy-backward-kill-word))
 #+END_SRC
 
 Unfortunately, the binding to C-w doesn’t work here, as I bind it in my own
@@ -1655,26 +1691,27 @@ Company mode promises to be like autocomplete, yet with less setup, so I’ll tr
 it out.
 
 #+BEGIN_SRC elisp
-  (pc company)
-  (pc slime-company)
-  (pc helm-company)
-
-  (add-hook 'after-init-hook 'global-company-mode)
+  (use-package company
+    :init (add-hook 'after-init-hook 'global-company-mode))
+  (use-package slime-company
+    :after slime)
+  (use-package helm-company
+    :after slime)
 #+END_SRC
 * Configure =magit=
 As far as I know, magit is simply the best interface to git.  As I normally
 place all my code under ~/code, I tell magit this is the case.
 
 #+BEGIN_SRC elisp
-  (pc magit
-    (:pre-install
-     (require 's))
-    (:bind (("C-c m" . magit-status)))
-    (:post-install
-     (setf magit-repo-dirs (list (s-join "/" (list (getenv "HOME") "code"))
-                                 user-emacs-directory)
-           magit-repo-dirs (list (getenv "HOME"))
-           magit-last-seen-setup-instructions "1.4.0")))
+  (use-package magit
+    ;; :init
+    ;; (require 's)
+    :bind (("C-c m" . magit-status))
+    :config
+    (setf magit-repo-dirs (list (s-join "/" (list (getenv "HOME") "code"))
+                                user-emacs-directory)
+          magit-repo-dirs (list (getenv "HOME"))
+          magit-last-seen-setup-instructions "1.4.0"))
 #+END_SRC
 
 * Some global keybindings
@@ -1714,11 +1751,11 @@ better than nothing.  Also, it shows where one deviates from Guido’s personal
 favorites, so he won’t cry too much when reading my code.
 
 #+BEGIN_SRC elisp
-  (pc elpy
-    (:post-install
-     (add-hook 'python-mode-hook
-               (lambda () (setf fill-column 79)))
-     (elpy-enable)))
+  (use-package elpy
+    :config
+    (add-hook 'python-mode-hook
+              (lambda () (setf fill-column 79)))
+    (elpy-enable))
 #+END_SRC
 
 * Configure and bind =ace-window=
@@ -1727,11 +1764,11 @@ from one to the next, one can directly jump to any visible window.  Note that
 this is a little weird when using more than one frame.
 
 #+BEGIN_SRC elisp
-  (pc ace-window
-      (:bind (("C-x o" . ace-window)))
-      (:post-install
-       (setq aw-scope 'frame)
-       (setq aw-keys '(?b ?n ?r ?s ?g ?o ?e ?i ?t ?c))))
+  (use-package ace-window
+    :bind (("C-x o" . ace-window))
+    :config
+    (setf aw-scope 'frame
+          aw-keys '(?b ?n ?r ?s ?g ?o ?e ?i ?t ?c)))
 #+END_SRC
 
 * Setup Org Mode
@@ -1853,7 +1890,7 @@ Just as LaTeX output may be syntax highlighted, I want something similar for
 html.
 
 #+BEGIN_SRC elisp
-  (pc htmlize)
+  (use-package htmlize)
 #+END_SRC
 
 ** Add a template/shortcut for Org Mode comment blocks
@@ -2029,9 +2066,11 @@ GraphViz uses files in a language called dot
 #+END_SRC
 * Install =graphviz-dot-mode=
 #+BEGIN_SRC elisp
-  (pc graphviz-dot-mode)
-  (add-to-list 'org-src-lang-modes
-               '("dot" . graphviz-dot))
+  (use-package graphviz-dot-mode
+    :mode "\\.dot"
+    :config
+    (add-to-list 'org-src-lang-modes
+                 '("dot" . graphviz-dot)))
 #+END_SRC
 * Install markdown-mode
 Some people insist on using markdown instead of org mode.  While I cannot help
@@ -2039,9 +2078,14 @@ such misguided souls, I can install a mode to make reading their stuff a little
 easier.
 
 #+BEGIN_SRC elisp
-  (pc markdown-mode)
+  (use-package markdown-mode
+    :mode "\\.md")
 #+END_SRC
 * Install tracwiki-mode
+  :PROPERTIES:
+  :header-args: :tangle no
+  :END:
+
 As with markdown, this is not Org Mode :(
 
 #+BEGIN_SRC elisp
@@ -2149,30 +2193,31 @@ Another useful thing I do here is to activate outline mode, as it provides some
 more jump locations.
 
 #+BEGIN_SRC elisp
-  (pc auctex
-    (:require nil)
-    (:post-install
-     (setf LaTeX-command "latex")
-     (add-hook
-      'LaTeX-mode-hook
-      (lambda ()
-        (TeX-PDF-mode)
-        ;; (push '(pdf . pdfsync)
-        ;;       TeX-source-correlate-method)
-        (define-key LaTeX-mode-map
-          [remap backward-delete-char]
-          'delete-backward-char)
-        (define-key LaTeX-mode-map (kbd "M-\"")
-          #'schweers/org-TeX-string)
-        (TeX-source-correlate-mode 1)
-        (flyspell-mode 1)
-        (setf (cdr (assoc "subsection"
-                          LaTeX-section-label))
-              "subsec:"
-              (cdr (assoc "subsubsection"
-                          LaTeX-section-label))
-              "subsubsec:")
-        (outline-minor-mode 1)))))
+  (use-package tex
+    :ensure auctex
+    :after latex
+    :config
+    (setf LaTeX-command "latex")
+    (add-hook
+     'LaTeX-mode-hook
+     (lambda ()
+       (TeX-PDF-mode)
+       ;; (push '(pdf . pdfsync)
+       ;;       TeX-source-correlate-method)
+       (define-key LaTeX-mode-map
+         [remap backward-delete-char]
+         'delete-backward-char)
+       (define-key LaTeX-mode-map (kbd "M-\"")
+         #'schweers/org-TeX-string)
+       (TeX-source-correlate-mode 1)
+       (flyspell-mode 1)
+       (setf (cdr (assoc "subsection"
+                         LaTeX-section-label))
+             "subsec:"
+             (cdr (assoc "subsubsection"
+                         LaTeX-section-label))
+             "subsubsec:")
+       (outline-minor-mode 1))))
 #+END_SRC
 
 * Install and configure =bbdb=
@@ -2180,13 +2225,13 @@ While BBDB is a little weird, it does not need a lot of configuration.  I
 basically only tell it that I’m not an American.
 
 #+BEGIN_SRC elisp
-  (pc bbdb
-    (:post-install
-     (setf bbdb-north-american-phone-number nil
-           bbdb-phone-style nil)))
+  (use-package bbdb
+    :config
+    (setf bbdb-north-american-phone-number nil
+          bbdb-phone-style nil))
 #+END_SRC
 
-* Install =gnus=
+* Configure =gnus=
 While my gnus file is quite large, for some reason gnus insists on having its
 own file.  I’ve convinced it to please not use the home directory for this.  I
 used to have this file in ~/.emacs.d, but as its more data than config, I’ve
@@ -2201,15 +2246,19 @@ moved this file to ~/.emacs_data/gnus.el.
 
 * Install =notmuch=
 #+BEGIN_SRC elisp
-  (pc notmuch
-    (:post-install
-     (define-key notmuch-show-mode-map "U" 'browse-url-at-point)
-     (setf notmuch-crypto-process-mime t)
-     ;; (bbdb-initialize 'message 'pgp 'gnus)
-     (require 'org-notmuch)))
+  (use-package notmuch
+    :commands notmuch
+    :config
+    (define-key notmuch-show-mode-map "U" 'browse-url-at-point)
+    (setf notmuch-crypto-process-mime t)
+    ;; (bbdb-initialize 'message 'pgp 'gnus)
+    (require 'org-notmuch))
 #+END_SRC
 
 * Configure =mu4e=
+  :PROPERTIES:
+  :header-args: :tangle no
+  :END:
   This is one of the few packages which I do not install via elpa.  Sane
   distributions have versions of Emacs which are not from the previous century,
   but on debian I’ll have to add a load path.
@@ -2234,15 +2283,15 @@ Multiple cursors is a nice shorthand for keyboard macros.  They save a lot of
 time when one is not /exactly/ sure what needs to be done.
 
 #+BEGIN_SRC elisp
-  (pc multiple-cursors
-    (:bind (("C-S-c C-S-c" . mc/edit-lines)
-            ("C->" . mc/mark-next-like-this)
-            ("C-<" . mc/mark-previous-like-this)
-            ("C-c C-<" . mc/mark-all-like-this))))
+  (use-package multiple-cursors
+    :bind (("C-S-c C-S-c" . mc/edit-lines)
+           ("C->" . mc/mark-next-like-this)
+           ("C-<" . mc/mark-previous-like-this)
+           ("C-c C-<" . mc/mark-all-like-this)))
 
 #+END_SRC
 
-* Install and configure =erc=
+* Configure =erc=
 As IRC is also just text, I naturally pull it into Emacs.  This should go
 without saying.
 
@@ -2261,8 +2310,9 @@ I installed this quite a while back.  It is really nice, but sadly I’ve
 forgotten how to use it because I hardly need it.
 
 #+BEGIN_SRC elisp
-  (pc ace-link
-    (:post-install (ace-link-setup-default)))
+  (use-package ace-link
+    :config
+    (ace-link-setup-default))
 #+END_SRC
 
 * Install and configure =browse-kill-ring=
@@ -2276,10 +2326,10 @@ Emacs.  If M-y was not preceded by C-y, a new window is created (if needed) to
 display the contents of the kill ring.
 
 #+BEGIN_SRC elisp
-  (pc browse-kill-ring
+  (use-package browse-kill-ring
     ;; (:post-install
     ;;  (browse-kill-ring-default-keybindings))
-    (:bind (("C-M-y" . browse-kill-ring))))
+    :bind (("C-M-y" . browse-kill-ring)))
 #+END_SRC
 * Install =js2-mode=
 Install =js2-mode=, as it is allegedly better than the js mode which comes with
@@ -2287,7 +2337,8 @@ emacs, and because swank-js needs it.  Note that this probably has to be
 installed before slime can add it to its contribs.
 
 #+BEGIN_SRC elisp
-  (pc js2-mode)
+  (use-package js2-mode
+    :mode "\\.js")
 #+END_SRC
 * Install nodejs-repl
 #+BEGIN_SRC elisp
@@ -2304,22 +2355,22 @@ interacting with the elisp VM underlying Emacs!
 #+BEGIN_SRC elisp
   ;; (pc ac-slime)
 
-  (pc slime
-    (:require nil)
-    (:post-install
-     (require 'slime-autoloads)
-     (cond ((eq system-type 'windows-nt)
-            (setf inferior-lisp-program "sbcl --dynamic-space-size 2048"))
-           ((eq system-type 'gnu/linux)
-            (setf inferior-lisp-program "sbcl --dynamic-space-size 12000")))
-     ;; (add-to-list 'slime-contribs 'slime-fancy)
+  (use-package slime
+    :commands slime
+    :config
+    (require 'slime-autoloads)
+    (cond ((eq system-type 'windows-nt)
+           (setf inferior-lisp-program "sbcl --dynamic-space-size 2048"))
+          ((eq system-type 'gnu/linux)
+           (setf inferior-lisp-program "sbcl --dynamic-space-size 12000")))
+    ;; (add-to-list 'slime-contribs 'slime-fancy)
 
-     ;; (require 'ac-slime)
-     ;; (add-hook 'slime-mode-hook 'set-up-slime-ac)
-     ;; (add-hook 'slime-repl-mode-hook 'set-up-slime-ac)
-     ;; (add-to-list 'ac-modes 'slime-repl-mode)
+    ;; (require 'ac-slime)
+    ;; (add-hook 'slime-mode-hook 'set-up-slime-ac)
+    ;; (add-hook 'slime-repl-mode-hook 'set-up-slime-ac)
+    ;; (add-to-list 'ac-modes 'slime-repl-mode)
 
-     (slime-setup '(slime-repl slime-scratch slime-fancy))))
+    (slime-setup '(slime-repl slime-scratch slime-fancy)))
 #+END_SRC
 
 * Configure Scheme
@@ -2383,8 +2434,9 @@ This is a package I hardly use, although it seems to be really cool.  Maybe I
 don’t use it because I already have lispy.
 
 #+BEGIN_SRC elisp
-  (pc expand-region
-    (:bind (("C-=" . er/expand-region))))
+  (use-package expand-region
+    :bind
+    (("C-=" . er/expand-region)))
 #+END_SRC
 
 * Activate eldoc on lisp buffers
@@ -2400,11 +2452,11 @@ Diminish is used to prevent the mode line from becoming too cluttered.  Sadly I
 have not yet gotten it to work for =emacs-lisp-mode=.
 
 #+BEGIN_SRC elisp
-  (pc diminish
-    (:post-install
-     (diminish 'emacs-lisp-mode "EL")
-     (diminish 'lisp-interaction-mode "LIM")
-     (diminish 'auto-revert-mode)))
+  (use-package diminish
+    :config
+    (diminish 'emacs-lisp-mode "EL")
+    (diminish 'lisp-interaction-mode "LIM")
+    (diminish 'auto-revert-mode))
 #+END_SRC
 
 * Install and configure =helm=
@@ -2414,33 +2466,33 @@ again.  Then I discovered helm and was stunned yet once more.  It really is that
 awesome, even though it is a bit intrusive.
 
 #+BEGIN_SRC elisp
-  (pc helm
-      (:post-install
-       (require 'helm-config)
-       (setq helm-man-or-woman-function 'woman)
-       (setq helm-man-or-woman-function 'Man-getpage-in-background)
-       (helm-mode 1)
-       (provide 'setup-helm)
-       (diminish 'helm-mode))
-      (:bind
-       (("M-x" . helm-M-x)
-        ("M-y" . helm-show-kill-ring)
-        ("C-x C-f" . helm-find-files)
-        ("C-x b" . helm-mini))))
+  (use-package helm
+    :config
+    (require 'helm-config)
+    (setq helm-man-or-woman-function 'woman)
+    (setq helm-man-or-woman-function 'Man-getpage-in-background)
+    (helm-mode 1)
+    (provide 'setup-helm)
+    (diminish 'helm-mode)
+    :bind
+    (("M-x" . helm-M-x)
+     ("M-y" . helm-show-kill-ring)
+     ("C-x C-f" . helm-find-files)
+     ("C-x b" . helm-mini)))
 #+END_SRC
 
 * Install =helm-swoop=
 I came across this today (<2017-04-21 Fri>) and just had to try it out.  Some
 docs can be found here: https://github.com/ShingoFukuyama/helm-swoop
 #+BEGIN_SRC elisp
-  (pc helm-swoop
-    (:bind (( "M-s M-s" . helm-swoop)))
-    (:post-install
-     ;; (evil-leader/set-key
-     ;;   "s" 'helm-swoop)
-     ))
+  (use-package helm-swoop
+    :bind (( "M-s M-s" . helm-swoop)))
 #+END_SRC
 * Install and configure =helm-gtags= for C(++) development
+  :PROPERTIES:
+  :header-args: :tangle no
+  :END:
+
 Helm can apparently be really cool for C++ (well, as cool as C++ can get) if
 used with GNU global.  Here we set it up to do so.
 
@@ -2519,10 +2571,10 @@ This alone is also a reason to switch to Emacs.  It takes undo to a whole new
 level.
 
 #+BEGIN_SRC elisp
-  (pc undo-tree
-    (:post-install
-     (global-undo-tree-mode 1)
-     (diminish 'undo-tree-mode)))
+  (use-package undo-tree
+    :config
+    (global-undo-tree-mode 1)
+    :diminish undo-tree-mode)
 #+END_SRC
 
 * Install and configure Emacs for clojure
@@ -2530,14 +2582,16 @@ level.
 ** Install =clojure-mode=
 
 #+BEGIN_SRC elisp
-  (pc clojure-mode)
+  (use-package clojure-mode
+    :commands clojure-mode)
 #+END_SRC
 
 ** Install =cider=
 Cider is like SLIME and geiser, but for clojure.
 
 #+BEGIN_SRC elisp
-  (pc cider)
+  (use-package cider
+    :commands cider)
 #+END_SRC
 
 * Install and configure =projectile=
@@ -2546,32 +2600,30 @@ Projectile can figure out where a project is by looking for typical files and
 directories (like .git).
 
 #+BEGIN_SRC elisp
-  (pc projectile
-    (:post-install
-     (projectile-mode)
-     ;; (define-key projectile-mode-map (kbd "s-M-p") 'projectile-command-map)
-     ))
+  (use-package projectile
+    :config
+    (projectile-mode))
 
-  (pc helm-projectile
-    (:post-install
-     (define-key projectile-mode-map (kbd "s-h") 'helm-projectile)))
+  (use-package helm-projectile
+    :config
+    (define-key projectile-mode-map (kbd "s-h") 'helm-projectile))
 #+END_SRC
 
 * Install and configure =helm-ag=
+  :PROPERTIES:
+  :header-args: :tangle no
+  :END:
+I’ll defer loading this until I know what I want it for and how to delay it.
 #+BEGIN_SRC elisp
-  (pc helm-ag
-    (:post-install
-     ;; (evil-leader/set-key
-     ;;   "i" 'helm-do-ag-project-root)
-     ))
+  (use-package helm-ag)
 #+END_SRC
 * Make parentheses less prominent
 I use =global-paren-face-mode= to make parentheses stand out a little less.
 
 #+BEGIN_SRC elisp
-  (pc paren-face
-    (:post-install
-     (global-paren-face-mode 1)))
+  (use-package paren-face
+    :config
+    (global-paren-face-mode 1))
 #+END_SRC
 
 * Install =w3m=
@@ -2580,7 +2632,8 @@ Windows.
 
 #+BEGIN_SRC elisp
   (condition-case e
-      (pc w3m)
+      (use-package w3m
+        :commands w3m)
     (error
      (warn "installing w3m failed: %s" (error-message-string e))))
 #+END_SRC
@@ -2592,38 +2645,39 @@ works much better than RSS in gnus.
 The feeds can also be entered here.
 
 #+BEGIN_SRC elisp
-  (pc elfeed
-    (:post-install
-     (setf elfeed-feeds
-           '(("http://endlessparentheses.com/atom.xml"
-              endlessparentheses blog emacs)
-             ("http://oremacs.com/atom.xml" oremacs blog emacs)
-             ("http://emacsredux.com/atom.xml" emacsredux blog emacs)
-             ("http://bitstacker.soup.io/rss" bitstacker)
-             ("http://www.copenhagenize.com/feeds/posts/default"
-              copenhagenize bike blog)
-             ("https://feeds.feedburner.com/blogspot/rkEL" der-postillon)
-             ("https://www.eine-zeitung.net/feed/" eine-zeitung)
-             ("https://feeds2.feedburner.com/gbo-zitate" gbo)
-             ("http://ibash.de/neueste-zitate.xml" ibash)
-             ("http://itstartedwithafight.de/feed/" itstartedwithafight bike blog)
-             ("http://irreal.org/blog/?feed=rss2" irreal blog emacs)
-             ("https://www.heise.de/developer/rss/news-atom.xml" heise-developer
-              heise)
-             ("https://www.heise.de/netze/rss/netze-atom.xml" heise-netze heise)
-             ("https://www.heise.de/security/news/news-atom.xml" heise-security
-              heise)
-             ("https://www.heise.de/tp/news-atom.xml" telepolis heise)
-             ("http://cre.fm/feed/opus/" cre podcast)
-             ("https://xkcd.com/rss.xml" xkcd webcomic)
-             ("https://www.tagesschau.de/xml/rss2" tagesschau news)
-             ("https://wingolog.org/feed/atom" wingolog blog)
-             ("http://howardism.org/index.xml" howardism blog emacs)
-             ("http://nullprogram.com/feed/" nullprogram blog emacs)
-             ("http://busy-streets.de/feed/" blog busy-streets bike)
-             ("http://cestlaz.github.io/rss.xml" blog emacs cestlaz zamansky)
-             ("https://www.archlinux.org/feeds/news/" blog archlinux)
-             ("http://pragmaticemacs.com/feed/" blog emacs pragmaticemacs)))))
+  (use-package elfeed
+    :commands elfeed
+    :config
+    (setf elfeed-feeds
+          '(("http://endlessparentheses.com/atom.xml"
+             endlessparentheses blog emacs)
+            ("http://oremacs.com/atom.xml" oremacs blog emacs)
+            ("http://emacsredux.com/atom.xml" emacsredux blog emacs)
+            ("http://bitstacker.soup.io/rss" bitstacker)
+            ("http://www.copenhagenize.com/feeds/posts/default"
+             copenhagenize bike blog)
+            ("https://feeds.feedburner.com/blogspot/rkEL" der-postillon)
+            ("https://www.eine-zeitung.net/feed/" eine-zeitung)
+            ("https://feeds2.feedburner.com/gbo-zitate" gbo)
+            ("http://ibash.de/neueste-zitate.xml" ibash)
+            ("http://itstartedwithafight.de/feed/" itstartedwithafight bike blog)
+            ("http://irreal.org/blog/?feed=rss2" irreal blog emacs)
+            ("https://www.heise.de/developer/rss/news-atom.xml" heise-developer
+             heise)
+            ("https://www.heise.de/netze/rss/netze-atom.xml" heise-netze heise)
+            ("https://www.heise.de/security/news/news-atom.xml" heise-security
+             heise)
+            ("https://www.heise.de/tp/news-atom.xml" telepolis heise)
+            ("http://cre.fm/feed/opus/" cre podcast)
+            ("https://xkcd.com/rss.xml" xkcd webcomic)
+            ("https://www.tagesschau.de/xml/rss2" tagesschau news)
+            ("https://wingolog.org/feed/atom" wingolog blog)
+            ("http://howardism.org/index.xml" howardism blog emacs)
+            ("http://nullprogram.com/feed/" nullprogram blog emacs)
+            ("http://busy-streets.de/feed/" blog busy-streets bike)
+            ("http://cestlaz.github.io/rss.xml" blog emacs cestlaz zamansky)
+            ("https://www.archlinux.org/feeds/news/" blog archlinux)
+            ("http://pragmaticemacs.com/feed/" blog emacs pragmaticemacs))))
 #+END_SRC
 
 ** Make elfeed be in emacs state by default
@@ -2642,16 +2696,24 @@ set of evil bindings, but for now, emacs mode should suffice.
 Avy can be used to jump to a position which is visible in the current window.
 
 #+BEGIN_SRC elisp
-  (pc avy
-    (:post-install
-     (global-set-key
-      (kbd "M-\"")
-      (defhydra hydra-avy (:color teal)
-        "avy-goto"
-        ("c" avy-goto-char "char")
-        ("2" avy-goto-char-2 "char-2")
-        ("g" avy-goto-line "line")
-        ("w" avy-goto-word-1 "word")))))
+  (use-package avy
+    ;; (:post-install
+    ;;  (global-set-key
+    ;;   (kbd "M-\"")
+    ;;   (defhydra hydra-avy (:color teal)
+    ;;     "avy-goto"
+    ;;     ("c" avy-goto-char "char")
+    ;;     ("2" avy-goto-char-2 "char-2")
+    ;;     ("g" avy-goto-line "line")
+    ;;     ("w" avy-goto-word-1 "word"))))
+    :config
+    (defhydra hydra-avy (:color teal)
+      "avy-goto"
+      ("c" avy-goto-char "char")
+      ("2" avy-goto-char-2 "char-2")
+      ("g" avy-goto-line "line")
+      ("w" avy-goto-word-1 "word"))
+    :bind (("M-\"" . hydra-avy/body)))
 
 #+END_SRC
 
@@ -2669,13 +2731,16 @@ At the very least, we need =haskell-mode=, otherwise we can’t properly edit
 files.
 
 #+BEGIN_SRC elisp
-  (pc haskell-mode)
+  (use-package haskell-mode
+    :mode "\\.hs"
+    :mode "\\.lhs")
 #+END_SRC
 
 I also want to try flycheck for haskell:
 
 #+BEGIN_SRC elisp
-  (pc flycheck-haskell)
+  (use-package flycheck-haskell
+    :after haskell-mode)
 #+END_SRC
 * Install =lua-mode=
 Lua mode is needed for computercraft.
@@ -2684,14 +2749,18 @@ Luckily, files in a computer inside of computercraft also exist in the
 filesystem outside of minecraft/feed the beast.
 
 #+BEGIN_SRC elisp
-  (pc lua-mode)
+  (use-package lua-mode
+    :mode "\\.lua")
 #+END_SRC
 * Install and require =tramp-term=
 Apparently, tramp-term integrates a remote ssh session with TRAMP.
 #+BEGIN_SRC elisp
-  (pc tramp-term)
+  (use-package tramp-term)
 #+END_SRC
 * Install =fuel= in order to experiment with factor
+  :PROPERTIES:
+  :header-args: :tangle no
+  :END:
 #+BEGIN_SRC elisp
   (pc fuel
     (:require nil)
@@ -2701,6 +2770,9 @@ Apparently, tramp-term integrates a remote ssh session with TRAMP.
                                                        (getenv "HOME"))))
 #+END_SRC
 * Install and configure yasnippet for C++ mode
+  :PROPERTIES:
+  :header-args: :tangle no
+  :END:
 #+BEGIN_SRC elisp
   (pc yasnippet
     (:postinstall
@@ -2765,13 +2837,18 @@ default.
 #+END_SRC
 * Install =cmake-mode=
   #+BEGIN_SRC elisp
-    (pc cmake-mode)
+    (use-package cmake-mode
+      :commands cmake-mode)
   #+END_SRC
 * Install =protobuf-mode=
   #+BEGIN_SRC elisp
-    (pc protobuf-mode)
+    (use-package protobuf-mode
+      :mode "\\.pbf")
   #+END_SRC
 * Install go-mode and assorted packages
+  :PROPERTIES:
+  :header-args: :tangle no
+  :END:
 I want to try out golang, I’ll probably not use it, but hey.
 
 #+BEGIN_SRC elisp
@@ -2790,16 +2867,19 @@ I want to try out golang, I’ll probably not use it, but hey.
 ** Install =rust-mode=
 This one is obvious, isn’t it?
 #+BEGIN_SRC elisp
-  (pc rust-mode)
+  (use-package rust-mode
+    :mode "\\.rs")
 #+END_SRC
 ** Install =cargo=
 This one is for editing cargo files
 #+BEGIN_SRC elisp
-  (pc cargo)
+  (use-package cargo
+    :mode "Cargo.toml")
 #+END_SRC
 ** Install =flycheck-rust=
 #+BEGIN_SRC elisp
-  (pc flycheck-rust)
+  (use-package flycheck-rust
+    :after rust-mode)
 #+END_SRC
 * Use chromium (or chromium-browser?)
 #+BEGIN_SRC elisp
@@ -3063,9 +3143,9 @@ Emacs can also provide an HTTP(?) edit server, so chromium can use it with “Ed
 with Emacs”.
 
 #+BEGIN_SRC elisp
-  (pc edit-server
-    (:post-install
-     (edit-server-start)))
+  (use-package edit-server
+    :config
+    (edit-server-start))
 #+END_SRC
 * Boot up with our literate config
 Using literate programming with Org Mode to configure Emacs is fine, but it has
