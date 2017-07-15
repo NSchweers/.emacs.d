@@ -88,8 +88,8 @@
      "\\tolerance=1000")))
  '(package-selected-packages
    (quote
-    (helm-company slime-company notmuch go-mode projectile clojure-mode helm auto-complete hydra dash async graphviz-dot-mode orgit w3m undo-tree tramp-term tracwiki-mode shell-command protobuf-mode paren-face multiple-cursors markdown-mode magit lua-mode lispy json-mode js2-mode htmlize helm-swoop helm-projectile helm-gtags helm-ag guide-key go-scratch go-eldoc fuel f expand-region elpy elfeed edit-server diminish dash-functional cmake-mode cider browse-kill-ring bbdb bash-completion auctex ace-link ac-slime)))
-'(rcirc-default-nick "schweers")
+    (company flycheck-rust cargo rust-mode flycheck-haskell haskell-mode helm-company slime-company which-key use-package go-mode projectile clojure-mode helm auto-complete hydra dash async graphviz-dot-mode orgit notmuch w3m undo-tree tramp-term tracwiki-mode shell-command protobuf-mode paren-face multiple-cursors markdown-mode magit lua-mode lispy json-mode js2-mode htmlize helm-swoop helm-projectile helm-gtags helm-ag guide-key go-scratch go-eldoc fuel f expand-region elpy elfeed edit-server diminish dash-functional cmake-mode cider browse-kill-ring bbdb bash-completion auctex ace-link ac-slime)))
+ '(rcirc-default-nick "schweers")
  '(rcirc-default-user-name "schweers")
  '(rcirc-fill-column (quote frame-width))
  '(rcirc-server-alist
