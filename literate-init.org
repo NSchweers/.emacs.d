@@ -2240,7 +2240,10 @@ moved this file to ~/.emacs_data/gnus.el.
 #+BEGIN_SRC elisp
   (load (expand-file-name
          "gnus.el"
-         (expand-file-name ".emacs_data" (getenv "HOME"))))
+         (expand-file-name (if (string= system-name "spinetail")
+                               ".emacs_data_oa"
+                             ".emacs_data")
+                           (getenv "HOME"))))
 
 #+END_SRC
 
@@ -2363,6 +2366,7 @@ interacting with the elisp VM underlying Emacs!
            (setf inferior-lisp-program "sbcl --dynamic-space-size 2048"))
           ((eq system-type 'gnu/linux)
            (setf inferior-lisp-program "sbcl --dynamic-space-size 12000")))
+    ;; (setf inferior-lisp-program "/home/schweers/code/src/ccl/lx86cl64")
     ;; (add-to-list 'slime-contribs 'slime-fancy)
 
     ;; (require 'ac-slime)
