@@ -756,7 +756,9 @@ necessary.  For details, see the docstring.
     (use-package paradox
       :init (setf paradox-lines-per-entry 2)
       :demand t
-      :config (paradox-enable))
+      :config
+      (setf paradox-execute-asynchronously t)
+      (paradox-enable))
   #+END_SRC
 * Install and configure async (for dired)
 It can be found here: https://github.com/jwiegley/emacs-async
@@ -2940,17 +2942,16 @@ without configuration.  I especially need this for C(++).  Lisp can do this way
 better anyway be virtue of having a running image.
 #+BEGIN_SRC elisp
   (use-package dumb-jump
+    :mode
     :config (dumb-jump-mode)
-    :bind (:map c++-mode-map
-                ("M-." . dumb-jump-go)
-                ("M-," . dumb-jump-back)
-                ("C-M-g" . dumb-jump-go-other-window)
-                :map c-mode-map
-                ("M-." . dumb-jump-go)
-                ("M-," . dumb-jump-back)
-                ("C-M-g" . dumb-jump-go-other-window)))
+    :bind (("M-." . dumb-jump-go)
+           ("M-," . dumb-jump-back)
+           ("C-M-g" . dumb-jump-go-other-window)))
 #+END_SRC
 * Use chromium (or chromium-browser?)
+  :PROPERTIES:
+  :header-args: :tangle no
+  :END:
 #+BEGIN_SRC elisp
   (setf browse-url-browser-function #'browse-url-chromium
         browse-url-generic-program "chromium")
