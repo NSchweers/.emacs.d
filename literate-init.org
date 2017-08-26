@@ -2618,7 +2618,7 @@ access to it.
 In case I want to use forth again.
 
 #+BEGIN_SRC elisp
-  (load "/usr/share/emacs/site-lisp/gforth.el")
+  (use-package forth-mode)
 #+END_SRC
 
 * Install and configure =undo-tree=
