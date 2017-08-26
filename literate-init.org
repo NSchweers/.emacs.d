@@ -751,6 +751,15 @@ necessary.  For details, see the docstring.
                    (cl-loop for c in (cadr bind) collect
                             `(global-set-key (kbd ,(car c)) ',(cdr c)))))))))
 #+END_SRC
+* Install and enable paradox
+  #+BEGIN_SRC elisp
+    (use-package paradox
+      :init (setf paradox-lines-per-entry 2)
+      :demand t
+      :config
+      (setf paradox-execute-asynchronously t)
+      (paradox-enable))
+  #+END_SRC
 * Install and configure async (for dired)
 It can be found here: https://github.com/jwiegley/emacs-async
 
@@ -1696,7 +1705,10 @@ it out.
   (use-package slime-company
     :after slime)
   (use-package helm-company
-    :after slime)
+    :bind (:map company-mode-map
+                ("M-S-SPC" . helm-company)
+                :map company-active-map
+                ("M-S-SPC" . helm-company)))
 #+END_SRC
 * Configure =magit=
 As far as I know, magit is simply the best interface to git.  As I normally
@@ -2366,6 +2378,43 @@ interacting with the elisp VM underlying Emacs!
            (setf inferior-lisp-program "sbcl --dynamic-space-size 2048"))
           ((eq system-type 'gnu/linux)
            (setf inferior-lisp-program "sbcl --dynamic-space-size 12000")))
+    (slime-setup '(slime-repl slime-scratch slime-fancy slime-tramp))
+    (add-to-list 'slime-filename-translations
+                 (slime-create-filename-translator
+                  :machine-instance "routingimport"
+                  :remote-host "routingimport.alpserver.de"
+                  :username "nsc"))
+    (defun helm-slime-repl-history ()
+      "helm for SLIME repl history."
+      (interactive)
+      (let* ((end (point))
+             (beg (save-excursion (move-beginning-of-line 1) (point)))
+             (input (buffer-substring beg end))
+             ;; slime-repl-input-history is buffer local, so we must not be in a
+             ;; helm buffer when accessing the variable.
+             (history slime-repl-input-history)
+             flag-empty)
+        (when (eq beg end)
+          (insert " ")
+          (setq flag-empty t)
+          (setq end (point)))
+        (unwind-protect
+            (with-helm-show-completion beg end
+                                       (helm :sources (helm-build-sync-source "SLIME repl history"
+                                                        :candidates history
+                                                        :action (lambda (candidate)
+                                                                  (slime-repl-kill-input)
+                                                                  (insert candidate)))
+                                             ;; (helm-make-source "Eshell history"
+                                             ;;     'helm-eshell-history-source)
+                                             :buffer "*helm SLIME repl history*"
+                                             :resume 'noresume
+                                             :input input))
+          (when (and flag-empty
+                     (looking-back " " (1- (point))))
+            (delete-char -1)))))
+
+    (define-key slime-repl-mode-map (kbd "M-r") 'helm-slime-repl-history)
     ;; (setf inferior-lisp-program "/home/schweers/code/src/ccl/lx86cl64")
     ;; (add-to-list 'slime-contribs 'slime-fancy)
 
@@ -2373,8 +2422,7 @@ interacting with the elisp VM underlying Emacs!
     ;; (add-hook 'slime-mode-hook 'set-up-slime-ac)
     ;; (add-hook 'slime-repl-mode-hook 'set-up-slime-ac)
     ;; (add-to-list 'ac-modes 'slime-repl-mode)
-
-    (slime-setup '(slime-repl slime-scratch slime-fancy)))
+    )
 #+END_SRC
 
 * Configure Scheme
@@ -2473,8 +2521,11 @@ awesome, even though it is a bit intrusive.
   (use-package helm
     :config
     (require 'helm-config)
-    (setq helm-man-or-woman-function 'woman)
-    (setq helm-man-or-woman-function 'Man-getpage-in-background)
+    (setf helm-man-or-woman-function 'woman
+          helm-man-or-woman-function 'Man-getpage-in-background
+          ;; setting helm-buffer-max-length to nil means that helm will use the
+          ;; length of the longest buffer name.
+          helm-buffer-max-length nil)
     (helm-mode 1)
     (provide 'setup-helm)
     (diminish 'helm-mode)
@@ -2885,9 +2936,25 @@ This one is for editing cargo files
   (use-package flycheck-rust
     :after rust-mode)
 #+END_SRC
-* Use chromium (or chromium-browser?)
+* Install and configure dumb-jump
+This is supposed to give me pleasant go to definition for several languages
+without configuration.  I especially need this for C(++).  Lisp can do this way
+better anyway be virtue of having a running image.
 #+BEGIN_SRC elisp
-  (setf browse-url-browser-function #'browse-url-chromium)
+  (use-package dumb-jump
+    :mode
+    :config (dumb-jump-mode)
+    :bind (("M-." . dumb-jump-go)
+           ("M-," . dumb-jump-back)
+           ("C-M-g" . dumb-jump-go-other-window)))
+#+END_SRC
+* Use chromium (or chromium-browser?)
+  :PROPERTIES:
+  :header-args: :tangle no
+  :END:
+#+BEGIN_SRC elisp
+  (setf browse-url-browser-function #'browse-url-chromium
+        browse-url-generic-program "chromium")
 #+END_SRC
 * Define a minor mode for keybindings
 I use a separate minor mode which does nothing but bind keys.  This has the

@@ -8,6 +8,9 @@
  '(auth-sources (quote ("~/.emacs_data/authinfo.gpg")))
  '(calendar-week-start-day 1)
  '(collection-roots (quote ("/mnt/data/video/serien/")))
+ '(company-backends
+   (quote
+    (company-bbdb company-nxml company-css company-eclim company-semantic company-clang company-xcode company-cmake company-capf company-files company-oddmuse company-dabbrev)))
  '(elmo-imap4-default-authenticate-type (quote clear))
  '(erc-autojoin-channels-alist nil)
  '(erc-autojoin-mode t)
@@ -36,6 +39,7 @@
  '(erc-track-minor-mode t)
  '(erc-track-mode t)
  '(gc-cons-percentage 0.3)
+ '(global-company-mode t)
  '(gnus-home-directory "~/.emacs.d/")
  '(haskell-mode-hook (quote (turn-on-haskell-indentation)))
  '(jabber-account-list
@@ -88,7 +92,8 @@
      "\\tolerance=1000")))
  '(package-selected-packages
    (quote
-    (company flycheck-rust cargo rust-mode flycheck-haskell haskell-mode helm-company slime-company which-key use-package go-mode projectile clojure-mode helm auto-complete hydra dash async graphviz-dot-mode orgit notmuch w3m undo-tree tramp-term tracwiki-mode shell-command protobuf-mode paren-face multiple-cursors markdown-mode magit lua-mode lispy json-mode js2-mode htmlize helm-swoop helm-projectile helm-gtags helm-ag guide-key go-scratch go-eldoc fuel f expand-region elpy elfeed edit-server diminish dash-functional cmake-mode cider browse-kill-ring bbdb bash-completion auctex ace-link ac-slime)))
+    (dumb-jump paradox company flycheck-rust cargo rust-mode flycheck-haskell haskell-mode helm-company slime-company which-key use-package go-mode projectile clojure-mode helm auto-complete hydra dash async graphviz-dot-mode orgit notmuch w3m undo-tree tramp-term tracwiki-mode shell-command protobuf-mode paren-face multiple-cursors markdown-mode magit lua-mode lispy json-mode js2-mode htmlize helm-swoop helm-projectile helm-gtags helm-ag guide-key go-scratch go-eldoc fuel f expand-region elpy elfeed edit-server diminish dash-functional cmake-mode cider browse-kill-ring bbdb bash-completion auctex ace-link ac-slime)))
+ '(paradox-github-token t)
  '(rcirc-default-nick "schweers")
  '(rcirc-default-user-name "schweers")
  '(rcirc-fill-column (quote frame-width))
