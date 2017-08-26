@@ -2618,7 +2618,17 @@ access to it.
 In case I want to use forth again.
 
 #+BEGIN_SRC elisp
-  (use-package forth-mode)
+  (use-package forth-mode
+    :config
+    (defun forth-eval-defun ()
+      (interactive)
+      (save-mark-and-excursion
+       (mark-defun)
+       (forth-eval-region (min (point) (mark))
+                          (max (point) (mark)))))
+    :bind (:map forth-mode-map
+                ("C-M-x" . forth-eval-defun))
+    :mode "\\.fs\\'")
 #+END_SRC
 
 * Install and configure =undo-tree=
