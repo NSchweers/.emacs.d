@@ -2044,6 +2044,11 @@ good.
 #+BEGIN_SRC elisp
   (setf org-clock-into-drawer t)
 #+END_SRC
+** Make clocks persistent
+#+BEGIN_SRC elisp
+  (setf org-clock-persist 'history)
+  (org-clock-persistence-insinuate)
+#+END_SRC
 ** Allow org-babel to evaluate shell scripts
 For security reasons, org-babel normally doesn’t execute shell scripts.
 
