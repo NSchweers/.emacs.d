@@ -92,7 +92,7 @@
      "\\tolerance=1000")))
  '(package-selected-packages
    (quote
-    (forth-mode dumb-jump paradox company flycheck-rust cargo rust-mode flycheck-haskell haskell-mode helm-company slime-company which-key use-package go-mode projectile clojure-mode helm auto-complete hydra dash async graphviz-dot-mode orgit notmuch w3m undo-tree tramp-term tracwiki-mode shell-command protobuf-mode paren-face multiple-cursors markdown-mode magit lua-mode lispy json-mode js2-mode htmlize helm-swoop helm-projectile helm-gtags helm-ag guide-key go-scratch go-eldoc fuel f expand-region elpy elfeed edit-server diminish dash-functional cmake-mode cider browse-kill-ring bbdb bash-completion auctex ace-link ac-slime)))
+    (org-plus-contrib edit-server dumb-jump flycheck-rust cargo rust-mode protobuf-mode cmake-mode tramp-term lua-mode flycheck-haskell haskell-mode elfeed w3m paren-face helm-projectile projectile cider clojure-mode undo-tree helm-swoop expand-region js2-mode browse-kill-ring ace-link multiple-cursors notmuch bbdb auctex markdown-mode graphviz-dot-mode htmlize elpy magit helm-company slime-company company lispy which-key shell-command bash-completion json-mode f dash-functional dash async paradox use-package)))
  '(paradox-github-token t)
  '(rcirc-default-nick "schweers")
  '(rcirc-default-user-name "schweers")

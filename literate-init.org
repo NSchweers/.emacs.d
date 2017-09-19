@@ -32,19 +32,28 @@ first we need to set up the packages system.
 *** Initialize the package system
     We have to initialize the package system before using it, so we do that here.
 
-    We have to =require= the package system, as it is not loaded by default.  I
-    use an alist of repositories (currently only two) which are added to the
-    package archives unless they are already present.
+    We have to =require= the package system, as it is not loaded by default.
 
     #+BEGIN_SRC elisp
       (require 'package)
-
+    #+END_SRC
+**** Add melpa and melpa-stable repositories
+     I use an alist of repositories (currently only two) which are added to the
+     package archives unless they are already present.
+    #+BEGIN_SRC elisp
       ;; Add melpa to package repos
       (dolist (m '(("melpa-stable" . "http://stable.melpa.org/packages/")
                    ("melpa" . "http://melpa.org/packages/")))
         (add-to-list 'package-archives m t))
     #+END_SRC
+**** Add Org Mode repo
+     Not only do we want to add the repository, we also want to append it (at
+     least that’s what the [[http://orgmode.org/elpa.html][website]] says).
 
+     #+BEGIN_SRC elisp
+       (add-to-list 'package-archives '("org" . "http://orgmode.org/elpa/") t)
+     #+END_SRC
+*** Initialize
     As soon as the archives have been added, the package system can be initialized.
     As a poor man’s check, I look for a file named after one of the archives.  If it
     doesn’t (yet) exist, the archives have to be fetched.
@@ -1783,9 +1792,26 @@ this is a little weird when using more than one frame.
           aw-keys '(?b ?n ?r ?s ?g ?o ?e ?i ?t ?c)))
 #+END_SRC
 
-* Setup Org Mode
+* Install and Setup Org Mode
 As Org Mode is a huge application in its own right, it needs a lot of
 configuration.
+
+** Installation
+As Emacs ships with an almost ancient version of Org Mode, I want a newer
+version.  Luckily Org Mode has an extra elpa repository, which I have set up
+[[*Add%20Org%20Mode%20repo][here]].
+
+Normally I’d just put my setup into use-package, but as I already have a lot of
+settings spread out over this file, I want it to stay that way.  Plus, I
+/always/ load Org Mode anyway, so there is no point to lazy loading.
+
+#+BEGIN_SRC elisp
+  (use-package org
+    :ensure org-plus-contrib
+    :mode (("\\.org\\" . org-mode)
+           ("\\.txt\\" . org-mode))
+    :demand t)
+#+END_SRC
 
 ** Setup indentation
 The first step is that I’d like Org Mode to indent when I enter a newline by
@@ -1801,21 +1827,50 @@ default.
 Also, I want the notes file which I use with org-capture to reside inside my
 .emacs.d directory.  This might as well change in the future.
 #+BEGIN_SRC elisp
-  (setf org-default-notes-file
+  (setf org-directory
         (expand-file-name (if (string= system-name "spinetail")
-                              ".emacs_data/notes.org"
-                            ".emacs_data/notes.org.gpg")
+                              ".emacs_data"
+                            ".emacs_data")
                           (getenv "HOME"))
+        org-default-notes-file
+        (expand-file-name ".emacs_data/notes.org" (getenv "HOME"))
         org-agenda-files
-        (list (expand-file-name (if (string= system-name "spinetail")
-                                    ".emacs_data/notes.org"
-                                  ".emacs_data/notes.org.gpg")
-                                (getenv "HOME"))
+        ;; "notes.org"
+        ;; (directory-files org-directory nil "\\.org$")
+        (list (expand-file-name "notes.org" org-directory)
               (expand-file-name ".emacs_data_oa/notes.org"
                                 (getenv "HOME")))
+        ;; (list (expand-file-name (if (string= system-name "spinetail")
+        ;;                             ".emacs_data/notes.org"
+        ;;                           ".emacs_data/notes.org")
+        ;;                         (getenv "HOME"))
+        ;;       (expand-file-name ".emacs_data_oa/notes.org"
+        ;;                         (getenv "HOME")))
         org-special-ctrl-a/e t
         org-special-ctrl-k t
         org-special-ctrl-o t)
+#+END_SRC
+
+** Setup MobileOrg
+Apparently, one is supposed to have a staging area of some sort to which to push
+inside Emacs.
+
+#+BEGIN_SRC elisp
+  (setf org-mobile-directory "~/Nextcloud/MobileOrg")
+#+END_SRC
+
+It seems that MobileOrg pulls data into the file named by this variable.  Note
+that the file must exist.  The mobile data is appended to this file and the
+server contents is emptied.  Which I find at least weird, if not plain wrong.
+
+#+BEGIN_SRC elisp
+  (setf org-mobile-inbox-for-pull (expand-file-name "mobile.org" org-directory))
+#+END_SRC
+
+Maybe I have to set which files to sync more explicitly?
+
+#+BEGIN_SRC elisp
+  (setf org-mobile-files "notes.org")
 #+END_SRC
 
 ** Org is the new Fundamental
