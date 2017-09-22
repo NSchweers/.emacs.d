@@ -1808,8 +1808,6 @@ settings spread out over this file, I want it to stay that way.  Plus, I
 #+BEGIN_SRC elisp
   (use-package org
     :ensure org-plus-contrib
-    :mode (("\\.org\\" . org-mode)
-           ("\\.txt\\" . org-mode))
     :demand t)
 #+END_SRC
 
@@ -1830,10 +1828,11 @@ Also, I want the notes file which I use with org-capture to reside inside my
   (setf org-directory
         (expand-file-name (if (string= system-name "spinetail")
                               ".emacs_data"
-                            ".emacs_data")
+                            ;; ".emacs_data"
+                            "Nextcloud/org")
                           (getenv "HOME"))
         org-default-notes-file
-        (expand-file-name ".emacs_data/notes.org" (getenv "HOME"))
+        (expand-file-name "notes.org" org-directory)
         org-agenda-files
         ;; "notes.org"
         ;; (directory-files org-directory nil "\\.org$")
