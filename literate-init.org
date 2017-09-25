@@ -1826,11 +1826,17 @@ Also, I want the notes file which I use with org-capture to reside inside my
 .emacs.d directory.  This might as well change in the future.
 #+BEGIN_SRC elisp
   (setf org-directory
-        (expand-file-name (if (string= system-name "spinetail")
-                              ".emacs_data"
-                            ;; ".emacs_data"
-                            "Nextcloud/org")
-                          (getenv "HOME"))
+        (cond ((eq system-type 'windows-nt)
+               (expand-file-name "Nextcloud/org" (getenv "USERPROFILE")))
+              ((string= system-name "spinetail")
+               (expand-file-name ".emacs_data" (getenv "HOME")))
+              (t
+               (expand-file-name "Nextcloud/org" (getenv "HOME"))))
+        ;; (expand-file-name (if (string= system-name "spinetail")
+        ;;                       ".emacs_data"
+        ;;                     ;; ".emacs_data"
+        ;;                     "Nextcloud/org")
+        ;;                   (getenv "HOME"))
         org-default-notes-file
         (expand-file-name "notes.org" org-directory)
         org-agenda-files
@@ -3017,6 +3023,15 @@ better anyway be virtue of having a running image.
            ("M-," . dumb-jump-back)
            ("C-M-g" . dumb-jump-go-other-window)))
 #+END_SRC
+* Install =smartscan=
+  I [[file:c:/Users/schweers/Nextcloud/org/notes.org::*Look%20into%20smart%20scan,%20or%20write%20an%20alternative][wanted to do this for ages]], let’s see how it goes.
+
+  #+BEGIN_SRC elisp
+    (use-package smartscan
+      :demand t
+      :config
+      (smartscan-mode 1))
+  #+END_SRC
 * Use chromium (or chromium-browser?)
   :PROPERTIES:
   :header-args: :tangle no
