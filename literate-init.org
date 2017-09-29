@@ -349,14 +349,6 @@ stretch, so I have to use this ancient emacs24.5 like some cretin
       (save-place-mode 1)))
 #+END_SRC
 
-** Automatically refresh dired
-I want dired to do autorefresh, but be quiet about it.
-
-#+BEGIN_SRC elisp
-  (setf global-auto-revert-non-file-buffers t
-        auto-revert-verbose nil)
-#+END_SRC
-
 ** Echo keystrokes
 Normally Emacs waites for a while before showing the keys which were pressed, if
 the given keys are not sufficient to form a command (i.e. they result in a
@@ -786,9 +778,18 @@ in async mode though.
   (autoload 'dired-toggle-read-only "dired" nil t)
   (dired-async-mode 1)
 #+END_SRC
+** Automatically refresh dired
+I want dired to do autorefresh, but be quiet about it.
 
+#+BEGIN_SRC elisp
+  (setf global-auto-revert-non-file-buffers t
+        auto-revert-verbose nil)
+#+END_SRC
+
+** Enter =dired-dwim-target=
 Make dired guess a destination for file operations.  If I recall correctly, the
-directory of the buffer in =other-window= can be such a guess.
+directory of the buffer in =other-window= can be such a guess.  This can be done
+by typing `o' in a dired buffer.
 
 #+BEGIN_SRC elisp
   (setf dired-dwim-target t)
