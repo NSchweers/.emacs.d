@@ -2305,7 +2305,8 @@ basically only tell it that I’m not an American.
 #+BEGIN_SRC elisp
   (use-package bbdb
     :config
-    (setf bbdb-north-american-phone-number nil
+    (setf bbdb-file (expand-file-name "bbdb" org-directory)
+          bbdb-north-american-phone-number nil
           bbdb-phone-style nil))
 #+END_SRC
 
