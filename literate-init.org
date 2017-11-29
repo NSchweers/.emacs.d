@@ -1498,130 +1498,6 @@ with ".el".
   #+END_SRC
 
 * TODO replace evil-leader with hydra?
-* Install and configure evil mode
-  :PROPERTIES:
-  :header-args: :tangle no
-  :END:
-Evil provides a layer on top of Emacs to emulate vi like keybindings and modes
-(called “states” in Evil parlance).
-
-There is a special evil package which should be loaded before evil itself, as it
-affects initial buffers like the scratch buffer.  For this reason we install
-evil-leader before evil itself.
-
-#+BEGIN_SRC elisp
-  (pc evil
-    (:post-install
-     (require 'evil)
-     (evil-mode 1)))
-
-  (pc evil-leader
-    (:post-install
-     (evil-leader/set-leader "<SPC>")
-     (evil-leader/set-key
-       "<SPC>" 'helm-M-x
-       "f" 'helm-find-files
-       "b" 'helm-mini
-       "B" 'ibuffer-other-window
-       "w2" 'split-window-below
-       "w3" 'split-window-right
-       "wf" 'helm-find-files-other-window
-       "wb" 'switch-to-buffer-other-window
-       "wq" 'kill-this-buffer
-       "g" 'magit-status
-       "ha" 'apropos-command
-       "hb" 'describe-bindings
-       "hf" 'describe-function
-       "hv" 'describe-variable
-       "hk" 'describe-key
-       "ho" 'describe-symbol
-       "hi" 'info
-       "k" 'schweers/kill-buffer
-       "wo" 'ace-window)
-     (define-key evil-motion-state-map (kbd ",") nil)
-     (global-evil-leader-mode 1)))
-#+END_SRC
-
-Evil itself is all well and good for the novice user, yet some modes use rather
-different keybindings, hence need extra evil bindings.  This is where Evil
-plugins come to play.
-
-** Setup evil-lispy
-   :PROPERTIES:
-   :header-args: :tangle no
-   :END:
-Lispy uses vi-like keybindings, yet implements them in its own magical way,
-hence is by default incompatible with evil-mode.
-#+BEGIN_SRC elisp
-  (pc evil-lispy)
-#+END_SRC
-
-** Setup evil-magit
-Magit also defines its own peculiar bindings, so again another plugin is
-needed.
-
-#+BEGIN_SRC elisp
-  (pc evil-magit
-    :post-install)
-#+END_SRC
-
-** Setup evil-org
-This mode introduces several bindings, apparently mostly for headings.
-
-For some reason this code behaves in a really weird way.  When used in other
-source blocks, it seems to work just fine, but in this block, I first have to
-change to emacs state and back to normal again before the binding works as
-intended.
-
-#+BEGIN_SRC elisp
-  (pc evil-org)
-
-  (evil-leader/set-key
-    "n" 'org-capture)
-
-  (defvar *schweers/transient-km* (make-sparse-keymap))
-
-  (define-key *schweers/transient-km* (kbd ",") 'org-edit-src-exit)
-  (define-key *schweers/transient-km* (kbd ".") 'org-edit-src-abort)
-  (evil-define-key 'normal org-src-mode-map (kbd ",") *schweers/transient-km*)
-#+END_SRC
-
-** Setup Helm integration
-Without helm, life in Emacs is pretty meaningless.  Sadly, there is no readily
-installable package to integrate Evil and Helm.
-
-#+BEGIN_SRC elisp
-  (define-key evil-ex-map "b " 'helm-mini)
-  (define-key evil-ex-map "e" 'helm-find-files)
-#+END_SRC
-
-** Setup evil for info
-+Info also has rather non-standard bindings, as one does not edit text here, it
-is advisable to have evil be in emacs state.+  I’m not sure yet what to do
-here.  Time might tell.
-
-#+BEGIN_SRC elisp
-  ;; (evil-set-initial-state 'Info-mode 'emacs)
-#+END_SRC
-
-As an added bonus, add bindings for j and k in Emacs state, as these are not
-bound in info.
-
-#+BEGIN_SRC elisp
-  (define-key Info-mode-map (kbd "j") (kbd "C-n"))
-  (define-key Info-mode-map (kbd "k") (kbd "C-p"))
-#+END_SRC
-
-** Setup evil-mu4e
-   #+BEGIN_SRC elisp
-     (condition-case nil
-         (pc evil-mu4e)
-       (file-error (warn "Could not load evil-mu4e.  Have you loaded mu4e?")))
-   #+END_SRC
-
-** TODO Add evil bindings for undo-tree
-
-** TODO Add evil bindings for mark commands
 * Install and configure =guide key=
 The package =guide-key= makes it a little easier to explore prefixed
 keybindings.  The variable =guide-key/guide-key-sequence= holds a list of
@@ -1714,11 +1590,6 @@ it out.
     :init (add-hook 'after-init-hook 'global-company-mode))
   (use-package slime-company
     :after slime)
-  (use-package helm-company
-    :bind (:map company-mode-map
-                ("M-S-SPC" . helm-company)
-                :map company-active-map
-                ("M-S-SPC" . helm-company)))
 #+END_SRC
 * Configure =magit=
 As far as I know, magit is simply the best interface to git.  As I normally
@@ -2451,37 +2322,37 @@ interacting with the elisp VM underlying Emacs!
                   :machine-instance "routingimport"
                   :remote-host "routingimport.alpserver.de"
                   :username "nsc"))
-    (defun helm-slime-repl-history ()
-      "helm for SLIME repl history."
-      (interactive)
-      (let* ((end (point))
-             (beg (save-excursion (move-beginning-of-line 1) (point)))
-             (input (buffer-substring beg end))
-             ;; slime-repl-input-history is buffer local, so we must not be in a
-             ;; helm buffer when accessing the variable.
-             (history slime-repl-input-history)
-             flag-empty)
-        (when (eq beg end)
-          (insert " ")
-          (setq flag-empty t)
-          (setq end (point)))
-        (unwind-protect
-            (with-helm-show-completion beg end
-                                       (helm :sources (helm-build-sync-source "SLIME repl history"
-                                                        :candidates history
-                                                        :action (lambda (candidate)
-                                                                  (slime-repl-kill-input)
-                                                                  (insert candidate)))
-                                             ;; (helm-make-source "Eshell history"
-                                             ;;     'helm-eshell-history-source)
-                                             :buffer "*helm SLIME repl history*"
-                                             :resume 'noresume
-                                             :input input))
-          (when (and flag-empty
-                     (looking-back " " (1- (point))))
-            (delete-char -1)))))
+    ;; (defun helm-slime-repl-history ()
+    ;;   "helm for SLIME repl history."
+    ;;   (interactive)
+    ;;   (let* ((end (point))
+    ;;          (beg (save-excursion (move-beginning-of-line 1) (point)))
+    ;;          (input (buffer-substring beg end))
+    ;;          ;; slime-repl-input-history is buffer local, so we must not be in a
+    ;;          ;; helm buffer when accessing the variable.
+    ;;          (history slime-repl-input-history)
+    ;;          flag-empty)
+    ;;     (when (eq beg end)
+    ;;       (insert " ")
+    ;;       (setq flag-empty t)
+    ;;       (setq end (point)))
+    ;;     (unwind-protect
+    ;;         (with-helm-show-completion beg end
+    ;;                                    (helm :sources (helm-build-sync-source "SLIME repl history"
+    ;;                                                     :candidates history
+    ;;                                                     :action (lambda (candidate)
+    ;;                                                               (slime-repl-kill-input)
+    ;;                                                               (insert candidate)))
+    ;;                                          ;; (helm-make-source "Eshell history"
+    ;;                                          ;;     'helm-eshell-history-source)
+    ;;                                          :buffer "*helm SLIME repl history*"
+    ;;                                          :resume 'noresume
+    ;;                                          :input input))
+    ;;       (when (and flag-empty
+    ;;                  (looking-back " " (1- (point))))
+    ;;         (delete-char -1)))))
 
-    (define-key slime-repl-mode-map (kbd "M-r") 'helm-slime-repl-history)
+    ;; (define-key slime-repl-mode-map (kbd "M-r") 'helm-slime-repl-history)
     ;; (setf inferior-lisp-program "/home/schweers/code/src/ccl/lx86cl64")
     ;; (add-to-list 'slime-contribs 'slime-fancy)
 
@@ -2579,6 +2450,9 @@ have not yet gotten it to work for =emacs-lisp-mode=.
 #+END_SRC
 
 * Install and configure =helm=
+  :PROPERTIES:
+  :header-args: :tangle no
+  :END:
 This is a package which redefines completion.  When I first used Emacs, I was in
 awe at how awesome the completion was.  Then I discovered Ido and was stunned
 again.  Then I discovered helm and was stunned yet once more.  It really is that
@@ -2604,6 +2478,9 @@ awesome, even though it is a bit intrusive.
 #+END_SRC
 
 * Install =helm-swoop=
+  :PROPERTIES:
+  :header-args: :tangle no
+  :END:
 I came across this today (<2017-04-21 Fri>) and just had to try it out.  Some
 docs can be found here: https://github.com/ShingoFukuyama/helm-swoop
 #+BEGIN_SRC elisp
@@ -2645,6 +2522,36 @@ used with GNU global.  Here we set it up to do so.
      (define-key helm-gtags-mode-map (kbd "C-c <") 'helm-gtags-previous-history)
      (define-key helm-gtags-mode-map (kbd "C-c >")
        'helm-gtags-next-history)))
+#+END_SRC
+* Install and configure =ivy=
+Ivy and friends seem to be a nice alternative to =helm= which I want to try out.
+
+#+BEGIN_SRC elisp
+  (use-package counsel)
+  (use-package ivy-hydra)
+  (use-package flx)
+  (use-package ivy
+    :config
+    (setf ivy-use-virtual-buffers t
+          ivy-count-format "(%d/%d) "
+          ivy-wrap t)
+    (ivy-mode 1)
+    :bind (("C-s" . swiper)
+           ("M-x" . counsel-M-x)
+           ("C-x C-f" . counsel-find-file)
+           ("<f1> f" . counsel-describe-function)
+           ("<f1> v" . counsel-describe-variable)
+           ("<f1> l" . counsel-find-library)
+           ("<f2> i" . counsel-info-lookup-symbol)
+           ("<f2> u" . counsel-unicode-char)
+
+           ("C-c g" . counsel-git)
+           ("C-c j" . counsel-git-grep)
+           ("C-c k" . counsel-ag)
+           ("C-x l" . counsel-locate)
+           ("C-S-o" . counsel-rhythmbox)
+
+           ("C-c C-r" . ivy-resume)))
 #+END_SRC
 * Make it easy to look something up in the CL Hyperspec
 The hyperspec it /the/ definitive resource on Common Lisp, so I want quick
@@ -2735,10 +2642,6 @@ directories (like .git).
   (use-package projectile
     :config
     (projectile-mode))
-
-  (use-package helm-projectile
-    :config
-    (define-key projectile-mode-map (kbd "s-h") 'helm-projectile))
 #+END_SRC
 
 * Install and configure =helm-ag=
@@ -3233,7 +3136,7 @@ advantage that other modes cannot quite as easily overwrite my keybindings.
       ("l" org-toggle-link-display "Org: toggle link display")
       ("q" nil "quit")))
 
-  (define-key *schweers-bindings* (kbd "M-o") 'occur)
+  ;; (define-key *schweers-bindings* (kbd "M-o") 'occur)
   (define-key *schweers-bindings* (kbd "C-x C-b") 'ibuffer-other-window)
   (define-key *schweers-bindings* (kbd "M-j") 'eval-print-last-sexp)
   (define-key *schweers-bindings* (kbd "C-x C-SPC") 'helm-all-mark-rings)
