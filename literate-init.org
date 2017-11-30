@@ -2950,7 +2950,6 @@ without configuration.  I especially need this for C(++).  Lisp can do this way
 better anyway be virtue of having a running image.
 #+BEGIN_SRC elisp
   (use-package dumb-jump
-    :mode
     :config (dumb-jump-mode)
     :bind (("M-." . dumb-jump-go)
            ("M-," . dumb-jump-back)

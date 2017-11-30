@@ -91,7 +91,8 @@
      ("" "hyperref" nil)
      "\\tolerance=1000")))
  '(package-selected-packages
-   (quote))
+   (quote
+    (edit-server pdf-tools smartscan dumb-jump flycheck-rust cargo rust-mode protobuf-mode cmake-mode tramp-term lua-mode flycheck-haskell haskell-mode elfeed w3m paren-face projectile cider clojure-mode undo-tree flx ivy-hydra counsel diminish expand-region js2-mode browse-kill-ring ace-link multiple-cursors notmuch bbdb auctex markdown-mode graphviz-dot-mode htmlize which-key use-package slime-company shell-command paradox org-plus-contrib magit lispy json-mode f elpy dash-functional bash-completion)))
  '(paradox-github-token t)
  '(rcirc-default-nick "schweers")
  '(rcirc-default-user-name "schweers")
