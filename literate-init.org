@@ -6,6 +6,13 @@
 #+TITLE: An Emacs Configuration
 #+AUTHOR: Nathanael Schweers
 
+* Workaround for a security bug
+#+BEGIN_SRC elisp
+  ;; Mitigate Bug#28350 (security) in Emacs 25.2 and earlier.
+  (eval-after-load "enriched"
+    '(defun enriched-decode-display-prop (start end &optional param)
+       (list start end)))
+#+END_SRC
 * Early setup
 Some things just have to happen really early.
 ** Activate lexical scope
@@ -766,7 +773,6 @@ It can be found here: https://github.com/jwiegley/emacs-async
 
 #+BEGIN_SRC elisp
   (use-package async)
-
 #+END_SRC
 
 * Configure =dired=
@@ -1663,6 +1669,7 @@ lispy, which is an alternative to paredit.
     (setf lispy-delete-backward-recenter nil))
 
   (use-package lispy
+    :demand t
     :bind (("C-M-1" . lispy-describe-inline)
            ("C-M-2" . lispy-arglist-inline)
            ("C-M-3" . lispy-right))
@@ -2090,9 +2097,15 @@ Org mode supports clocking, which is really cool, but by default it folds
 durations which are longer than 24h into days.  The following setting changes
 that.
 
+Note that the first setting is now obsolete.  I’ll leave it here for the time
+being, but it should only have effect on older org mode versions.  At the time
+of this writing (<2017-10-12 Thu>) the built-in version of Org Mode should still
+use the old variable.
+
 #+BEGIN_SRC elisp
   (setf org-time-clocksum-format
-        '(:hours "%d" :require-hours t :minutes ":%02d" :require-minutes t))
+        '(:hours "%d" :require-hours t :minutes ":%02d" :require-minutes t)
+        org-duration-format 'h:mm)
 #+END_SRC
 ** Let org-clock include the current task
 By default org-clock ignores the current task in report tables.  This is not
@@ -2116,9 +2129,22 @@ For security reasons, org-babel normally doesn’t execute shell scripts.
 #+BEGIN_SRC elisp
   (add-to-list 'org-babel-load-languages
                '(shell . t))
-  (require 'ob-sh)
+  ;; (add-to-list 'org-babel-load-languages
+  ;;              '(sh . t))
+  ;; (require 'ob-sh)
 #+END_SRC
-
+** Allow org-babel to evaluate lisp code
+As [[*Allow org-babel to evaluate shell scripts][above]], Common Lisp is not allowed by default.
+#+BEGIN_SRC elisp
+  (add-to-list 'org-babel-load-languages
+               '(lisp . t))
+  (require 'ob-lisp)
+#+END_SRC
+** Load org languages
+Actually load the languages.
+#+BEGIN_SRC elisp
+  (org-babel-do-load-languages 'org-babel-load-languages org-babel-load-languages)
+#+END_SRC
 ** Install =orgit=
    :PROPERTIES:
    :header-args: :tangle no
@@ -2608,7 +2634,8 @@ I came across this today (<2017-04-21 Fri>) and just had to try it out.  Some
 docs can be found here: https://github.com/ShingoFukuyama/helm-swoop
 #+BEGIN_SRC elisp
   (use-package helm-swoop
-    :bind (( "M-s M-s" . helm-swoop)))
+    :bind (("M-s M-s" . helm-swoop)
+           ("M-s M-m" . helm-multi-swoop)))
 #+END_SRC
 * Install and configure =helm-gtags= for C(++) development
   :PROPERTIES:
@@ -2809,7 +2836,8 @@ The feeds can also be entered here.
             ("http://busy-streets.de/feed/" blog busy-streets bike)
             ("http://cestlaz.github.io/rss.xml" blog emacs cestlaz zamansky)
             ("https://www.archlinux.org/feeds/news/" blog archlinux)
-            ("http://pragmaticemacs.com/feed/" blog emacs pragmaticemacs))))
+            ("http://pragmaticemacs.com/feed/" blog emacs pragmaticemacs)
+            ("http://feed.dilbert.com/dilbert/daily_strip" dilbert webcomic))))
 #+END_SRC
 
 ** Make elfeed be in emacs state by default
@@ -3042,6 +3070,33 @@ better anyway be virtue of having a running image.
   (setf browse-url-browser-function #'browse-url-chromium
         browse-url-generic-program "chromium")
 #+END_SRC
+* Configure helm and eshell
+#+BEGIN_SRC elisp
+  (add-hook 'eshell-mode-hook
+            (lambda ()
+              (add-to-list 'eshell-visual-commands "htop")
+              (eshell-cmpl-initialize)
+              (define-key eshell-mode-map [remap eshell-pcomplete]
+                'helm-esh-pcomplete)
+              (define-key eshell-mode-map (kbd "M-p") 'helm-eshell-history)))
+
+  (defun pcomplete/sudo ()
+    (let ((prec (pcomplete-arg 'last -1)))
+      (cond ((string= "sudo" prec)
+             (while (pcomplete-here*
+                     (funcall pcomplete-command-completion-function)
+                     (pcomplete-arg 'last) t))))))
+
+  (defalias 'open 'find-file)
+  (defalias 'openo 'find-file-other-window)
+
+#+END_SRC
+* Install =pdf-tools=
+#+BEGIN_SRC elisp
+  (use-package pdf-tools
+    :config (pdf-tools-install))
+
+#+END_SRC
 * Define a minor mode for keybindings
 I use a separate minor mode which does nothing but bind keys.  This has the
 advantage that other modes cannot quite as easily overwrite my keybindings.
@@ -3253,7 +3308,7 @@ advantage that other modes cannot quite as easily overwrite my keybindings.
   (global-set-key (kbd "C-c L") 'org-insert-link-global)
   (global-set-key (kbd "C-c o") 'org-open-at-point-global)
 
-  (define-key *schweers-bindings* (kbd "C-c M-b") 'bury-buffer)
+  ;; (define-key *schweers-bindings* (kbd "C-c M-b") 'bury-buffer)
 
   (define-minor-mode schweers-bindings-mode
     "This minor mode binds my own keybindings."
