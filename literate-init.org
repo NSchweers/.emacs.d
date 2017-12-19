@@ -1669,7 +1669,6 @@ lispy, which is an alternative to paredit.
     (setf lispy-delete-backward-recenter nil))
 
   (use-package lispy
-    :demand t
     :bind (("C-M-1" . lispy-describe-inline)
            ("C-M-2" . lispy-arglist-inline)
            ("C-M-3" . lispy-right))
@@ -2106,6 +2105,9 @@ use the old variable.
   (setf org-time-clocksum-format
         '(:hours "%d" :require-hours t :minutes ":%02d" :require-minutes t)
         org-duration-format 'h:mm)
+
+  (setf org-time-clocksum-format
+        '(:hours "%d" :require-hours t :minutes ":%02d" :require-minutes t))
 #+END_SRC
 ** Let org-clock include the current task
 By default org-clock ignores the current task in report tables.  This is not
@@ -2837,8 +2839,9 @@ The feeds can also be entered here.
             ("http://busy-streets.de/feed/" blog busy-streets bike)
             ("http://cestlaz.github.io/rss.xml" blog emacs cestlaz zamansky)
             ("https://www.archlinux.org/feeds/news/" blog archlinux)
-            ("http://pragmaticemacs.com/feed/" blog emacs pragmaticemacs)
             ("http://feed.dilbert.com/dilbert/daily_strip" dilbert webcomic))))
+            ("http://pragmaticemacs.com/feed/" blog emacs pragmaticemacs))))
+>>>>>>> origin/master
 #+END_SRC
 
 ** Make elfeed be in emacs state by default
