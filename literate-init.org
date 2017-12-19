@@ -2407,6 +2407,7 @@ without saying.
   (and (load-library "erc-highlight-nicknames")
        (add-to-list 'erc-modules 'highlight-nicknames)
        (erc-update-modules))
+  (setf erc-nick "schweers")
   (add-hook 'erc-mode-hook
             (lambda ()
               (auto-fill-mode -1)
@@ -2470,7 +2471,7 @@ interacting with the elisp VM underlying Emacs!
     (cond ((eq system-type 'windows-nt)
            (setf inferior-lisp-program "sbcl --dynamic-space-size 2048"))
           ((eq system-type 'gnu/linux)
-           (setf inferior-lisp-program "sbcl --dynamic-space-size 12000")))
+           (setf inferior-lisp-program "sbcl --dynamic-space-size 20000")))
     (slime-setup '(slime-repl slime-scratch slime-fancy slime-tramp))
     (add-to-list 'slime-filename-translations
                  (slime-create-filename-translator
