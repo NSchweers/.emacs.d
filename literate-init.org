@@ -1504,11 +1504,7 @@ with ".el".
       (error (warn "mu4e could not be loaded.")))
   #+END_SRC
 
-* TODO replace evil-leader with hydra?
 * Install and configure evil mode
-  :PROPERTIES:
-  :header-args: :tangle no
-  :END:
 Evil provides a layer on top of Emacs to emulate vi like keybindings and modes
 (called “states” in Evil parlance).
 
@@ -1517,36 +1513,44 @@ affects initial buffers like the scratch buffer.  For this reason we install
 evil-leader before evil itself.
 
 #+BEGIN_SRC elisp
-  (pc evil
-    (:post-install
-     (require 'evil)
-     (evil-mode 1)))
+  (use-package evil)
 
-  (pc evil-leader
-    (:post-install
-     (evil-leader/set-leader "<SPC>")
-     (evil-leader/set-key
-       "<SPC>" 'helm-M-x
-       "f" 'helm-find-files
-       "b" 'helm-mini
-       "B" 'ibuffer-other-window
-       "w2" 'split-window-below
-       "w3" 'split-window-right
-       "wf" 'helm-find-files-other-window
-       "wb" 'switch-to-buffer-other-window
-       "wq" 'kill-this-buffer
-       "g" 'magit-status
-       "ha" 'apropos-command
-       "hb" 'describe-bindings
-       "hf" 'describe-function
-       "hv" 'describe-variable
-       "hk" 'describe-key
-       "ho" 'describe-symbol
-       "hi" 'info
-       "k" 'schweers/kill-buffer
-       "wo" 'ace-window)
-     (define-key evil-motion-state-map (kbd ",") nil)
-     (global-evil-leader-mode 1)))
+  (add-to-list 'load-path (expand-file-name "site-lisp/evil-collection/"
+                                            user-emacs-directory))
+
+  (when (require 'evil-collection nil t)
+    (evil-collection-init)
+    (evil-mode 1))
+
+  ;; (use-package evil-collection
+  ;;   :custom (evil-collection-setup-minibuffer t)
+  ;;   :init (evil-collection-init))
+
+  ;; (pc evil-leader
+  ;;   (:post-install
+  ;;    (evil-leader/set-leader "<SPC>")
+  ;;    (evil-leader/set-key
+  ;;      "<SPC>" 'helm-M-x
+  ;;      "f" 'helm-find-files
+  ;;      "b" 'helm-mini
+  ;;      "B" 'ibuffer-other-window
+  ;;      "w2" 'split-window-below
+  ;;      "w3" 'split-window-right
+  ;;      "wf" 'helm-find-files-other-window
+  ;;      "wb" 'switch-to-buffer-other-window
+  ;;      "wq" 'kill-this-buffer
+  ;;      "g" 'magit-status
+  ;;      "ha" 'apropos-command
+  ;;      "hb" 'describe-bindings
+  ;;      "hf" 'describe-function
+  ;;      "hv" 'describe-variable
+  ;;      "hk" 'describe-key
+  ;;      "ho" 'describe-symbol
+  ;;      "hi" 'info
+  ;;      "k" 'schweers/kill-buffer
+  ;;      "wo" 'ace-window)
+  ;;    (define-key evil-motion-state-map (kbd ",") nil)
+  ;;    (global-evil-leader-mode 1)))
 #+END_SRC
 
 Evil itself is all well and good for the novice user, yet some modes use rather
@@ -1564,6 +1568,9 @@ hence is by default incompatible with evil-mode.
 #+END_SRC
 
 ** Setup evil-magit
+   :PROPERTIES:
+   :header-args: :tangle no
+   :END:
 Magit also defines its own peculiar bindings, so again another plugin is
 needed.
 
@@ -1573,6 +1580,9 @@ needed.
 #+END_SRC
 
 ** Setup evil-org
+   :PROPERTIES:
+   :header-args: :tangle no
+   :END:
 This mode introduces several bindings, apparently mostly for headings.
 
 For some reason this code behaves in a really weird way.  When used in other
@@ -1620,6 +1630,9 @@ bound in info.
 #+END_SRC
 
 ** Setup evil-mu4e
+   :PROPERTIES:
+   :header-args: :tangle no
+   :END:
    #+BEGIN_SRC elisp
      (condition-case nil
          (pc evil-mu4e)
