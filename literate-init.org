@@ -1513,6 +1513,34 @@ affects initial buffers like the scratch buffer.  For this reason we install
 evil-leader before evil itself.
 
 #+BEGIN_SRC elisp
+  (use-package evil-leader
+    :init
+    (global-evil-leader-mode 1)
+    (evil-leader/set-leader ",")
+    (evil-leader/set-key
+      "<SPC>" 'helm-M-x
+      "f" 'helm-find-files
+      "b" 'helm-mini
+      "B" 'ibuffer-other-window
+      "2" 'split-window-below
+      "3" 'split-window-right
+      "0" 'delete-window
+      "wf" 'helm-find-files-other-window
+      "wb" 'switch-to-buffer-other-window
+      "wq" 'kill-this-buffer
+      "g" 'magit-status
+      "ha" 'apropos-command
+      "hb" 'describe-bindings
+      "hf" 'describe-function
+      "hv" 'describe-variable
+      "hk" 'describe-key
+      "ho" 'describe-symbol
+      "hi" 'info
+      "k" 'schweers/kill-buffer
+      "wo" 'ace-window)
+    ;; (define-key evil-motion-state-map (kbd ",") nil)
+    (global-evil-leader-mode 1))
+
   (use-package evil)
 
   (add-to-list 'load-path (expand-file-name "site-lisp/evil-collection/"
@@ -1525,32 +1553,6 @@ evil-leader before evil itself.
   ;; (use-package evil-collection
   ;;   :custom (evil-collection-setup-minibuffer t)
   ;;   :init (evil-collection-init))
-
-  ;; (pc evil-leader
-  ;;   (:post-install
-  ;;    (evil-leader/set-leader "<SPC>")
-  ;;    (evil-leader/set-key
-  ;;      "<SPC>" 'helm-M-x
-  ;;      "f" 'helm-find-files
-  ;;      "b" 'helm-mini
-  ;;      "B" 'ibuffer-other-window
-  ;;      "w2" 'split-window-below
-  ;;      "w3" 'split-window-right
-  ;;      "wf" 'helm-find-files-other-window
-  ;;      "wb" 'switch-to-buffer-other-window
-  ;;      "wq" 'kill-this-buffer
-  ;;      "g" 'magit-status
-  ;;      "ha" 'apropos-command
-  ;;      "hb" 'describe-bindings
-  ;;      "hf" 'describe-function
-  ;;      "hv" 'describe-variable
-  ;;      "hk" 'describe-key
-  ;;      "ho" 'describe-symbol
-  ;;      "hi" 'info
-  ;;      "k" 'schweers/kill-buffer
-  ;;      "wo" 'ace-window)
-  ;;    (define-key evil-motion-state-map (kbd ",") nil)
-  ;;    (global-evil-leader-mode 1)))
 #+END_SRC
 
 Evil itself is all well and good for the novice user, yet some modes use rather
@@ -1580,9 +1582,6 @@ needed.
 #+END_SRC
 
 ** Setup evil-org
-   :PROPERTIES:
-   :header-args: :tangle no
-   :END:
 This mode introduces several bindings, apparently mostly for headings.
 
 For some reason this code behaves in a really weird way.  When used in other
@@ -1591,16 +1590,18 @@ change to emacs state and back to normal again before the binding works as
 intended.
 
 #+BEGIN_SRC elisp
-  (pc evil-org)
+  (use-package evil-org
+    :ensure t
+    :after org
+    :config
+    (add-hook 'org-mode-hook 'evil-org-mode)
+    (add-hook 'evil-org-mode-hook
+              (lambda ()
+                (evil-org-set-key-theme '(textobjects insert navigation additional
+                                                      shift todo heading)))))
 
   (evil-leader/set-key
     "n" 'org-capture)
-
-  (defvar *schweers/transient-km* (make-sparse-keymap))
-
-  (define-key *schweers/transient-km* (kbd ",") 'org-edit-src-exit)
-  (define-key *schweers/transient-km* (kbd ".") 'org-edit-src-abort)
-  (evil-define-key 'normal org-src-mode-map (kbd ",") *schweers/transient-km*)
 #+END_SRC
 
 ** Setup Helm integration
