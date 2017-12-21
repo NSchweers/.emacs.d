@@ -2142,6 +2142,9 @@ GraphViz uses files in a language called dot
   (add-to-list 'org-babel-load-languages
                  '(dot . t))
 #+END_SRC
+** Configure publishing projects
+   Org Mode can apparently publish projects from a given directory to another
+   directory or server.
 * Install =graphviz-dot-mode=
 #+BEGIN_SRC elisp
   (use-package graphviz-dot-mode
@@ -3019,7 +3022,6 @@ without configuration.  I especially need this for C(++).  Lisp can do this way
 better anyway be virtue of having a running image.
 #+BEGIN_SRC elisp
   (use-package dumb-jump
-    :mode
     :config (dumb-jump-mode)
     :bind (("M-." . dumb-jump-go)
            ("M-," . dumb-jump-back)
