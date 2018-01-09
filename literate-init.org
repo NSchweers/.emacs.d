@@ -1541,7 +1541,8 @@ evil-leader before evil itself.
     ;; (define-key evil-motion-state-map (kbd ",") nil)
     (global-evil-leader-mode 1))
 
-  (use-package evil)
+  (use-package evil
+    (setf evil-cross-lines t))
 
   (add-to-list 'load-path (expand-file-name "site-lisp/evil-collection/"
                                             user-emacs-directory))
@@ -1553,6 +1554,31 @@ evil-leader before evil itself.
   ;; (use-package evil-collection
   ;;   :custom (evil-collection-setup-minibuffer t)
   ;;   :init (evil-collection-init))
+#+END_SRC
+
+Wasamasa kindly wrote the following snippet for me.  I didn’t even ask for it.
+It defines a textobject for defuns.
+
+#+BEGIN_SRC elisp
+  (defun forward-evil-defun (&optional count)
+    "Move forward COUNT defuns.
+  Moves point COUNT defuns forward or (- COUNT) defuns backward
+  if COUNT is negative.  A defun is defined by
+  `beginning-of-defun' and `end-of-defun' functions."
+    (evil-motion-loop (dir (or count 1))
+      (ignore-errors
+        (if (> dir 0) (end-of-defun) (beginning-of-defun)))))
+
+  (evil-define-text-object evil-a-defun (count &optional beg end type)
+    (evil-select-an-object 'evil-defun beg end type count))
+
+  (evil-define-text-object evil-inner-defun (count &optional beg end type)
+    (evil-select-inner-object 'evil-defun beg end type count))
+
+  (with-eval-after-load 'evil-maps
+    (define-key evil-outer-text-objects-map (kbd "S") 'evil-a-defun)
+    (define-key evil-inner-text-objects-map (kbd "S") 'evil-inner-defun))
+
 #+END_SRC
 
 Evil itself is all well and good for the novice user, yet some modes use rather
@@ -1570,15 +1596,11 @@ hence is by default incompatible with evil-mode.
 #+END_SRC
 
 ** Setup evil-magit
-   :PROPERTIES:
-   :header-args: :tangle no
-   :END:
 Magit also defines its own peculiar bindings, so again another plugin is
 needed.
 
 #+BEGIN_SRC elisp
-  (pc evil-magit
-    :post-install)
+  (use-package evil-magit)
 #+END_SRC
 
 ** Setup evil-org
