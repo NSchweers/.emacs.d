@@ -99,7 +99,7 @@ to the load path explicitly.
 
 #+BEGIN_SRC elisp
   (add-to-list 'load-path (expand-file-name "site-lisp" user-emacs-directory))
-  (add-to-list 'load-path "/usr/share/emacs/site-lisp/mu4e")
+  ;; (add-to-list 'load-path "/usr/share/emacs/site-lisp/mu4e")
 #+END_SRC
 
 ** Add debian specific stuff
@@ -766,7 +766,11 @@ necessary.  For details, see the docstring.
       :demand t
       :config
       (setf paradox-execute-asynchronously t)
-      (paradox-enable))
+      (paradox-enable)
+      (add-hook 'paradox-menu-mode-hook
+                (lambda ()
+                  (eval-after-load 'evil
+                   (evil-set-initial-state 'paradox-menu-mode 'emacs)))))
   #+END_SRC
 * Install and configure async (for dired)
 It can be found here: https://github.com/jwiegley/emacs-async
@@ -1444,6 +1448,9 @@ with ".el".
         (find-file (cdr fname?)))))
 #+END_SRC
 * Load and Configure =mu4e=
+  :PROPERTIES:
+  :header-args: :tangle no
+  :END:
   I’ll try this again
 
   #+BEGIN_SRC elisp
@@ -1541,15 +1548,30 @@ evil-leader before evil itself.
     ;; (define-key evil-motion-state-map (kbd ",") nil)
     (global-evil-leader-mode 1))
 
+  ;; (use-package evil
+  ;;   :config
+  ;;   (setf evil-cross-lines t))
+
+  ;; (add-to-list 'load-path (expand-file-name "site-lisp/evil-collection/"
+  ;;                                           user-emacs-directory))
+
+  ;; (when (require 'evil-collection nil t)
+  ;;   (evil-collection-init)
+  ;;   (evil-mode 1))
+
   (use-package evil
-    (setf evil-cross-lines t))
-
-  (add-to-list 'load-path (expand-file-name "site-lisp/evil-collection/"
-                                            user-emacs-directory))
-
-  (when (require 'evil-collection nil t)
-    (evil-collection-init)
+    :ensure t
+    :init
+    (evil-want-integration nil)
+    :config
+    (setf evil-cross-lines t)
     (evil-mode 1))
+
+  (use-package evil-collection
+    :after evil
+    :ensure t
+    :config
+    (evil-collection-init))
 
   ;; (use-package evil-collection
   ;;   :custom (evil-collection-setup-minibuffer t)
@@ -2543,8 +2565,11 @@ interacting with the elisp VM underlying Emacs!
           (when (and flag-empty
                      (looking-back " " (1- (point))))
             (delete-char -1)))))
-
     (define-key slime-repl-mode-map (kbd "M-r") 'helm-slime-repl-history)
+
+    (add-hook 'slime-repl-mode-hook
+              (lambda ()
+                (eval-after-load 'evil (evil-set-initial-state 'sldb-mode 'emacs))))
     ;; (setf inferior-lisp-program "/home/schweers/code/src/ccl/lx86cl64")
     ;; (add-to-list 'slime-contribs 'slime-fancy)
 
@@ -2886,8 +2911,10 @@ should start in emacs state.  In the future it might be nice to devise a good
 set of evil bindings, but for now, emacs mode should suffice.
 
 #+BEGIN_SRC elisp
-  (evil-set-initial-state 'elfeed-search-mode 'emacs)
-  (evil-set-initial-state 'elfeed-show-mode 'emacs)
+  (add-hook 'elfeed-search-mode-hook
+            (lambda ()
+              (evil-set-initial-state 'elfeed-search-mode 'emacs)))
+  ;; (evil-set-initial-state 'elfeed-show-mode 'emacs)
 #+END_SRC
 * Install and configure =avy=
 Avy can be used to jump to a position which is visible in the current window.
