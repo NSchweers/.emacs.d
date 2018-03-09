@@ -1677,6 +1677,7 @@ lispy, which is an alternative to paredit.
     (setf lispy-delete-backward-recenter nil))
 
   (use-package lispy
+    :demand t
     :bind (("C-M-1" . lispy-describe-inline)
            ("C-M-2" . lispy-arglist-inline)
            ("C-M-3" . lispy-right))
@@ -2113,7 +2114,6 @@ use the old variable.
   (setf org-time-clocksum-format
         '(:hours "%d" :require-hours t :minutes ":%02d" :require-minutes t)
         org-duration-format 'h:mm)
-
   (setf org-time-clocksum-format
         '(:hours "%d" :require-hours t :minutes ":%02d" :require-minutes t))
 #+END_SRC
@@ -2178,6 +2178,9 @@ GraphViz uses files in a language called dot
   (add-to-list 'org-babel-load-languages
                  '(dot . t))
 #+END_SRC
+** Configure publishing projects
+   Org Mode can apparently publish projects from a given directory to another
+   directory or server.
 * Install =graphviz-dot-mode=
 #+BEGIN_SRC elisp
   (use-package graphviz-dot-mode
@@ -2639,6 +2642,7 @@ docs can be found here: https://github.com/ShingoFukuyama/helm-swoop
     :bind (("M-s M-s" . helm-swoop)
            ("M-s M-m" . helm-multi-swoop)))
 #+END_SRC
+
 * Install and configure ggtags
   :PROPERTIES:
   :header-args: :tangle no
@@ -2652,6 +2656,7 @@ docs can be found here: https://github.com/ShingoFukuyama/helm-swoop
                 (when (derived-mode-p 'csmode 'c++-mode 'java-mode)
                   (ggtags-mode 1)))))
 #+END_SRC
+
 * Install and configure =helm-gtags= for C(++) development
   :PROPERTIES:
   :header-args: :tangle no
@@ -2849,9 +2854,8 @@ The feeds can also be entered here.
             ("http://busy-streets.de/feed/" blog busy-streets bike)
             ("http://cestlaz.github.io/rss.xml" blog emacs cestlaz zamansky)
             ("https://www.archlinux.org/feeds/news/" blog archlinux)
+            ("http://pragmaticemacs.com/feed/" blog emacs pragmaticemacs)
             ("http://feed.dilbert.com/dilbert/daily_strip" dilbert webcomic))))
-            ("http://pragmaticemacs.com/feed/" blog emacs pragmaticemacs))))
->>>>>>> origin/master
 #+END_SRC
 
 ** Make elfeed be in emacs state by default
