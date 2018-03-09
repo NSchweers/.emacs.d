@@ -551,6 +551,14 @@ config.
 #+END_SRC
 
 ** Setup diary
+** Activate abbrevs
+   #+BEGIN_SRC elisp
+     (setq abbrev-file-name             ;; tell emacs where to read abbrev
+           "~/.emacs.d/abbrev_defs")    ;; definitions from...
+     (setq save-abbrevs t)              ;; save abbrevs when files are saved
+     ;; you will be asked before the abbreviations are saved
+     (setq-default abbrev-mode t)
+   #+END_SRC
 *** Set diary file to a sane postion
 As mentioned elsewhere, Emacs tends to pollute the users home directory.  Here,
 diary files are placed into ~/.emacs.d/.
@@ -682,83 +690,199 @@ of where the mouse points.
 #+BEGIN_SRC elisp
   (setf mouse-yank-at-point t)
 #+END_SRC
-* Define a configuration macro
-  :PROPERTIES:
-  :header-args: :tangle no
-  :END:
-While this macro is far from perfect, it is good enough to be used.
-
-This macro checks whether a given package is installed and installs it if
-necessary.  For details, see the docstring.
+* Install and configure =bbdb=
+While BBDB is a little weird, it does not need a lot of configuration.  I
+basically only tell it that I’m not an American.
 
 #+BEGIN_SRC elisp
-  ;(require 'seq)
-  (require 'subr-x)
-
-  (defun pc/get-package-desc (&rest pkgs)
-    (cl-block 'return
-      (package--mapc
-       (lambda (p)
-         (if (memq (package-desc-name p) pkgs)
-             (cl-return-from 'return p))))
-      nil))
-
-  (defmacro pc (pkg &rest clauses)
-    "Install PKG if not installed.  Configure according to CLAUSES.
-
-  A clause is always a list, where the first element is a symbol.
-  It may be one of the following:
-
-  \(:pre-install &rest body\) Evaluate body before installing
-
-  \(:dont-select\) if an installation is necessary, don’t select PKG
-  as installed manually.
-
-  \(:require &optional feature\) Constructs and evaluates a require form.  If
-  FEATURE is given, require FEATURE.  Otherwise require PKG.  This is
-  evaluated immediately after installation.
-
-  \(:post-install &rest body\) Evaluate body after installation.
-
-  \(:bind alist\) Bind keys globally.  Performed after :post-install actions."
-    (declare (indent 1))
-    (let ((pkg-desc (make-symbol "pkg-desc"))
-          (get-package-desc (make-symbol "get-package-desc")))
-      `(progn
-         (cl-flet
-             ((,get-package-desc
-               (&rest pkgs)
-               "Returns a non-nil if at least one of the packages given in PKGS exists.
-
-  Returns nil otherwise.  The return value is the package
-  descriptor for the first matching package. "
-               (cl-block 'return
-                 (package--mapc
-                  (lambda (p)
-                    (if (memq (package-desc-name p) pkgs)
-                        (cl-return-from 'return p))))
-                 nil)))
-           (when (not (,get-package-desc ',pkg))
-             (error "Package does not exist: %s" ',pkg))
-           (let ((,pkg-desc (,get-package-desc ',pkg)))
-             ,@(let ((pre-inst (assoc :pre-install clauses)))
-                   (if pre-inst (cdr pre-inst)))
-             (unless (package-installed-p ',pkg)
-               (if (version<= emacs-version "25.0")
-                   (package-install ',pkg)
-                 (package-install ',pkg ,(cdr (assoc :dont-select clauses)))))
-             ,@(let ((req-form (assoc :require clauses)))
-                 (if (not (null (cdr req-form)))
-                     (if (not (null (cddr req-form)))
-                         (error "too many forms in :require clause.")
-                       `(,(cadr req-form)))
-                   `((require ',pkg))))
-             ,@(let ((post-inst (assoc :post-install clauses)))
-                 (if post-inst (cdr post-inst)))
-             ,@(let ((bind (assoc :bind clauses)))
-                   (cl-loop for c in (cadr bind) collect
-                            `(global-set-key (kbd ,(car c)) ',(cdr c)))))))))
+  (use-package bbdb
+    :config
+    (setf bbdb-file (expand-file-name "../bbdb" org-directory)
+          bbdb-north-american-phone-number nil
+          bbdb-phone-style nil))
 #+END_SRC
+
+* Install and configure evil mode
+Evil provides a layer on top of Emacs to emulate vi like keybindings and modes
+(called “states” in Evil parlance).
+
+There is a special evil package which should be loaded before evil itself, as it
+affects initial buffers like the scratch buffer.  For this reason we install
+evil-leader before evil itself.
+
+First, we want to set a variable which needs to be set before loading evil.  I
+tried this in the :init phase of evil, but it doesn’t seem to work.
+
+#+BEGIN_SRC elisp
+  (setf evil-want-integration nil)
+#+END_SRC
+
+#+BEGIN_SRC elisp
+  (use-package evil-leader
+    :init
+    (global-evil-leader-mode 1)
+    (evil-leader/set-leader ",")
+    (evil-leader/set-key
+      "<SPC>" 'helm-M-x
+      "f" 'helm-find-files
+      "b" 'helm-mini
+      "B" 'ibuffer-other-window
+      "2" 'split-window-below
+      "3" 'split-window-right
+      "0" 'delete-window
+      "wf" 'helm-find-files-other-window
+      "wb" 'switch-to-buffer-other-window
+      "wq" 'kill-this-buffer
+      "g" 'magit-status
+      "ha" 'apropos-command
+      "hb" 'describe-bindings
+      "hf" 'describe-function
+      "hv" 'describe-variable
+      "hk" 'describe-key
+      "ho" 'describe-symbol
+      "hi" 'info
+      "k" 'schweers/kill-buffer
+      "wo" 'ace-window)
+    ;; (define-key evil-motion-state-map (kbd ",") nil)
+    (global-evil-leader-mode 1))
+
+  ;; (use-package evil
+  ;;   :config
+  ;;   (setf evil-cross-lines t))
+
+  ;; (add-to-list 'load-path (expand-file-name "site-lisp/evil-collection/"
+  ;;                                           user-emacs-directory))
+
+  ;; (when (require 'evil-collection nil t)
+  ;;   (evil-collection-init)
+  ;;   (evil-mode 1))
+
+  (use-package evil
+    :ensure t
+    :config
+    (setf evil-cross-lines t)
+    (evil-mode 1))
+
+  (use-package evil-collection
+    :after evil
+    :ensure t
+    :config
+    (evil-collection-init))
+
+  ;; (use-package evil-collection
+  ;;   :custom (evil-collection-setup-minibuffer t)
+  ;;   :init (evil-collection-init))
+#+END_SRC
+
+Wasamasa kindly wrote the following snippet for me.  I didn’t even ask for it.
+It defines a textobject for defuns.
+
+#+BEGIN_SRC elisp
+  (defun forward-evil-defun (&optional count)
+    "Move forward COUNT defuns.
+  Moves point COUNT defuns forward or (- COUNT) defuns backward
+  if COUNT is negative.  A defun is defined by
+  `beginning-of-defun' and `end-of-defun' functions."
+    (evil-motion-loop (dir (or count 1))
+      (ignore-errors
+        (if (> dir 0) (end-of-defun) (beginning-of-defun)))))
+
+  (evil-define-text-object evil-a-defun (count &optional beg end type)
+    (evil-select-an-object 'evil-defun beg end type count))
+
+  (evil-define-text-object evil-inner-defun (count &optional beg end type)
+    (evil-select-inner-object 'evil-defun beg end type count))
+
+  (with-eval-after-load 'evil-maps
+    (define-key evil-outer-text-objects-map (kbd "S") 'evil-a-defun)
+    (define-key evil-inner-text-objects-map (kbd "S") 'evil-inner-defun))
+
+#+END_SRC
+
+Evil itself is all well and good for the novice user, yet some modes use rather
+different keybindings, hence need extra evil bindings.  This is where Evil
+plugins come to play.
+
+** Setup evil-lispy
+   :PROPERTIES:
+   :header-args: :tangle no
+   :END:
+Lispy uses vi-like keybindings, yet implements them in its own magical way,
+hence is by default incompatible with evil-mode.
+#+BEGIN_SRC elisp
+  (pc evil-lispy)
+#+END_SRC
+
+** Setup evil-magit
+Magit also defines its own peculiar bindings, so again another plugin is
+needed.
+
+#+BEGIN_SRC elisp
+  (use-package evil-magit)
+#+END_SRC
+
+** Setup evil-org
+This mode introduces several bindings, apparently mostly for headings.
+
+For some reason this code behaves in a really weird way.  When used in other
+source blocks, it seems to work just fine, but in this block, I first have to
+change to emacs state and back to normal again before the binding works as
+intended.
+
+#+BEGIN_SRC elisp
+  (use-package evil-org
+    :ensure t
+    :after org
+    :config
+    (add-hook 'org-mode-hook 'evil-org-mode)
+    (add-hook 'evil-org-mode-hook
+              (lambda ()
+                (evil-org-set-key-theme '(textobjects insert navigation additional
+                                                      shift todo heading)))))
+
+  (evil-leader/set-key
+    "n" 'org-capture)
+#+END_SRC
+
+** Setup Helm integration
+Without helm, life in Emacs is pretty meaningless.  Sadly, there is no readily
+installable package to integrate Evil and Helm.
+
+#+BEGIN_SRC elisp
+  (define-key evil-ex-map "b " 'helm-mini)
+  (define-key evil-ex-map "e" 'helm-find-files)
+#+END_SRC
+
+** Setup evil for info
++Info also has rather non-standard bindings, as one does not edit text here, it
+is advisable to have evil be in emacs state.+  I’m not sure yet what to do
+here.  Time might tell.
+
+#+BEGIN_SRC elisp
+  ;; (evil-set-initial-state 'Info-mode 'emacs)
+#+END_SRC
+
+As an added bonus, add bindings for j and k in Emacs state, as these are not
+bound in info.
+
+#+BEGIN_SRC elisp
+  (define-key Info-mode-map (kbd "j") (kbd "C-n"))
+  (define-key Info-mode-map (kbd "k") (kbd "C-p"))
+#+END_SRC
+
+** Setup evil-mu4e
+   :PROPERTIES:
+   :header-args: :tangle no
+   :END:
+   #+BEGIN_SRC elisp
+     (condition-case nil
+         (pc evil-mu4e)
+       (file-error (warn "Could not load evil-mu4e.  Have you loaded mu4e?")))
+   #+END_SRC
+
+** TODO Add evil bindings for undo-tree
+
+** TODO Add evil bindings for mark commands
 * Install and enable paradox
   #+BEGIN_SRC elisp
     (use-package paradox
@@ -767,10 +891,11 @@ necessary.  For details, see the docstring.
       :config
       (setf paradox-execute-asynchronously t)
       (paradox-enable)
-      (add-hook 'paradox-menu-mode-hook
-                (lambda ()
-                  (eval-after-load 'evil
-                   (evil-set-initial-state 'paradox-menu-mode 'emacs)))))
+      ;; (add-hook 'paradox-menu-mode-hook
+      ;;           (lambda ()
+      ;;             (eval-after-load 'evil
+      ;;              (evil-set-initial-state 'paradox-menu-mode 'emacs))))
+      )
   #+END_SRC
 * Install and configure async (for dired)
 It can be found here: https://github.com/jwiegley/emacs-async
@@ -1511,182 +1636,6 @@ with ".el".
       (error (warn "mu4e could not be loaded.")))
   #+END_SRC
 
-* Install and configure evil mode
-Evil provides a layer on top of Emacs to emulate vi like keybindings and modes
-(called “states” in Evil parlance).
-
-There is a special evil package which should be loaded before evil itself, as it
-affects initial buffers like the scratch buffer.  For this reason we install
-evil-leader before evil itself.
-
-#+BEGIN_SRC elisp
-  (use-package evil-leader
-    :init
-    (global-evil-leader-mode 1)
-    (evil-leader/set-leader ",")
-    (evil-leader/set-key
-      "<SPC>" 'helm-M-x
-      "f" 'helm-find-files
-      "b" 'helm-mini
-      "B" 'ibuffer-other-window
-      "2" 'split-window-below
-      "3" 'split-window-right
-      "0" 'delete-window
-      "wf" 'helm-find-files-other-window
-      "wb" 'switch-to-buffer-other-window
-      "wq" 'kill-this-buffer
-      "g" 'magit-status
-      "ha" 'apropos-command
-      "hb" 'describe-bindings
-      "hf" 'describe-function
-      "hv" 'describe-variable
-      "hk" 'describe-key
-      "ho" 'describe-symbol
-      "hi" 'info
-      "k" 'schweers/kill-buffer
-      "wo" 'ace-window)
-    ;; (define-key evil-motion-state-map (kbd ",") nil)
-    (global-evil-leader-mode 1))
-
-  ;; (use-package evil
-  ;;   :config
-  ;;   (setf evil-cross-lines t))
-
-  ;; (add-to-list 'load-path (expand-file-name "site-lisp/evil-collection/"
-  ;;                                           user-emacs-directory))
-
-  ;; (when (require 'evil-collection nil t)
-  ;;   (evil-collection-init)
-  ;;   (evil-mode 1))
-
-  (use-package evil
-    :ensure t
-    :init
-    (evil-want-integration nil)
-    :config
-    (setf evil-cross-lines t)
-    (evil-mode 1))
-
-  (use-package evil-collection
-    :after evil
-    :ensure t
-    :config
-    (evil-collection-init))
-
-  ;; (use-package evil-collection
-  ;;   :custom (evil-collection-setup-minibuffer t)
-  ;;   :init (evil-collection-init))
-#+END_SRC
-
-Wasamasa kindly wrote the following snippet for me.  I didn’t even ask for it.
-It defines a textobject for defuns.
-
-#+BEGIN_SRC elisp
-  (defun forward-evil-defun (&optional count)
-    "Move forward COUNT defuns.
-  Moves point COUNT defuns forward or (- COUNT) defuns backward
-  if COUNT is negative.  A defun is defined by
-  `beginning-of-defun' and `end-of-defun' functions."
-    (evil-motion-loop (dir (or count 1))
-      (ignore-errors
-        (if (> dir 0) (end-of-defun) (beginning-of-defun)))))
-
-  (evil-define-text-object evil-a-defun (count &optional beg end type)
-    (evil-select-an-object 'evil-defun beg end type count))
-
-  (evil-define-text-object evil-inner-defun (count &optional beg end type)
-    (evil-select-inner-object 'evil-defun beg end type count))
-
-  (with-eval-after-load 'evil-maps
-    (define-key evil-outer-text-objects-map (kbd "S") 'evil-a-defun)
-    (define-key evil-inner-text-objects-map (kbd "S") 'evil-inner-defun))
-
-#+END_SRC
-
-Evil itself is all well and good for the novice user, yet some modes use rather
-different keybindings, hence need extra evil bindings.  This is where Evil
-plugins come to play.
-
-** Setup evil-lispy
-   :PROPERTIES:
-   :header-args: :tangle no
-   :END:
-Lispy uses vi-like keybindings, yet implements them in its own magical way,
-hence is by default incompatible with evil-mode.
-#+BEGIN_SRC elisp
-  (pc evil-lispy)
-#+END_SRC
-
-** Setup evil-magit
-Magit also defines its own peculiar bindings, so again another plugin is
-needed.
-
-#+BEGIN_SRC elisp
-  (use-package evil-magit)
-#+END_SRC
-
-** Setup evil-org
-This mode introduces several bindings, apparently mostly for headings.
-
-For some reason this code behaves in a really weird way.  When used in other
-source blocks, it seems to work just fine, but in this block, I first have to
-change to emacs state and back to normal again before the binding works as
-intended.
-
-#+BEGIN_SRC elisp
-  (use-package evil-org
-    :ensure t
-    :after org
-    :config
-    (add-hook 'org-mode-hook 'evil-org-mode)
-    (add-hook 'evil-org-mode-hook
-              (lambda ()
-                (evil-org-set-key-theme '(textobjects insert navigation additional
-                                                      shift todo heading)))))
-
-  (evil-leader/set-key
-    "n" 'org-capture)
-#+END_SRC
-
-** Setup Helm integration
-Without helm, life in Emacs is pretty meaningless.  Sadly, there is no readily
-installable package to integrate Evil and Helm.
-
-#+BEGIN_SRC elisp
-  (define-key evil-ex-map "b " 'helm-mini)
-  (define-key evil-ex-map "e" 'helm-find-files)
-#+END_SRC
-
-** Setup evil for info
-+Info also has rather non-standard bindings, as one does not edit text here, it
-is advisable to have evil be in emacs state.+  I’m not sure yet what to do
-here.  Time might tell.
-
-#+BEGIN_SRC elisp
-  ;; (evil-set-initial-state 'Info-mode 'emacs)
-#+END_SRC
-
-As an added bonus, add bindings for j and k in Emacs state, as these are not
-bound in info.
-
-#+BEGIN_SRC elisp
-  (define-key Info-mode-map (kbd "j") (kbd "C-n"))
-  (define-key Info-mode-map (kbd "k") (kbd "C-p"))
-#+END_SRC
-
-** Setup evil-mu4e
-   :PROPERTIES:
-   :header-args: :tangle no
-   :END:
-   #+BEGIN_SRC elisp
-     (condition-case nil
-         (pc evil-mu4e)
-       (file-error (warn "Could not load evil-mu4e.  Have you loaded mu4e?")))
-   #+END_SRC
-
-** TODO Add evil bindings for undo-tree
-
-** TODO Add evil bindings for mark commands
 * Install and configure =guide key=
 The package =guide-key= makes it a little easier to explore prefixed
 keybindings.  The variable =guide-key/guide-key-sequence= holds a list of
@@ -2383,18 +2332,6 @@ more jump locations.
        (outline-minor-mode 1))))
 #+END_SRC
 
-* Install and configure =bbdb=
-While BBDB is a little weird, it does not need a lot of configuration.  I
-basically only tell it that I’m not an American.
-
-#+BEGIN_SRC elisp
-  (use-package bbdb
-    :config
-    (setf bbdb-file (expand-file-name "../bbdb" org-directory)
-          bbdb-north-american-phone-number nil
-          bbdb-phone-style nil))
-#+END_SRC
-
 * Configure =gnus=
 While my gnus file is quite large, for some reason gnus insists on having its
 own file.  I’ve convinced it to please not use the home directory for this.  I
@@ -2699,6 +2636,19 @@ docs can be found here: https://github.com/ShingoFukuyama/helm-swoop
     :bind (("M-s M-s" . helm-swoop)
            ("M-s M-m" . helm-multi-swoop)))
 #+END_SRC
+* Install and configure ggtags
+  :PROPERTIES:
+  :header-args: :tangle no
+  :END:
+
+#+BEGIN_SRC elisp
+  (use-package ggtags
+    :config
+    (add-hook 'c-mode-common-hook
+              (lambda ()
+                (when (derived-mode-p 'csmode 'c++-mode 'java-mode)
+                  (ggtags-mode 1)))))
+#+END_SRC
 * Install and configure =helm-gtags= for C(++) development
   :PROPERTIES:
   :header-args: :tangle no
@@ -2708,32 +2658,30 @@ Helm can apparently be really cool for C++ (well, as cool as C++ can get) if
 used with GNU global.  Here we set it up to do so.
 
 #+BEGIN_SRC elisp
-  (pc helm-gtags
-    (:require nil)
-    (:post-install
-     (setq
-      helm-gtags-ignore-case t
-      helm-gtags-auto-update t
-      helm-gtags-use-input-at-cursor t
-      helm-gtags-pulse-at-cursor t
-      helm-gtags-prefix-key "\C-cg"
-      helm-gtags-suggested-key-mapping t)
+  (use-package helm-gtags
+    :config
+    (setf helm-gtags-ignore-case t
+          helm-gtags-auto-update t
+          helm-gtags-use-input-at-cursor t
+          helm-gtags-pulse-at-cursor t
+          helm-gtags-prefix-key "\C-cg"
+          helm-gtags-suggested-key-mapping t)
 
-     (require 'helm-gtags)
-     ;; Enable helm-gtags-mode
-     (add-hook 'dired-mode-hook 'helm-gtags-mode)
-     (add-hook 'eshell-mode-hook 'helm-gtags-mode)
-     (add-hook 'c-mode-hook 'helm-gtags-mode)
-     (add-hook 'c++-mode-hook 'helm-gtags-mode)
-     (add-hook 'asm-mode-hook 'helm-gtags-mode)
+    (require 'helm-gtags)
+    ;; Enable helm-gtags-mode
+    (add-hook 'dired-mode-hook 'helm-gtags-mode)
+    (add-hook 'eshell-mode-hook 'helm-gtags-mode)
+    (add-hook 'c-mode-hook 'helm-gtags-mode)
+    (add-hook 'c++-mode-hook 'helm-gtags-mode)
+    (add-hook 'asm-mode-hook 'helm-gtags-mode)
 
-     (define-key helm-gtags-mode-map (kbd "C-c g a") 'helm-gtags-tags-in-this-function)
-     (define-key helm-gtags-mode-map (kbd "C-j") 'helm-gtags-select)
-     (define-key helm-gtags-mode-map (kbd "M-.") 'helm-gtags-dwim)
-     (define-key helm-gtags-mode-map (kbd "M-,") 'helm-gtags-pop-stack)
-     (define-key helm-gtags-mode-map (kbd "C-c <") 'helm-gtags-previous-history)
-     (define-key helm-gtags-mode-map (kbd "C-c >")
-       'helm-gtags-next-history)))
+    (define-key helm-gtags-mode-map (kbd "C-c g a") 'helm-gtags-tags-in-this-function)
+    (define-key helm-gtags-mode-map (kbd "C-j") 'helm-gtags-select)
+    (define-key helm-gtags-mode-map (kbd "M-.") 'helm-gtags-dwim)
+    (define-key helm-gtags-mode-map (kbd "M-,") 'helm-gtags-pop-stack)
+    (define-key helm-gtags-mode-map (kbd "C-c <") 'helm-gtags-previous-history)
+    (define-key helm-gtags-mode-map (kbd "C-c >")
+      'helm-gtags-next-history))
 #+END_SRC
 * Make it easy to look something up in the CL Hyperspec
 The hyperspec it /the/ definitive resource on Common Lisp, so I want quick
