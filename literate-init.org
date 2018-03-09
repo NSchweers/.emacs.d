@@ -1058,7 +1058,6 @@ are/were used to ensure that .elc files are kept up to date with their source
 files.
 
 #+BEGIN_SRC elisp
-  (use-package s)
   (require 's)
   (require 'dash)
   (require 'dash-functional)
