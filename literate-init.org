@@ -703,6 +703,9 @@ basically only tell it that I’m not an American.
 #+END_SRC
 
 * Install and configure evil mode
+  :PROPERTIES:
+  :header-args: :tangle no
+  :END:
 Evil provides a layer on top of Emacs to emulate vi like keybindings and modes
 (called “states” in Evil parlance).
 
@@ -890,12 +893,7 @@ bound in info.
       :demand t
       :config
       (setf paradox-execute-asynchronously t)
-      (paradox-enable)
-      ;; (add-hook 'paradox-menu-mode-hook
-      ;;           (lambda ()
-      ;;             (eval-after-load 'evil
-      ;;              (evil-set-initial-state 'paradox-menu-mode 'emacs))))
-      )
+      (paradox-enable))
   #+END_SRC
 * Install and configure async (for dired)
 It can be found here: https://github.com/jwiegley/emacs-async
@@ -1060,6 +1058,7 @@ are/were used to ensure that .elc files are kept up to date with their source
 files.
 
 #+BEGIN_SRC elisp
+  (use-package s)
   (require 's)
   (require 'dash)
   (require 'dash-functional)
@@ -2510,9 +2509,6 @@ interacting with the elisp VM underlying Emacs!
             (delete-char -1)))))
     (define-key slime-repl-mode-map (kbd "M-r") 'helm-slime-repl-history)
 
-    (add-hook 'slime-repl-mode-hook
-              (lambda ()
-                (eval-after-load 'evil (evil-set-initial-state 'sldb-mode 'emacs))))
     ;; (setf inferior-lisp-program "/home/schweers/code/src/ccl/lx86cl64")
     ;; (add-to-list 'slime-contribs 'slime-fancy)
 
