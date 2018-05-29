@@ -1870,6 +1870,13 @@ Also, I want the notes file which I use with org-capture to reside inside my
         org-special-ctrl-o t)
 #+END_SRC
 
+*** Setup keyword states
+    Org Mode can have more than just the three states "", "TODO" and "DONE".
+
+    #+BEGIN_SRC elisp
+      (setf org-todo-keywords '((sequence "TODO" "|" "DONE" "CANCELLED")))
+    #+END_SRC
+
 ** Setup MobileOrg
 Apparently, one is supposed to have a staging area of some sort to which to push
 inside Emacs.
@@ -3110,6 +3117,18 @@ better anyway be virtue of having a running image.
   (use-package pdf-tools
     :config (pdf-tools-install))
 
+#+END_SRC
+* Do some SQL setup
+#+BEGIN_SRC elisp
+  (use-package sql-indent
+    :after (sql))
+
+  (use-package sqlup-mode
+    :after (sql)
+    :config
+    (add-hook 'sql-mode-hook
+              (lambda ()
+                (sqlup-mode 1))))
 #+END_SRC
 * Define a minor mode for keybindings
 I use a separate minor mode which does nothing but bind keys.  This has the
