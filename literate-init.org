@@ -913,6 +913,7 @@ in async mode though.
   (autoload 'dired-toggle-read-only "dired" nil t)
   (dired-async-mode 1)
   (put 'dired-find-alternate-file 'disabled nil)
+  (setf wdired-create-parent-directories t)
 #+END_SRC
 ** Automatically refresh dired
 I want dired to do autorefresh, but be quiet about it.
