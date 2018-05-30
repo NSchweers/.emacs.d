@@ -92,7 +92,7 @@
      "\\tolerance=1000")))
  '(package-selected-packages
    (quote
-    (ggtags helm-gtags diminish evil-magit evil-org evil-leader evil-collection evil pdf-tools smartscan org-plus-contrib edit-server dumb-jump flycheck-rust cargo rust-mode protobuf-mode cmake-mode tramp-term lua-mode flycheck-haskell haskell-mode elfeed w3m paren-face helm-projectile projectile cider clojure-mode undo-tree helm-swoop expand-region js2-mode browse-kill-ring ace-link multiple-cursors notmuch bbdb auctex markdown-mode graphviz-dot-mode htmlize elpy magit helm-company slime-company company lispy which-key shell-command bash-completion json-mode f dash-functional dash async paradox use-package)))))
+    (edit-server pdf-tools smartscan dumb-jump flycheck-rust cargo rust-mode protobuf-mode cmake-mode tramp-term lua-mode flycheck-haskell haskell-mode elfeed w3m paren-face helm-projectile projectile cider clojure-mode undo-tree helm-swoop diminish expand-region js2-mode browse-kill-ring ace-link multiple-cursors notmuch auctex markdown-mode graphviz-dot-mode htmlize org-plus-contrib elpy magit helm-company slime-company company lispy which-key shell-command bash-completion json-mode f dash-functional dash async paradox bbdb use-package)))
  '(paradox-github-token t)
  '(rcirc-default-nick "schweers")
  '(rcirc-default-user-name "schweers")
@@ -103,7 +103,7 @@
       ("&bitlbee")
       nil nil)
      ("irc.freenode.net" :channels
-      ("#neo" "#informatik-ag")
+      ("#lisp" "##lisp" "#sbcl" "#lispcafe")
       nil nil))))
  '(send-mail-function (quote smtpmail-send-it)))
 
@@ -112,5 +112,5 @@
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
- '(flymake-errline ((((class color)) (:underline "red"))))
- '(flymake-warnline ((((class color)) (:underline "yellow")))))
+ '(flymake-errline ((((class color)) (:underline "red"))) t)
+ '(flymake-warnline ((((class color)) (:underline "yellow"))) t))
