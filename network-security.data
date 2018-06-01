@@ -1,0 +1,5 @@
+(
+ (:id "sha1:ac7feb949147490ee549b5b6c3ae7edd929ea335" :fingerprint "sha1:d2:1a:01:45:2b:5a:9b:06:10:69:46:93:0e:64:71:78:69:ff:7a:e0" :host "news.gmane.org:nntp" :conditions (:self-signed :expired :unknown-ca :invalid))
+ (:id "sha1:b9bceb147ee271d0a3d2520468b70b91add8d9c4" :fingerprint "sha1:49:5b:ca:4e:da:f0:ed:2a:13:c6:e9:98:60:a2:bd:c3:a8:01:f2:de")
+ (:id "sha1:254e3b12f1ef5fdba3ea5ba109329488ad6eaebd" :fingerprint "sha1:49:5b:ca:4e:da:f0:ed:2a:13:c6:e9:98:60:a2:bd:c3:a8:01:f2:de")
+)

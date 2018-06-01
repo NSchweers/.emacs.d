@@ -2172,6 +2172,14 @@ GraphViz uses files in a language called dot
 ** Configure publishing projects
    Org Mode can apparently publish projects from a given directory to another
    directory or server.
+   #+BEGIN_SRC elisp
+     (setf org-publish-project-alist
+           `(("blog"
+              :base-directory ,(expand-file-name "blog" (getenv "HOME"))
+              :publishing-directory ,(expand-file-name "blog-published"
+                                                       (getenv "HOME"))
+              :publishing-function ,#'org-html-publish-to-html)))
+   #+END_SRC
 * Install =graphviz-dot-mode=
 #+BEGIN_SRC elisp
   (use-package graphviz-dot-mode
