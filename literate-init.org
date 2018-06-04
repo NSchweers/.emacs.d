@@ -690,6 +690,399 @@ of where the mouse points.
 #+BEGIN_SRC elisp
   (setf mouse-yank-at-point t)
 #+END_SRC
+
+* Install and Setup Org Mode
+As Org Mode is a huge application in its own right, it needs a lot of
+configuration.
+
+** Installation
+As Emacs ships with an almost ancient version of Org Mode, I want a newer
+version.  Luckily Org Mode has an extra elpa repository, which I have set up
+[[*Add%20Org%20Mode%20repo][here]].
+
+Normally I’d just put my setup into use-package, but as I already have a lot of
+settings spread out over this file, I want it to stay that way.  Plus, I
+/always/ load Org Mode anyway, so there is no point to lazy loading.
+
+#+BEGIN_SRC elisp
+  (use-package org
+    :ensure org-plus-contrib
+    :demand t)
+#+END_SRC
+
+** Setup indentation
+The first step is that I’d like Org Mode to indent when I enter a newline by
+default.
+
+#+BEGIN_SRC elisp
+  (defun setup-org/define-newline-keys ()
+    (define-key org-mode-map (kbd "RET") 'org-return-indent)
+    (define-key org-mode-map (kbd "C-j") 'org-return))
+#+END_SRC
+
+** Setup notes
+Also, I want the notes file which I use with org-capture to reside inside my
+.emacs.d directory.  This might as well change in the future.
+#+BEGIN_SRC elisp
+  (setf org-directory
+        (cond ((eq system-type 'windows-nt)
+               (expand-file-name "Nextcloud/org" (getenv "USERPROFILE")))
+              ((string= system-name "spinetail")
+               (expand-file-name ".emacs_data" (getenv "HOME")))
+              (t
+               (expand-file-name "Nextcloud/org" (getenv "HOME"))))
+        ;; (expand-file-name (if (string= system-name "spinetail")
+        ;;                       ".emacs_data"
+        ;;                     ;; ".emacs_data"
+        ;;                     "Nextcloud/org")
+        ;;                   (getenv "HOME"))
+        org-default-notes-file
+        (expand-file-name "notes.org" org-directory)
+        org-agenda-files
+        ;; "notes.org"
+        ;; (directory-files org-directory nil "\\.org$")
+        (list (expand-file-name "notes.org" org-directory)
+              (expand-file-name ".emacs_data_oa/notes.org"
+                                (getenv "HOME")))
+        ;; (list (expand-file-name (if (string= system-name "spinetail")
+        ;;                             ".emacs_data/notes.org"
+        ;;                           ".emacs_data/notes.org")
+        ;;                         (getenv "HOME"))
+        ;;       (expand-file-name ".emacs_data_oa/notes.org"
+        ;;                         (getenv "HOME")))
+        org-special-ctrl-a/e t
+        org-special-ctrl-k t
+        org-special-ctrl-o t)
+#+END_SRC
+
+** Setup MobileOrg
+Apparently, one is supposed to have a staging area of some sort to which to push
+inside Emacs.
+
+#+BEGIN_SRC elisp
+  (setf org-mobile-directory "~/Nextcloud/MobileOrg")
+#+END_SRC
+
+It seems that MobileOrg pulls data into the file named by this variable.  Note
+that the file must exist.  The mobile data is appended to this file and the
+server contents is emptied.  Which I find at least weird, if not plain wrong.
+
+#+BEGIN_SRC elisp
+  (setf org-mobile-inbox-for-pull (expand-file-name "mobile.org" org-directory))
+#+END_SRC
+
+Maybe I have to set which files to sync more explicitly?
+
+#+BEGIN_SRC elisp
+  (setf org-mobile-files "notes.org")
+#+END_SRC
+
+** Org is the new Fundamental
+   :PROPERTIES:
+   :header-args: :tangle no
+   :END:
+I want Org Mode to be the default major mode instead of fundamental mode.  This
+should be the right thing for the vast majority of files, as Org Mode is all
+ASCII text anyway.  I’m not really sure this works though, so I’ve left it out
+for now.
+
+#+BEGIN_SRC elisp
+  (add-to-list 'magic-fallback-mode-alist '((lambda () t) . org-mode))
+#+END_SRC
+
+One of the great features of Org Mode is that it can work with source blocks
+(like in this file!).  It can also fontify them properly, using the appropriate
+modes.  Why this is not the default is beyond me.
+
+** Setup font-locking
+#+BEGIN_SRC elisp
+  (setf org-src-fontify-natively t)
+#+END_SRC
+
+** Export to LaTeX/PDF
+Org Mode can export to LaTeX, hence to PDF, but it needs some help in doing so.
+This next block of code imports the new exporter and configures it for some
+classes that are not by default configured.
+
+#+BEGIN_SRC elisp
+  (require 'ox-latex)
+  (setf org-latex-inputenc-alist '(("utf8" . "utf8x")))
+  (add-hook 'org-mode-hook
+            (lambda ()
+              (add-to-list 'org-latex-classes
+                           '("IEEEtran"
+                             "\\documentclass[conference]{IEEEtran}"
+                             ("\\section{%s}" . "\\section*{%s}")
+                             ("\\subsection{%s}" . "\\subsection*{%s}")
+                             ("\\subsubsection{%s}" . "\\subsubsection*{%s}")
+                             ("\\paragraph{%s}" . "\\paragraph*{%s}")
+                             ("\\subparagraph{%s}" . "\\subparagraph*{%s}")))
+              (add-to-list 'org-latex-classes
+                           '("scrartcl"
+                             "\\documentclass{scrartcl}"
+                             ("\\section{%s}" . "\\section*{%s}")
+                             ("\\subsection{%s}" . "\\subsection*{%s}")
+                             ("\\subsubsection{%s}" . "\\subsubsection*{%s}")
+                             ("\\paragraph{%s}" . "\\paragraph*{%s}")
+                             ("\\subparagraph{%s}" . "\\subparagraph*{%s}")))
+              (add-to-list 'org-latex-classes
+                           '("scrlttr2"
+                             "\\documentclass{scrartcl}"
+                             ("\\section{%s}" . "\\section*{%s}")
+                             ("\\subsection{%s}" . "\\subsection*{%s}")
+                             ("\\subsubsection{%s}" . "\\subsubsection*{%s}")
+                             ("\\paragraph{%s}" . "\\paragraph*{%s}")
+                             ("\\subparagraph{%s}" . "\\subparagraph*{%s}")))
+              (flyspell-mode 1)
+              (define-key org-mode-map [remap backward-delete-char]
+                'org-delete-backward-char)))
+#+END_SRC
+
+Also, I want source code blocks to be syntax colored.  Sadly, this is not the
+same coloring as in source blocks.  Instead, the LaTeX package =minted= is used.
+
+#+begin_comment
+#+BEGIN_SRC elisp
+  (setf org-latex-listings 'minted)
+  ;; (add-to-list 'org-latex-packages-alist '("" "listings"))
+  ;; (add-to-list 'org-latex-packages-alist '("" "color"))
+  (add-to-list 'org-latex-packages-alist '("" "minted"))
+
+  (setf
+   org-latex-pdf-process
+   '("pdflatex -shell-escape -interaction nonstopmode -output-directory %o %f"
+     "pdflatex -shell-escape -interaction nonstopmode -output-directory %o %f"
+     "pdflatex -shell-escape -interaction nonstopmode -output-directory %o %f"))
+#+END_SRC
+#+end_comment
+
+** Add font-locking for html output
+Just as LaTeX output may be syntax highlighted, I want something similar for
+html.
+
+#+BEGIN_SRC elisp
+  (use-package htmlize)
+#+END_SRC
+
+** Add a template/shortcut for Org Mode comment blocks
+Org Mode files can contain comments, just like any other language.  They may
+begin with a # to comment a line, or may be a block like a source block.
+
+#+BEGIN_SRC elisp
+  (add-to-list 'org-structure-template-alist '("C" "#+BEGIN_COMMENT\n?\n#+END_COMMENT"))
+
+#+END_SRC
+
+** Add a capture template
+The command =org-capture= can capture in many formats and to many files.  I took
+the default and only slightly changed it.
+
+#+BEGIN_SRC elisp
+  (setf org-capture-templates
+        `(("t" "Task" entry
+           (file+headline ,org-default-notes-file
+                          "Tasks")
+           "* TODO %?\n  %t\n  %a  %i\n")
+          ("n" "Notes" entry
+           (file+headline ,org-default-notes-file
+                          "Notes")
+           "* %?\n  %t\n  %a  %i\n")))
+
+#+END_SRC
+
+** Make Org Mode use TeX string delimiters
+   :PROPERTIES:
+   :header-args: :tangle no
+   :END:
+This command either inserts the empty TeX string ``'' at point, or surrounds the
+region with these quote characters.  It does not deactivate the region.  Also,
+the region contains the newly inserted quotes.
+
+#+BEGIN_SRC elisp
+  (defun schweers/org-TeX-string (beg end &optional point)
+    "Insert a pair of TeX string delimiters (`` and '').
+
+  Put these back to back with point between them, or around the region, if
+  active.  Extend the region to contain the new delimiters too."
+    (interactive "rd")
+    (unless point
+      (setf point (point)))
+    (if (not (use-region-p))
+        (progn
+          (insert "``''")
+          (backward-char 2))
+      (let ((at-beginning-p (= beg point)))
+        (goto-char end)
+        (insert "''")
+        (when at-beginning-p
+          (push-mark (point)))
+        (goto-char beg)
+        (insert "``")
+        (if at-beginning-p
+            (backward-char 2)
+          (push-mark (- (point) 2))
+          (goto-char (+ 4 end)))
+        (setf deactivate-mark nil))))
+
+  (define-key org-mode-map (kbd "M-\"") #'schweers/org-TeX-string)
+
+#+END_SRC
+
+** A poor man’s presenter in Org Mode
+Org Mode can be used as a poor man’s presenter.  This can come in handy when one
+wants a live Emacs session, for instance because one wants to demonstrate
+features of Emacs.  I did this for the presentation of my master thesis.  I
+shamelessly +stole+ borrowed this code from someplace online.
+
+#+BEGIN_SRC elisp
+  (defun ded/org-show-next-heading-tidily ()
+    "Show next entry, keeping other entries closed."
+    (interactive)
+    (if (save-excursion (end-of-line) (outline-invisible-p))
+        (progn (org-show-entry) (outline-show-children))
+      (outline-next-heading)
+      (unless (and (bolp) (org-on-heading-p))
+        ;; (org-up-heading-safe)
+        ;; (hide-subtree)
+        (error "Boundary reached"))
+      (org-overview)
+      (org-reveal t)
+      (org-show-entry)
+      (outline-show-children)))
+
+  (defun ded/org-show-previous-heading-tidily ()
+    "Show previous entry, keeping other entries closed."
+    (interactive)
+    (let ((pos (point)))
+      (outline-previous-heading)
+      (unless (and (< (point) pos) (bolp) (org-on-heading-p))
+        (goto-char pos)
+        (outline-hide-subtree)
+        (error "Boundary reached"))
+      (org-overview)
+      (org-reveal t)
+      (org-show-entry)
+      (outline-show-children)))
+
+  (define-key org-mode-map (kbd "<f8>") 'ded/org-show-previous-heading-tidily)
+  (define-key org-mode-map (kbd "<f9>") 'ded/org-show-next-heading-tidily)
+#+END_SRC
+
+** Set up the archive filename
+Org Mode normally adds the string "_archive" to the file name, yet this doesn’t
+work well with gpg encrypted files.  For this reason I’ll simply put "archive_"
+at the beginning of the new file name.
+
+#+BEGIN_SRC elisp
+  (setf org-archive-location "archive_%s::")
+#+END_SRC
+** Set up diary integration
+Org Mode can include items from the excellent diary package (which can represent
+recurring events of arbitrary complexity).  Only one variable needs to be set.
+
+#+BEGIN_SRC elisp
+  (setq org-agenda-include-diary t)
+#+END_SRC
+** Set the format for org-clock
+Org mode supports clocking, which is really cool, but by default it folds
+durations which are longer than 24h into days.  The following setting changes
+that.
+
+Note that the first setting is now obsolete.  I’ll leave it here for the time
+being, but it should only have effect on older org mode versions.  At the time
+of this writing (<2017-10-12 Thu>) the built-in version of Org Mode should still
+use the old variable.
+
+#+BEGIN_SRC elisp
+  (setf org-time-clocksum-format
+        '(:hours "%d" :require-hours t :minutes ":%02d" :require-minutes t)
+        org-duration-format 'h:mm)
+  (setf org-time-clocksum-format
+        '(:hours "%d" :require-hours t :minutes ":%02d" :require-minutes t))
+#+END_SRC
+** Let org-clock include the current task
+By default org-clock ignores the current task in report tables.  This is not
+good.
+
+#+BEGIN_SRC elisp
+  (setf org-clock-report-include-clocking-task t)
+#+END_SRC
+** clock into a drawer
+#+BEGIN_SRC elisp
+  (setf org-clock-into-drawer t)
+#+END_SRC
+** Make clocks persistent
+#+BEGIN_SRC elisp
+  (setf org-clock-persist 'history)
+  (org-clock-persistence-insinuate)
+#+END_SRC
+** Allow org-babel to evaluate shell scripts
+For security reasons, org-babel normally doesn’t execute shell scripts.
+
+#+BEGIN_SRC elisp
+  (add-to-list 'org-babel-load-languages
+               '(shell . t))
+  ;; (add-to-list 'org-babel-load-languages
+  ;;              '(sh . t))
+  ;; (require 'ob-sh)
+#+END_SRC
+** Allow org-babel to evaluate lisp code
+As [[*Allow org-babel to evaluate shell scripts][above]], Common Lisp is not allowed by default.
+#+BEGIN_SRC elisp
+  (add-to-list 'org-babel-load-languages
+               '(lisp . t))
+  (require 'ob-lisp)
+#+END_SRC
+** Load org languages
+Actually load the languages.
+#+BEGIN_SRC elisp
+  (org-babel-do-load-languages 'org-babel-load-languages org-babel-load-languages)
+#+END_SRC
+** Install =orgit=
+   :PROPERTIES:
+   :header-args: :tangle no
+   :END:
+Thanks to =orgit= it is possible to create links to magit buffers in Org Mode.
+Sadly this pulls in a new version of Org Mode, which breaks things for my setup
+which is why I have excluded it from my setup, at least for now.
+
+#+BEGIN_SRC elisp
+  (pc orgit)
+#+END_SRC
+
+** Activate dot source blocks
+GraphViz uses files in a language called dot
+
+#+BEGIN_SRC elisp
+  ;; (org-babel-do-load-languages
+  ;;  'org-babel-load-languages
+  ;;  '((dot . t)))
+
+  (add-to-list 'org-babel-load-languages
+                 '(dot . t))
+#+END_SRC
+** Configure publishing projects
+   Org Mode can apparently publish projects from a given directory to another
+   directory or server.
+   #+BEGIN_SRC elisp
+     (setf org-publish-project-alist
+           `(("blog"
+              :base-directory ,(expand-file-name "blog" (getenv "HOME"))
+              :publishing-directory ,(expand-file-name "blog-published"
+                                                       (getenv "HOME"))
+              :publishing-function ,#'org-html-publish-to-html)))
+   #+END_SRC
+** Add todo states.
+   I could have sworn that I already configured this, but it seems that I am too
+   sloppy in my usage of git on this repo.
+
+   Anyway, Org Mode can have mode (different) todo states than it does by
+   default:
+
+   #+BEGIN_SRC elisp
+     (setf org-todo-keywords
+           '((sequence "TODO" "|" "DONE" "CANCELLED")))
+   #+END_SRC
 * Install and configure =bbdb=
 While BBDB is a little weird, it does not need a lot of configuration.  I
 basically only tell it that I’m not an American.
@@ -1622,388 +2015,6 @@ this is a little weird when using more than one frame.
     (setf aw-scope 'frame
           aw-keys '(?b ?n ?r ?s ?g ?o ?e ?i ?t ?c)))
 #+END_SRC
-
-* Install and Setup Org Mode
-As Org Mode is a huge application in its own right, it needs a lot of
-configuration.
-
-** Installation
-As Emacs ships with an almost ancient version of Org Mode, I want a newer
-version.  Luckily Org Mode has an extra elpa repository, which I have set up
-[[*Add%20Org%20Mode%20repo][here]].
-
-Normally I’d just put my setup into use-package, but as I already have a lot of
-settings spread out over this file, I want it to stay that way.  Plus, I
-/always/ load Org Mode anyway, so there is no point to lazy loading.
-
-#+BEGIN_SRC elisp
-  (use-package org
-    :ensure org-plus-contrib
-    :demand t)
-#+END_SRC
-
-** Setup indentation
-The first step is that I’d like Org Mode to indent when I enter a newline by
-default.
-
-#+BEGIN_SRC elisp
-  (defun setup-org/define-newline-keys ()
-    (define-key org-mode-map (kbd "RET") 'org-return-indent)
-    (define-key org-mode-map (kbd "C-j") 'org-return))
-#+END_SRC
-
-** Setup notes
-Also, I want the notes file which I use with org-capture to reside inside my
-.emacs.d directory.  This might as well change in the future.
-#+BEGIN_SRC elisp
-  (setf org-directory
-        (cond ((eq system-type 'windows-nt)
-               (expand-file-name "Nextcloud/org" (getenv "USERPROFILE")))
-              ((string= system-name "spinetail")
-               (expand-file-name ".emacs_data" (getenv "HOME")))
-              (t
-               (expand-file-name "Nextcloud/org" (getenv "HOME"))))
-        ;; (expand-file-name (if (string= system-name "spinetail")
-        ;;                       ".emacs_data"
-        ;;                     ;; ".emacs_data"
-        ;;                     "Nextcloud/org")
-        ;;                   (getenv "HOME"))
-        org-default-notes-file
-        (expand-file-name "notes.org" org-directory)
-        org-agenda-files
-        ;; "notes.org"
-        ;; (directory-files org-directory nil "\\.org$")
-        (list (expand-file-name "notes.org" org-directory)
-              (expand-file-name ".emacs_data_oa/notes.org"
-                                (getenv "HOME")))
-        ;; (list (expand-file-name (if (string= system-name "spinetail")
-        ;;                             ".emacs_data/notes.org"
-        ;;                           ".emacs_data/notes.org")
-        ;;                         (getenv "HOME"))
-        ;;       (expand-file-name ".emacs_data_oa/notes.org"
-        ;;                         (getenv "HOME")))
-        org-special-ctrl-a/e t
-        org-special-ctrl-k t
-        org-special-ctrl-o t)
-#+END_SRC
-
-** Setup MobileOrg
-Apparently, one is supposed to have a staging area of some sort to which to push
-inside Emacs.
-
-#+BEGIN_SRC elisp
-  (setf org-mobile-directory "~/Nextcloud/MobileOrg")
-#+END_SRC
-
-It seems that MobileOrg pulls data into the file named by this variable.  Note
-that the file must exist.  The mobile data is appended to this file and the
-server contents is emptied.  Which I find at least weird, if not plain wrong.
-
-#+BEGIN_SRC elisp
-  (setf org-mobile-inbox-for-pull (expand-file-name "mobile.org" org-directory))
-#+END_SRC
-
-Maybe I have to set which files to sync more explicitly?
-
-#+BEGIN_SRC elisp
-  (setf org-mobile-files "notes.org")
-#+END_SRC
-
-** Org is the new Fundamental
-   :PROPERTIES:
-   :header-args: :tangle no
-   :END:
-I want Org Mode to be the default major mode instead of fundamental mode.  This
-should be the right thing for the vast majority of files, as Org Mode is all
-ASCII text anyway.  I’m not really sure this works though, so I’ve left it out
-for now.
-
-#+BEGIN_SRC elisp
-  (add-to-list 'magic-fallback-mode-alist '((lambda () t) . org-mode))
-#+END_SRC
-
-One of the great features of Org Mode is that it can work with source blocks
-(like in this file!).  It can also fontify them properly, using the appropriate
-modes.  Why this is not the default is beyond me.
-
-** Setup font-locking
-#+BEGIN_SRC elisp
-  (setf org-src-fontify-natively t)
-#+END_SRC
-
-** Export to LaTeX/PDF
-Org Mode can export to LaTeX, hence to PDF, but it needs some help in doing so.
-This next block of code imports the new exporter and configures it for some
-classes that are not by default configured.
-
-#+BEGIN_SRC elisp
-  (require 'ox-latex)
-  (setf org-latex-inputenc-alist '(("utf8" . "utf8x")))
-  (add-hook 'org-mode-hook
-            (lambda ()
-              (add-to-list 'org-latex-classes
-                           '("IEEEtran"
-                             "\\documentclass[conference]{IEEEtran}"
-                             ("\\section{%s}" . "\\section*{%s}")
-                             ("\\subsection{%s}" . "\\subsection*{%s}")
-                             ("\\subsubsection{%s}" . "\\subsubsection*{%s}")
-                             ("\\paragraph{%s}" . "\\paragraph*{%s}")
-                             ("\\subparagraph{%s}" . "\\subparagraph*{%s}")))
-              (add-to-list 'org-latex-classes
-                           '("scrartcl"
-                             "\\documentclass{scrartcl}"
-                             ("\\section{%s}" . "\\section*{%s}")
-                             ("\\subsection{%s}" . "\\subsection*{%s}")
-                             ("\\subsubsection{%s}" . "\\subsubsection*{%s}")
-                             ("\\paragraph{%s}" . "\\paragraph*{%s}")
-                             ("\\subparagraph{%s}" . "\\subparagraph*{%s}")))
-              (add-to-list 'org-latex-classes
-                           '("scrlttr2"
-                             "\\documentclass{scrartcl}"
-                             ("\\section{%s}" . "\\section*{%s}")
-                             ("\\subsection{%s}" . "\\subsection*{%s}")
-                             ("\\subsubsection{%s}" . "\\subsubsection*{%s}")
-                             ("\\paragraph{%s}" . "\\paragraph*{%s}")
-                             ("\\subparagraph{%s}" . "\\subparagraph*{%s}")))
-              (flyspell-mode 1)
-              (define-key org-mode-map [remap backward-delete-char]
-                'org-delete-backward-char)))
-#+END_SRC
-
-Also, I want source code blocks to be syntax colored.  Sadly, this is not the
-same coloring as in source blocks.  Instead, the LaTeX package =minted= is used.
-
-#+begin_comment
-#+BEGIN_SRC elisp
-  (setf org-latex-listings 'minted)
-  ;; (add-to-list 'org-latex-packages-alist '("" "listings"))
-  ;; (add-to-list 'org-latex-packages-alist '("" "color"))
-  (add-to-list 'org-latex-packages-alist '("" "minted"))
-
-  (setf
-   org-latex-pdf-process
-   '("pdflatex -shell-escape -interaction nonstopmode -output-directory %o %f"
-     "pdflatex -shell-escape -interaction nonstopmode -output-directory %o %f"
-     "pdflatex -shell-escape -interaction nonstopmode -output-directory %o %f"))
-#+END_SRC
-#+end_comment
-
-** Add font-locking for html output
-Just as LaTeX output may be syntax highlighted, I want something similar for
-html.
-
-#+BEGIN_SRC elisp
-  (use-package htmlize)
-#+END_SRC
-
-** Add a template/shortcut for Org Mode comment blocks
-Org Mode files can contain comments, just like any other language.  They may
-begin with a # to comment a line, or may be a block like a source block.
-
-#+BEGIN_SRC elisp
-  (add-to-list 'org-structure-template-alist '("C" "#+BEGIN_COMMENT\n?\n#+END_COMMENT"))
-
-#+END_SRC
-
-** Add a capture template
-The command =org-capture= can capture in many formats and to many files.  I took
-the default and only slightly changed it.
-
-#+BEGIN_SRC elisp
-  (setf org-capture-templates
-        `(("t" "Task" entry
-           (file+headline ,org-default-notes-file
-                          "Tasks")
-           "* TODO %?\n  %t\n  %a  %i\n")
-          ("n" "Notes" entry
-           (file+headline ,org-default-notes-file
-                          "Notes")
-           "* %?\n  %t\n  %a  %i\n")))
-
-#+END_SRC
-
-** Make Org Mode use TeX string delimiters
-   :PROPERTIES:
-   :header-args: :tangle no
-   :END:
-This command either inserts the empty TeX string ``'' at point, or surrounds the
-region with these quote characters.  It does not deactivate the region.  Also,
-the region contains the newly inserted quotes.
-
-#+BEGIN_SRC elisp
-  (defun schweers/org-TeX-string (beg end &optional point)
-    "Insert a pair of TeX string delimiters (`` and '').
-
-  Put these back to back with point between them, or around the region, if
-  active.  Extend the region to contain the new delimiters too."
-    (interactive "rd")
-    (unless point
-      (setf point (point)))
-    (if (not (use-region-p))
-        (progn
-          (insert "``''")
-          (backward-char 2))
-      (let ((at-beginning-p (= beg point)))
-        (goto-char end)
-        (insert "''")
-        (when at-beginning-p
-          (push-mark (point)))
-        (goto-char beg)
-        (insert "``")
-        (if at-beginning-p
-            (backward-char 2)
-          (push-mark (- (point) 2))
-          (goto-char (+ 4 end)))
-        (setf deactivate-mark nil))))
-
-  (define-key org-mode-map (kbd "M-\"") #'schweers/org-TeX-string)
-
-#+END_SRC
-
-** A poor man’s presenter in Org Mode
-Org Mode can be used as a poor man’s presenter.  This can come in handy when one
-wants a live Emacs session, for instance because one wants to demonstrate
-features of Emacs.  I did this for the presentation of my master thesis.  I
-shamelessly +stole+ borrowed this code from someplace online.
-
-#+BEGIN_SRC elisp
-  (defun ded/org-show-next-heading-tidily ()
-    "Show next entry, keeping other entries closed."
-    (interactive)
-    (if (save-excursion (end-of-line) (outline-invisible-p))
-        (progn (org-show-entry) (outline-show-children))
-      (outline-next-heading)
-      (unless (and (bolp) (org-on-heading-p))
-        ;; (org-up-heading-safe)
-        ;; (hide-subtree)
-        (error "Boundary reached"))
-      (org-overview)
-      (org-reveal t)
-      (org-show-entry)
-      (outline-show-children)))
-
-  (defun ded/org-show-previous-heading-tidily ()
-    "Show previous entry, keeping other entries closed."
-    (interactive)
-    (let ((pos (point)))
-      (outline-previous-heading)
-      (unless (and (< (point) pos) (bolp) (org-on-heading-p))
-        (goto-char pos)
-        (outline-hide-subtree)
-        (error "Boundary reached"))
-      (org-overview)
-      (org-reveal t)
-      (org-show-entry)
-      (outline-show-children)))
-
-  (define-key org-mode-map (kbd "<f8>") 'ded/org-show-previous-heading-tidily)
-  (define-key org-mode-map (kbd "<f9>") 'ded/org-show-next-heading-tidily)
-#+END_SRC
-
-** Set up the archive filename
-Org Mode normally adds the string "_archive" to the file name, yet this doesn’t
-work well with gpg encrypted files.  For this reason I’ll simply put "archive_"
-at the beginning of the new file name.
-
-#+BEGIN_SRC elisp
-  (setf org-archive-location "archive_%s::")
-#+END_SRC
-** Set up diary integration
-Org Mode can include items from the excellent diary package (which can represent
-recurring events of arbitrary complexity).  Only one variable needs to be set.
-
-#+BEGIN_SRC elisp
-  (setq org-agenda-include-diary t)
-#+END_SRC
-** Set the format for org-clock
-Org mode supports clocking, which is really cool, but by default it folds
-durations which are longer than 24h into days.  The following setting changes
-that.
-
-Note that the first setting is now obsolete.  I’ll leave it here for the time
-being, but it should only have effect on older org mode versions.  At the time
-of this writing (<2017-10-12 Thu>) the built-in version of Org Mode should still
-use the old variable.
-
-#+BEGIN_SRC elisp
-  (setf org-time-clocksum-format
-        '(:hours "%d" :require-hours t :minutes ":%02d" :require-minutes t)
-        org-duration-format 'h:mm)
-  (setf org-time-clocksum-format
-        '(:hours "%d" :require-hours t :minutes ":%02d" :require-minutes t))
-#+END_SRC
-** Let org-clock include the current task
-By default org-clock ignores the current task in report tables.  This is not
-good.
-
-#+BEGIN_SRC elisp
-  (setf org-clock-report-include-clocking-task t)
-#+END_SRC
-** clock into a drawer
-#+BEGIN_SRC elisp
-  (setf org-clock-into-drawer t)
-#+END_SRC
-** Make clocks persistent
-#+BEGIN_SRC elisp
-  (setf org-clock-persist 'history)
-  (org-clock-persistence-insinuate)
-#+END_SRC
-** Allow org-babel to evaluate shell scripts
-For security reasons, org-babel normally doesn’t execute shell scripts.
-
-#+BEGIN_SRC elisp
-  (add-to-list 'org-babel-load-languages
-               '(shell . t))
-  ;; (add-to-list 'org-babel-load-languages
-  ;;              '(sh . t))
-  ;; (require 'ob-sh)
-#+END_SRC
-** Allow org-babel to evaluate lisp code
-As [[*Allow org-babel to evaluate shell scripts][above]], Common Lisp is not allowed by default.
-#+BEGIN_SRC elisp
-  (add-to-list 'org-babel-load-languages
-               '(lisp . t))
-  (require 'ob-lisp)
-#+END_SRC
-** Load org languages
-Actually load the languages.
-#+BEGIN_SRC elisp
-  (org-babel-do-load-languages 'org-babel-load-languages org-babel-load-languages)
-#+END_SRC
-** Install =orgit=
-   :PROPERTIES:
-   :header-args: :tangle no
-   :END:
-Thanks to =orgit= it is possible to create links to magit buffers in Org Mode.
-Sadly this pulls in a new version of Org Mode, which breaks things for my setup
-which is why I have excluded it from my setup, at least for now.
-
-#+BEGIN_SRC elisp
-  (pc orgit)
-#+END_SRC
-
-** Activate dot source blocks
-GraphViz uses files in a language called dot
-
-#+BEGIN_SRC elisp
-  ;; (org-babel-do-load-languages
-  ;;  'org-babel-load-languages
-  ;;  '((dot . t)))
-
-  (add-to-list 'org-babel-load-languages
-                 '(dot . t))
-#+END_SRC
-** Configure publishing projects
-   Org Mode can apparently publish projects from a given directory to another
-   directory or server.
-   #+BEGIN_SRC elisp
-     (setf org-publish-project-alist
-           `(("blog"
-              :base-directory ,(expand-file-name "blog" (getenv "HOME"))
-              :publishing-directory ,(expand-file-name "blog-published"
-                                                       (getenv "HOME"))
-              :publishing-function ,#'org-html-publish-to-html)))
-   #+END_SRC
 * Install =graphviz-dot-mode=
 #+BEGIN_SRC elisp
   (use-package graphviz-dot-mode
