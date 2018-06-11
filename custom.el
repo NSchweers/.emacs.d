@@ -91,6 +91,9 @@
      ("" "amssymb" t)
      ("" "hyperref" nil)
      "\\tolerance=1000")))
+ '(package-selected-packages
+   (quote
+    (edit-server pdf-tools smartscan dumb-jump flycheck-rust cargo rust-mode protobuf-mode cmake-mode tramp-term lua-mode flycheck-haskell haskell-mode elfeed w3m paren-face helm-projectile projectile cider clojure-mode undo-tree helm-swoop diminish expand-region js2-mode browse-kill-ring ace-link multiple-cursors notmuch auctex markdown-mode graphviz-dot-mode elpy magit helm-company slime-company company lispy which-key shell-command bash-completion json-mode f dash-functional dash async paradox bbdb htmlize org-plus-contrib use-package)))
  '(paradox-github-token t)
  '(rcirc-default-nick "schweers")
  '(rcirc-default-user-name "schweers")

@@ -728,7 +728,7 @@ Also, I want the notes file which I use with org-capture to reside inside my
         (cond ((eq system-type 'windows-nt)
                (expand-file-name "Nextcloud/org" (getenv "USERPROFILE")))
               ((string= system-name "spinetail")
-               (expand-file-name ".emacs_data" (getenv "HOME")))
+               (expand-file-name ".emacs_data_oa" (getenv "HOME")))
               (t
                (expand-file-name "Nextcloud/org" (getenv "HOME"))))
         ;; (expand-file-name (if (string= system-name "spinetail")
@@ -2175,15 +2175,20 @@ more jump locations.
 While my gnus file is quite large, for some reason gnus insists on having its
 own file.  I’ve convinced it to please not use the home directory for this.  I
 used to have this file in ~/.emacs.d, but as its more data than config, I’ve
-moved this file to ~/.emacs_data/gnus.el.
+moved this file somewhere else.  To be precise, I look in two locations, and
+load both of them.  One for my private mail, one for work.
 
 #+BEGIN_SRC elisp
   (load (expand-file-name
          "gnus.el"
-         (expand-file-name (if (string= system-name "spinetail")
-                               ".emacs_data_oa"
-                             ".emacs_data")
-                           (getenv "HOME"))))
+         (expand-file-name ".emacs_data_privat"
+                           (getenv "HOME")))
+        t)
+  (load (expand-file-name
+         "gnus.el"
+         (expand-file-name ".emacs_data_oa"
+                           (getenv "HOME")))
+        t)
 
 #+END_SRC
 
