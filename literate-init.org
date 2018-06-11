@@ -741,10 +741,10 @@ Also, I want the notes file which I use with org-capture to reside inside my
         org-agenda-files
         ;; "notes.org"
         ;; (directory-files org-directory nil "\\.org$")
-        (union (list (expand-file-name "notes.org" org-directory))
-               (list (expand-file-name ".emacs_data_oa/notes.org"
-                                       (getenv "HOME")))
-               :test #'string=)
+        (cl-union (list (expand-file-name "notes.org" org-directory))
+                  (list (expand-file-name ".emacs_data_oa/notes.org"
+                                          (getenv "HOME")))
+                  :test #'string=)
         ;; (list (expand-file-name (if (string= system-name "spinetail")
         ;;                             ".emacs_data/notes.org"
         ;;                           ".emacs_data/notes.org")
