@@ -2313,6 +2313,7 @@ interacting with the elisp VM underlying Emacs!
            (setf inferior-lisp-program "sbcl --dynamic-space-size 2048"))
           ((eq system-type 'gnu/linux)
            (setf inferior-lisp-program "sbcl --dynamic-space-size 20000")))
+    (define-key slime-mode-map (kbd "C-c s") 'slime-scratch)
     (slime-setup '(slime-repl slime-scratch slime-fancy slime-tramp))
     (add-to-list 'slime-filename-translations
                  (slime-create-filename-translator
@@ -2335,16 +2336,16 @@ interacting with the elisp VM underlying Emacs!
           (setq end (point)))
         (unwind-protect
             (with-helm-show-completion beg end
-                                       (helm :sources (helm-build-sync-source "SLIME repl history"
-                                                        :candidates history
-                                                        :action (lambda (candidate)
-                                                                  (slime-repl-kill-input)
-                                                                  (insert candidate)))
-                                             ;; (helm-make-source "Eshell history"
-                                             ;;     'helm-eshell-history-source)
-                                             :buffer "*helm SLIME repl history*"
-                                             :resume 'noresume
-                                             :input input))
+              (helm :sources (helm-build-sync-source "SLIME repl history"
+                               :candidates history
+                               :action (lambda (candidate)
+                                         (slime-repl-kill-input)
+                                         (insert candidate)))
+                    ;; (helm-make-source "Eshell history"
+                    ;;     'helm-eshell-history-source)
+                    :buffer "*helm SLIME repl history*"
+                    :resume 'noresume
+                    :input input))
           (when (and flag-empty
                      (looking-back " " (1- (point))))
             (delete-char -1)))))
