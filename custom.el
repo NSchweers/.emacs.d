@@ -5,7 +5,6 @@
  ;; If there is more than one, they won't work right.
  '(ac-use-quick-help t)
  '(auth-source-save-behavior nil)
- '(auth-sources (quote ("~/.emacs_data/authinfo.gpg")))
  '(calendar-week-start-day 1)
  '(canlock-password "71904c8b85387f68f531b96c68982f7c9d67c122")
  '(collection-roots (quote ("/mnt/data/video/serien/")))

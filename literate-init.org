@@ -691,6 +691,12 @@ of where the mouse points.
   (setf mouse-yank-at-point t)
 #+END_SRC
 
+** Set =auth-sources=
+   #+BEGIN_SRC elisp
+     (setf auth-sources
+           (list (expand-file-name ".emacs_data_oa" (getenv "HOME"))
+                 (expand-file-name ".emacs_data_privat" (getenv "HOME"))))
+   #+END_SRC
 * Install and Setup Org Mode
 As Org Mode is a huge application in its own right, it needs a lot of
 configuration.
