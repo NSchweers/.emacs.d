@@ -694,8 +694,12 @@ of where the mouse points.
 ** Set =auth-sources=
    #+BEGIN_SRC elisp
      (setf auth-sources
-           (list (expand-file-name ".emacs_data_oa" (getenv "HOME"))
-                 (expand-file-name ".emacs_data_privat" (getenv "HOME"))))
+           (list (expand-file-name "authinfo.gpg"
+                                   (expand-file-name ".emacs_data_oa"
+                                                     (getenv "HOME")))
+                 (expand-file-name "authinfo.gpg"
+                                   (expand-file-name ".emacs_data_privat"
+                                                     (getenv "HOME")))))
    #+END_SRC
 * Install and Setup Org Mode
 As Org Mode is a huge application in its own right, it needs a lot of
@@ -1443,6 +1447,58 @@ The http header has to be stripped, then docview-mode is activated.
                 (doc-view-mode)
                 (call-interactively #'misc/olbia)))))))
 #+END_SRC
+
+** Open menues for food venues in kemnat
+   #+BEGIN_SRC elisp
+     (defun schweers/food-kemnat ()
+       (interactive)
+       (browse-url "http://z7-bar.de")
+       (schweers/campioni '(4))
+       (schweers/gourmet-compagnie))
+
+     (defun schweers/campioni (arg)
+       (interactive "P")
+       (when arg
+         (other-window 1))
+       (w3m "https://www.ristorante-campioni.de/index.php/karten/mittagskarte")
+       (when arg
+         (other-window -1)))
+
+     (defun schweers/gourmet-compagnie (arg)
+       (interactive "P")
+       (let*
+           ((url-pattern
+             "https://www.gourmet-compagnie.de/files/speiseplan_kw_%d_kemnat_%d.pdf")
+            (current-count 0)
+            (buffer nil)
+            (buffer-name "*Gourmet Compagnie*"))
+         (cl-labels ((next-url
+                      ()
+                      (format url-pattern
+                              (car (read-from-string (format-time-string "%V")))
+                              (incf current-count)))
+                     (update-or-show-pdf
+                      (status)
+                      (if (plist-get status :error)
+                          (progn
+                            (kill-buffer buffer-name)
+                            (with-current-buffer buffer
+                              (rename-buffer buffer-name)
+                              (if arg
+                                  (switch-to-buffer-other-window buffer)
+                                (switch-to-buffer buffer))
+                              (doc-view-mode)))
+                        (when buffer
+                          (kill-buffer buffer))
+                        (setf buffer (current-buffer))
+                        (search-forward-regexp "%PDF")
+                        (beginning-of-line)
+                        (delete-region (point-min) (point))
+                        (url-retrieve (next-url) #'update-or-show-pdf))))
+           (url-retrieve
+            (next-url) #'update-or-show-pdf))))
+
+   #+END_SRC
 
 ** Split quoted paragraph in =message-mode=
 In message mode, it can be annoying to break up a quoted paragraph.  This
@@ -2535,6 +2591,20 @@ used with GNU global.  Here we set it up to do so.
     (define-key helm-gtags-mode-map (kbd "C-c >")
       'helm-gtags-next-history))
 #+END_SRC
+
+* Install =w3m=
+I use this to browse the hyperspec.  Don't require it, as it will fail on
+Windows.
+
+#+BEGIN_SRC elisp
+  (condition-case e
+      (use-package w3m
+        :commands w3m
+        :config
+        (define-key w3m-mode-map (kbd "q") 'bury-buffer))
+    (error
+     (warn "installing w3m failed: %s" (error-message-string e))))
+#+END_SRC
 * Make it easy to look something up in the CL Hyperspec
 The hyperspec it /the/ definitive resource on Common Lisp, so I want quick
 access to it.
@@ -2645,18 +2715,6 @@ I use =global-paren-face-mode= to make parentheses stand out a little less.
   (use-package paren-face
     :config
     (global-paren-face-mode 1))
-#+END_SRC
-
-* Install =w3m=
-I use this to browse the hyperspec.  Don't require it, as it will fail on
-Windows.
-
-#+BEGIN_SRC elisp
-  (condition-case e
-      (use-package w3m
-        :commands w3m)
-    (error
-     (warn "installing w3m failed: %s" (error-message-string e))))
 #+END_SRC
 
 * Install and configure =elfeed=
