@@ -694,8 +694,10 @@ of where the mouse points.
 ** Set =auth-sources=
    #+BEGIN_SRC elisp
      (setf auth-sources
-           (list (expand-file-name ".emacs_data_oa" (getenv "HOME"))
-                 (expand-file-name ".emacs_data_privat" (getenv "HOME"))))
+           (mapcar (lambda (dir)
+                     (expand-file-name "authinfo.gpg" dir))
+                   (list (expand-file-name ".emacs_data_oa" (getenv "HOME"))
+                         (expand-file-name ".emacs_data_privat" (getenv "HOME")))))
    #+END_SRC
 * Install and Setup Org Mode
 As Org Mode is a huge application in its own right, it needs a lot of
@@ -1089,6 +1091,11 @@ GraphViz uses files in a language called dot
    #+BEGIN_SRC elisp
      (setf org-todo-keywords
            '((sequence "TODO" "|" "DONE" "CANCELLED")))
+   #+END_SRC
+** Enable blocking of dependencies
+   #+BEGIN_SRC elisp
+     (setf org-enforce-todo-dependencies t
+           org-enforce-todo-checkbox-dependencies t)
    #+END_SRC
 * Install and configure =bbdb=
 While BBDB is a little weird, it does not need a lot of configuration.  I
