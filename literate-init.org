@@ -1452,11 +1452,11 @@ The http header has to be stripped, then docview-mode is activated.
    #+BEGIN_SRC elisp
      (defun schweers/food-kemnat ()
        (interactive)
-       (browse-url "http://z7-bar.de")
+       ;; (browse-url "http://z7-bar.de")
        (schweers/campioni '(4))
        (schweers/gourmet-compagnie))
 
-     (defun schweers/campioni (arg)
+     (defun schweers/campioni (&optional arg)
        (interactive "P")
        (when arg
          (other-window 1))
@@ -1464,7 +1464,7 @@ The http header has to be stripped, then docview-mode is activated.
        (when arg
          (other-window -1)))
 
-     (defun schweers/gourmet-compagnie (arg)
+     (defun schweers/gourmet-compagnie (&optional arg)
        (interactive "P")
        (let*
            ((url-pattern
@@ -1480,8 +1480,9 @@ The http header has to be stripped, then docview-mode is activated.
                      (update-or-show-pdf
                       (status)
                       (if (plist-get status :error)
-                          (progn
-                            (kill-buffer buffer-name)
+                          (let ((old-buffer (get-buffer buffer-name)))
+                            (when old-buffer
+                             (kill-buffer old-buffer))
                             (with-current-buffer buffer
                               (rename-buffer buffer-name)
                               (if arg
@@ -1497,7 +1498,6 @@ The http header has to be stripped, then docview-mode is activated.
                         (url-retrieve (next-url) #'update-or-show-pdf))))
            (url-retrieve
             (next-url) #'update-or-show-pdf))))
-
    #+END_SRC
 
 ** Split quoted paragraph in =message-mode=
